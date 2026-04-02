@@ -92,11 +92,26 @@ $$\mathcal{L}_V = \mathbb{E}\!\left[(G_t - V(s_t))^2\right]$$
 
 **Proposition 2 (Bias-Variance Trade-off)**: *HCGAE interpolates between the high-variance, low-bias MC estimator and the low-variance, high-bias TD estimator according to local Critic error.*
 
-*Proof sketch*: Let $B_t = V(s_t) - V^*(s_t)$ be the Critic bias. Then:
+*Proof*: Let $B_t = V(s_t) - V^*(s_t)$ denote the scalar Critic bias at step $t$ (deterministic approximation error). Since the on-policy MC return is an unbiased estimator: $\mathbb{E}[G_t] = V^*(s_t)$.
 
-$$\mathbb{E}[\delta_t^c] = r_t + \gamma V^*(s_{t+1}) - V^*(s_t) + \underbrace{(1-\alpha_t)\gamma B_{t+1} - (1-\alpha_t)B_t}_{\text{residual bias, scaled by }(1-\alpha_t)}$$
+**Step 1 — Expected corrected value**:
 
-When $\alpha_t \to 1$ the bias term vanishes; when $\alpha_t \to 0$ the variance from $G_t$ is suppressed. The sigmoid gate finds the Pareto-optimal point dynamically. $\square$
+$$\mathbb{E}[V^c(s_t)] = (1-\alpha_t)\,V(s_t) + \alpha_t\,\mathbb{E}[G_t] = (1-\alpha_t)(V^*(s_t)+B_t) + \alpha_t V^*(s_t) = V^*(s_t) + (1-\alpha_t)B_t$$
+
+**Step 2 — Expected corrected TD residual**:
+
+$$\mathbb{E}[\delta_t^c] = r_t + \gamma\,\mathbb{E}[V^c(s_{t+1})] - \mathbb{E}[V^c(s_t)]$$
+
+$$= \bigl(r_t + \gamma V^*(s_{t+1}) - V^*(s_t)\bigr) + \gamma(1-\alpha_{t+1})B_{t+1} - (1-\alpha_t)B_t$$
+
+The first bracket equals zero by the Bellman optimality condition for $V^*$, leaving:
+
+$$\boxed{\mathbb{E}[\delta_t^c] = \gamma(1-\alpha_{t+1})B_{t+1} - (1-\alpha_t)B_t}$$
+
+**Step 3 — Limiting cases**:
+- When $\alpha_t \to 1$ (large Critic error, sigmoid saturates high): both bias terms vanish and $\delta_t^c \to r_t + \gamma G_{t+1} - G_t$, the MC increment (zero bias, high variance).
+- When $\alpha_t \to 0$ (small Critic error): $\delta_t^c \to r_t + \gamma V(s_{t+1}) - V(s_t) = \delta_t$, the standard TD residual (low variance, full bias $B_t$).
+- The sigmoid gate $\sigma(\beta \cdot \mathrm{err}/\hat{\mu})$ is a monotone function of local Critic error, so it continuously transitions between these extremes, dynamically selecting the Pareto-optimal bias-variance operating point. $\square$
 
 ### 2.4 The Feature-Leakage Question (Critical Analysis)
 
@@ -356,15 +371,55 @@ CartPole-v1 is a simple environment where all methods converge to the maximum sc
 
 ### 7.3 Application Domains
 
+#### Method Selection Summary
+
 | Domain | Recommended Method | Rationale |
 |--------|-------------------|-----------|
-| Robot manipulation (episodic) | HCGAE | Dense reward, natural episode structure |
-| Legged locomotion | MSGAE | Varying gait phases need different time horizons |
-| Autonomous driving | MSGAE | Long-horizon, safety-critical — robustness preferred |
-| RLHF (LLM alignment) | HCGAE | Each dialogue is a finite episode |
-| Video game AI | HCGAE or MSGAE | Depends on reward density |
-| Real-time resource scheduling | CAGAE | Structured state transitions benefit from gating |
-| Infinite-horizon process control | Standard GAE or adapted MSGAE | HCGAE requires episode resets |
+| Robot manipulation (episodic) | **HCGAE** | Dense reward, natural episode structure |
+| Legged locomotion / MoCap | **MSGAE** | Varying gait phases require different time horizons |
+| Autonomous driving | **MSGAE** | Long-horizon, safety-critical — robustness preferred |
+| RLHF / LLM alignment | **HCGAE** | Each prompt–response is a finite episode |
+| Sparse-reward game AI | **MSGAE** | MC high-variance hurts HCGAE; multi-scale is more stable |
+| Structured process control | **CAGAE** | Regular transition patterns provide reliable gate signal |
+| Infinite-horizon control | Standard GAE or adapted MSGAE | HCGAE requires episode resets |
+
+#### Detailed Analysis
+
+**HCGAE — Best Suited For:**
+
+1. **Robotic Manipulation (grasping, assembly, insertion)**: These tasks are episodic (every attempt has a clear success/failure endpoint), and rewards are typically dense (contact forces, proximity signals). This means (a) $G_t$ is always computable, and (b) early-training Critic error is the dominant bottleneck. HCGAE's hindsight correction directly targets this bottleneck. In practice the mechanism is equivalent to warm-starting the Critic with a better bootstrap target at every rollout.
+
+2. **RLHF and Large Language Model Fine-Tuning**: Each (prompt, response) sequence is a finite episode where a scalar reward (e.g., from a reward model or human rater) arrives at the terminal token. The rollout length is predictable (bounded by context length), and $G_t$ is the discounted sum of KL-penalized token rewards. Because the episode is short and reward is dense enough for most token positions, the MC estimate is relatively low-variance. HCGAE thus provides a better advantage baseline than a poorly initialized Critic throughout the early KL-budget-sensitive training phase.
+
+3. **Sim-to-Real Transfer in Robotics**: When a policy is first deployed in simulation, the Critic is randomly initialized. Simulator episodes are cheap and finite. HCGAE's ability to rapidly correct early Critic bias translates to fewer simulator episodes needed before the policy is good enough to transfer, reducing the sim-to-real gap arising from poor value estimation.
+
+**MSGAE — Best Suited For:**
+
+1. **Legged Locomotion and Motion Capture**: Locomotion tasks exhibit strongly varying temporal structure: stance phases have immediate reward feedback (short horizon optimal), while swing phases require planning several steps ahead (long horizon optimal). A fixed $\lambda$ cannot capture both. MSGAE's state-conditioned mixture learns to select short-horizon estimates during ground contact (stable, low-variance) and long-horizon estimates during flight (lower bias for credit assignment).
+
+2. **Autonomous Driving**: Long-horizon safety-critical tasks penalize instability. MSGAE provides the most consistent gains across environments and does not require episode boundaries, making it compatible with truncated rollouts from running simulations. The SNR-weighted mixture also naturally down-weights scales that produce high-variance advantages during dense traffic scenarios.
+
+3. **Sparse Reward Environments (e.g., Montezuma's Revenge, navigation)**: MC returns are extremely high-variance when rewards are rare. HCGAE's hindsight correction, which blends MC returns, is directly penalized in this regime. MSGAE avoids direct MC blending and instead relies on multi-scale TD estimates, all of which are lower-variance than MC. This is confirmed by Acrobot-v1 results where MSGAE outperforms both HCGAE and CAGAE.
+
+4. **Production / Safety-Critical Deployment**: When consistency matters more than peak performance, MSGAE is the recommended default. It has no episode boundary requirement, no hard dependency on MC return accuracy, and its performance degrades gracefully as scale counts decrease.
+
+**CAGAE — Best Suited For:**
+
+1. **Structured Process Control (e.g., manufacturing, scheduling)**: In these domains, state transitions follow regular patterns. When the system is in a normal operating regime, successive TD residuals point in the same direction (sign-consistent), allowing the gate to learn a reliable high-gate signal. Anomalous transitions (equipment faults, scheduling conflicts) produce sign-flipping residuals and receive low gate values — naturally down-weighting potentially misleading signals.
+
+2. **Financial Portfolio Management**: Market regimes exhibit quasi-stationary behavior within trend phases. Sign-consistent TD residuals naturally correspond to trend-following signals, while sign-reversals indicate regime changes. CAGAE's gate effectively learns to reduce advantage weight during high-volatility periods.
+
+3. **Multi-Phase Tasks with Predictable Transition Structure**: Any task with alternating exploitation/exploration phases where TD residuals cluster directionally can benefit from CAGAE's learned gating.
+
+**When NOT to Use Each Method:**
+
+| Situation | Avoid | Reason |
+|-----------|-------|--------|
+| Off-policy replay buffer (without modification) | HCGAE | MC return $G_t$ is computed under behavior policy; must add importance-sampling correction |
+| Purely infinite-horizon tasks (no natural resets) | HCGAE | Cannot compute $G_t$ without episode endpoints |
+| Sparse reward (< 1 reward per 50 steps) | HCGAE | MC high variance dominates the correction |
+| Tasks with highly stochastic, structureless transitions | CAGAE | Sign-consistency heuristic fails; gate degenerates |
+| Extremely low compute budget | MSGAE | Requires computing 6× GAE passes per rollout |
 
 ---
 
@@ -490,7 +545,28 @@ $$\mathcal{L}_V = \mathbb{E}[(G_t - V(s_t))^2]$$
 
 **证明**：$|V(s_t)-G_t|\approx 0$ $\Rightarrow$ $\alpha_t\approx 0$ $\Rightarrow$ $V^c(s_t)\approx V(s_t)$ $\Rightarrow$ $\delta_t^c\approx\delta_t$。$\square$
 
-**命题 2（偏差-方差权衡）**：$\alpha_t$ 越大，残差偏差越低（趋向 MC 无偏），方差越高；$\alpha_t$ 越小，方差越低，但 Critic 偏差保留。Sigmoid 门控根据局部误差自动找到最优插值点。$\square$
+**命题 2（偏差-方差权衡）**：HCGAE 的修正 TD 残差期望偏差与 $\alpha_t$ 成反比，当 $\alpha_t \to 1$ 时趋向 MC 零偏差、高方差估计；当 $\alpha_t \to 0$ 时退化为标准 TD 低方差、全偏差估计；Sigmoid 门控根据局部误差连续插值，动态寻找最优工作点。
+
+**严格推导**：设 $B_t = V(s_t) - V^*(s_t)$ 为 Critic 近似偏差（标量），on-policy MC 回报满足无偏性 $\mathbb{E}[G_t] = V^*(s_t)$。
+
+**第一步 — 修正价值期望**：
+
+$$\mathbb{E}[V^c(s_t)] = (1-\alpha_t)V(s_t) + \alpha_t\,\mathbb{E}[G_t] = (1-\alpha_t)(V^*(s_t)+B_t) + \alpha_t V^*(s_t) = V^*(s_t) + (1-\alpha_t)B_t$$
+
+**第二步 — 修正 TD 残差期望**：
+
+$$\mathbb{E}[\delta_t^c] = r_t + \gamma\,\mathbb{E}[V^c(s_{t+1})] - \mathbb{E}[V^c(s_t)]$$
+
+$$= \bigl(\underbrace{r_t + \gamma V^*(s_{t+1}) - V^*(s_t)}_{= 0,\;\text{Bellman 最优条件}}\bigr) + \gamma(1-\alpha_{t+1})B_{t+1} - (1-\alpha_t)B_t$$
+
+$$\boxed{\mathbb{E}[\delta_t^c] = \gamma(1-\alpha_{t+1})B_{t+1} - (1-\alpha_t)B_t}$$
+
+注：原式中将 $\alpha_{t+1}$ 错写为 $\alpha_t$ 是常见错误——相邻步骤的门控值一般不相同。
+
+**第三步 — 极限分析**：
+- $\alpha_t \to 1$（Critic 误差大，Sigmoid 饱和）：偏差项趋向零，$\delta_t^c \approx r_t + \gamma G_{t+1} - G_t$，即 MC 增量——零偏差但高方差。
+- $\alpha_t \to 0$（Critic 精准，误差趋零）：$\delta_t^c \approx r_t + \gamma V(s_{t+1}) - V(s_t) = \delta_t$，即标准 TD——低方差但保留全部 Critic 偏差。
+- Sigmoid 门控 $\sigma(\beta \cdot \mathrm{err}/\hat{\mu})$ 是局部误差的单调函数，在两极端之间连续插值，自适应选取偏差-方差的 Pareto 最优点。$\square$
 
 ### 2.4 关键问题：是否存在特征信息穿越（Look-Ahead Bias）？
 
@@ -700,17 +776,67 @@ $$\mathcal{L} = \mathcal{L}_\pi + 0.5\,\mathcal{L}_V + 0.01\,\mathcal{L}_{\mathr
 2. **混合方法**：在每个 $\lambda$ 尺度上独立应用 hindsight 修正后再混合
 3. **不确定性量化**：集成 Dropout 估计 $V(s)$ 方差，直接驱动 $\alpha_t$
 
-### 7.3 适用领域
+### 7.3 适用场景与选型指南
 
-| 领域 | 推荐方法 | 原因 |
-|------|---------|------|
-| 机器人操控（回合制） | HCGAE | 密集奖励，自然回合结构 |
-| 步态控制 / 运动规划 | MSGAE | 不同步态阶段需要不同时间尺度 |
-| 自动驾驶 | MSGAE | 长视界，安全优先，鲁棒性更重要 |
-| RLHF / 大模型对齐 | HCGAE | 对话回合天然有限，MC 回报精确 |
-| 稀疏奖励游戏 AI | MSGAE | 稀疏奖励下 MC 高方差风险 |
-| 实时资源调度 | CAGAE | 结构化状态转换适合门控学习 |
-| 无限视界过程控制 | 标准 GAE 或改造版 MSGAE | HCGAE 需要重置点 |
+#### 快速选型表
+
+| 领域 | 推荐方法 | 核心理由 |
+|------|---------|---------|
+| 机器人操控（回合制） | **HCGAE** | 密集奖励 + 自然回合边界，Critic 偏差是主要瓶颈 |
+| 步态控制 / 运动捕捉 | **MSGAE** | 不同步态阶段（支撑/摆动）需要不同时间视界 |
+| 自动驾驶 | **MSGAE** | 长视界、安全优先，鲁棒性高于峰值性能 |
+| RLHF / 大模型对齐 | **HCGAE** | Prompt-Response 天然有限回合，MC 低方差 |
+| 稀疏奖励游戏 AI | **MSGAE** | MC 高方差危害 HCGAE，多尺度 TD 更稳健 |
+| 结构化过程控制 | **CAGAE** | 规律性状态转换提供可靠的符号一致性信号 |
+| 无限视界控制 | 标准 GAE 或改造版 MSGAE | HCGAE 需要回合重置点 |
+
+#### 详细场景分析
+
+**HCGAE 的适用场景**
+
+1. **机器人抓取 / 装配 / 插入（Robotic Manipulation）**
+   这类任务以"尝试—终止"为自然结构，每个回合有明确的成功/失败端点，奖励通常密集（接触力、接近距离信号）。这意味着 (a) $G_t$ 在每个 rollout 后都可精确计算，(b) 训练早期 Critic 偏差（随机初始化 → 价值网络偏差可达奖励量级）是收敛速度的决定性瓶颈。HCGAE 的 hindsight 修正直接作用于这个瓶颈，等价于在每次 rollout 后用 MC 回报为 Critic 提供一个更准确的 bootstrap 目标，大幅加速价值函数收敛。
+
+2. **RLHF 与大语言模型策略对齐**
+   每条 (prompt, response) 序列是一个有限回合：终止于最后一个 token 时刻，奖励来自奖励模型（或人工评分）。回合长度可预测（不超过上下文长度），$G_t$ 是 KL 惩罚 token 奖励的折扣加和。由于 token 级奖励通常足够密集（每步均有 KL 惩罚项），MC 估计的方差相对较低。在 RLHF 训练早期，Critic 从随机初始化开始，KL 预算敏感阶段的偏差直接影响策略梯度质量。HCGAE 能够在这一阶段提供更精准的优势基线，减少 KL 浪费。
+
+3. **Sim-to-Real 机器人仿真预训练**
+   仿真环境中回合廉价、边界清晰。HCGAE 快速纠正 Critic 偏差的能力意味着需要更少的仿真回合即可训练出足够好的策略，降低了仿真与真实环境之间因价值估计不准确导致的 sim-to-real gap。
+
+**MSGAE 的适用场景**
+
+1. **步态控制与运动捕捉（Legged Locomotion / MoCap）**
+   步态任务具有强烈的时间结构异质性：支撑相（脚接触地面）的奖励反馈即时，短视界估计方差低；摆动相（脚悬空）需要多步前瞻才能获得低偏差的信用分配。固定 $\lambda$ 无法同时兼顾两种情况。MSGAE 的状态条件混合权重网络可以在支撑相倾向短尺度（稳定、低方差），在摆动相倾向长尺度（低偏差），实现自适应时间视界。
+
+2. **自动驾驶**
+   自动驾驶任务的关键特点是：(a) 长视界（一次驾驶任务可持续数分钟）；(b) 安全约束严格（一次灾难性失误不可接受）。MSGAE 无需回合边界，天然兼容截断 rollout + bootstrap，且在三种方法中跨环境表现最稳定。SNR 加权机制在密集交通场景（高方差优势信号）下自动降低高方差尺度的权重，提供鲁棒的梯度信号。
+
+3. **稀疏奖励环境（Montezuma's Revenge、机器人导航等）**
+   当奖励稀疏时，MC 回报的方差极高（单次未获奖励 → $G_t = 0$）。HCGAE 将 MC 与 Critic 混合，在稀疏奖励下恰好放大了高方差问题（如 Acrobot 实验所示 EV 大幅波动）。MSGAE 完全基于多尺度 TD 估计，所有尺度的方差均低于 MC，在稀疏奖励下保持稳定。这一点在 Acrobot-v1 实验中得到验证：MSGAE 是三种新方法中唯一稳定超过基线的方法。
+
+4. **生产环境 / 安全关键部署（Production Deployment）**
+   当一致性优先于峰值性能时，MSGAE 是推荐的默认方案：无回合边界依赖、无 MC 精度硬依赖、计算开销线性可控（减少尺度数量即可降级）。
+
+**CAGAE 的适用场景**
+
+1. **结构化过程控制（生产制造、调度优化）**
+   这类场景中状态转换遵循规律模式：系统处于正常工作状态时，连续 TD 残差方向一致（设备稳定运行时奖励信号持续同向），门控网络学到高门控值；异常转换（设备故障、调度冲突）产生符号翻转残差，自动获得低门控值，天然抑制噪声信号对策略梯度的干扰。
+
+2. **金融投资组合管理**
+   市场趋势期内收益信号持续同向（符号一致），对应高门控；市场反转时 TD 残差符号反转，对应低门控，即波动期减小优势权重。CAGAE 的门控机制等价于一个自适应的市场环境检测器。
+
+3. **具有可预测转换结构的多阶段任务**
+   任何存在"利用阶段/探索阶段"交替、TD 残差方向聚集的任务均可受益于 CAGAE 的学习门控。
+
+#### 方法禁用场景（重要警告）
+
+| 禁用情形 | 禁用方法 | 原因 |
+|---------|---------|------|
+| Off-policy 回放缓冲（未改造） | **HCGAE** | $G_t$ 基于行为策略计算，直接用于目标策略会引入策略不一致偏差，需重要性采样修正 |
+| 无自然回合端点的无限视界任务 | **HCGAE** | 缺少回合终止信号，无法精确计算 $G_t$ |
+| 极稀疏奖励（每50步奖励少于1次） | **HCGAE** | MC 高方差主导，hindsight 修正适得其反 |
+| 高随机性、无结构状态转换 | **CAGAE** | 符号一致性启发失效，门控退化为常数 0.5 |
+| 极低计算预算 | **MSGAE** | 需计算 6 倍 GAE 展开，内存和计算开销是标准 GAE 的 6 倍 |
 
 ---
 

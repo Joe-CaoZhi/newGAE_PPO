@@ -471,42 +471,44 @@ def plot_comprehensive_analysis(
     # ── Explained Variance ──
     for name in sorted_names:
         logger = loggers[name]
-        if not hasattr(logger, "update_metrics") or not logger.update_metrics:
+        evs = logger.explained_variances
+        steps_train = logger.total_steps
+        if not evs or not steps_train:
             continue
-        evs = [m.get("explained_variance", float("nan")) for m in logger.update_metrics]
-        evs = [v for v in evs if not np.isnan(v)]
-        if not evs:
-            continue
+        n = min(len(evs), len(steps_train))
         color = AGENT_COLORS.get(name, "#607D8B")
         ls = AGENT_LINESTYLES.get(name, "-")
         lw = 2.2 if name in novel_methods else 1.4
-        alpha = 1.0 if name in novel_methods or name == "Standard_GAE" else 0.6
-        smooth_ev = smooth(evs, window=min(15, len(evs)))
-        ax_ev.plot(smooth_ev, color=color, linestyle=ls, linewidth=lw, alpha=alpha,
-                   label=AGENT_LABELS.get(name, name))
-    ax_ev.set_xlabel("Update Step")
+        alpha_val = 1.0 if name in novel_methods or name == "Standard_GAE" else 0.6
+        smooth_ev = smooth(evs[:n], window=min(15, n))
+        ax_ev.plot(steps_train[:n], smooth_ev, color=color, linestyle=ls,
+                   linewidth=lw, alpha=alpha_val, label=AGENT_LABELS.get(name, name))
+    ax_ev.set_xlabel("Environment Steps")
     ax_ev.set_ylabel("Explained Variance")
     ax_ev.set_title("Critic Accuracy (EV)", fontweight="bold")
-    ax_ev.set_ylim(-0.1, 1.05)
+    all_evs = [v for nm in sorted_names for v in loggers[nm].explained_variances]
+    if all_evs:
+        lo, hi = min(all_evs), max(all_evs)
+        ax_ev.set_ylim(min(-0.05, lo - 0.05), max(1.05, hi + 0.05))
     ax_ev.axhline(0, color="black", alpha=0.3, linewidth=0.8)
     ax_ev.legend(fontsize=7, loc="lower right")
 
     # ── Value Loss ──
     for name in sorted_names:
         logger = loggers[name]
-        if not hasattr(logger, "update_metrics") or not logger.update_metrics:
+        vlosses = logger.value_losses
+        steps_train = logger.total_steps
+        if not vlosses or not steps_train:
             continue
-        vlosses = [m.get("value_loss", float("nan")) for m in logger.update_metrics]
-        vlosses = [v for v in vlosses if not np.isnan(v)]
-        if not vlosses:
-            continue
+        n = min(len(vlosses), len(steps_train))
         color = AGENT_COLORS.get(name, "#607D8B")
+        ls = AGENT_LINESTYLES.get(name, "-")
         lw = 2.2 if name in novel_methods else 1.4
-        alpha = 1.0 if name in novel_methods or name == "Standard_GAE" else 0.6
-        smooth_vl = smooth(vlosses, window=min(15, len(vlosses)))
-        ax_vloss.plot(smooth_vl, color=color, linewidth=lw, alpha=alpha,
-                      label=AGENT_LABELS.get(name, name))
-    ax_vloss.set_xlabel("Update Step")
+        alpha_val = 1.0 if name in novel_methods or name == "Standard_GAE" else 0.6
+        smooth_vl = smooth(vlosses[:n], window=min(15, n))
+        ax_vloss.plot(steps_train[:n], smooth_vl, color=color, linestyle=ls,
+                      linewidth=lw, alpha=alpha_val, label=AGENT_LABELS.get(name, name))
+    ax_vloss.set_xlabel("Environment Steps")
     ax_vloss.set_ylabel("Value Loss")
     ax_vloss.set_title("Value Loss", fontweight="bold")
     ax_vloss.legend(fontsize=7)
@@ -514,19 +516,19 @@ def plot_comprehensive_analysis(
     # ── Approx KL ──
     for name in sorted_names:
         logger = loggers[name]
-        if not hasattr(logger, "update_metrics") or not logger.update_metrics:
+        kls = logger.approx_kls
+        steps_train = logger.total_steps
+        if not kls or not steps_train:
             continue
-        kls = [m.get("approx_kl", float("nan")) for m in logger.update_metrics]
-        kls = [v for v in kls if not np.isnan(v)]
-        if not kls:
-            continue
+        n = min(len(kls), len(steps_train))
         color = AGENT_COLORS.get(name, "#607D8B")
+        ls = AGENT_LINESTYLES.get(name, "-")
         lw = 2.2 if name in novel_methods else 1.4
-        alpha = 1.0 if name in novel_methods or name == "Standard_GAE" else 0.6
-        smooth_kl = smooth(kls, window=min(15, len(kls)))
-        ax_kl.plot(smooth_kl, color=color, linewidth=lw, alpha=alpha,
-                   label=AGENT_LABELS.get(name, name))
-    ax_kl.set_xlabel("Update Step")
+        alpha_val = 1.0 if name in novel_methods or name == "Standard_GAE" else 0.6
+        smooth_kl = smooth(kls[:n], window=min(15, n))
+        ax_kl.plot(steps_train[:n], smooth_kl, color=color, linestyle=ls,
+                   linewidth=lw, alpha=alpha_val, label=AGENT_LABELS.get(name, name))
+    ax_kl.set_xlabel("Environment Steps")
     ax_kl.set_ylabel("Approx KL")
     ax_kl.set_title("Policy Update KL", fontweight="bold")
     ax_kl.legend(fontsize=7)
