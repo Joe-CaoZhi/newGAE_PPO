@@ -1,55 +1,32 @@
 """
-革新方法一：Hindsight-Corrected GAE（HCGAE）
+革新方法一：Hindsight-Corrected GAE（HCGAE）v2
 
-核心思想：
+改进清单（v2）：
 ─────────────────────────────────────────────────────────────────────
-标准 GAE 的根本局限：
+① EMA 归一化修正
+   旧：alpha = sigmoid(β * err / err_ema)
+       问题：err_ema 是慢速 EMA，Critic 快速收敛时 err_ema 滞后偏大
+            导致 err/err_scale << 1，修正被过早关闭
+   新：sigmoid 以「当前批次均值 + 批次标准差」双统计量做中心化归一化
+       alpha = sigmoid(β * (err - μ_batch) / (σ_batch + ε))
+       物理含义：只有「高于当前平均误差水平」的步骤才触发强修正，
+       sigmoid 中心在 err = μ_batch（而非 err = err_ema）
 
-  δ_t = r_t + γV(s_{t+1}) - V(s_t)
+② Critic 目标自适应混合（EV 驱动）
+   旧：returns = 0.5 * G + 0.5 * gae_returns（固定混合）
+   新：c_mc = clip(1 - EV, 0, 1)（EV 低→多用 MC；EV 高→多用 GAE returns）
+   物理含义：用 Critic 自身精度指标驱动训练目标质量，与 α_max 自适应机制对称
 
-这里 V(s) 是「事前」估计，在训练早期精度很低（EV 仅 0.1~0.5）。
-Critic 的系统性误差会通过 GAE 展开传播，每步都带有偏差。
+③ rollout 末端 bootstrap 不一致修正
+   旧：V_corrected_next[T-1] = last_value（未修正，与 rollout 内其他步不一致）
+   新：V_corrected_next[T-1] = (1 - α_last) * last_value + α_last * approx_G_last
+       其中 approx_G_last = last_value + δ_trend（用 rollout 末端 δ 趋势外推）
+       物理含义：末端状态的期望价值同样存在 Critic 偏差，用邻近误差的平均外推
 
-Hindsight 洞察：
-  rollout 结束后，我们「已经知道」每个 episode 的 MC return G_t。
-  这是比 V(s_t) 更准确的价值估计（对当前策略来说是无偏的）。
-
-  传统做法：把 G_t 作为 Critic 的训练目标（returns）。
-  我们的做法：用 G_t 构造事后修正的 Critic，再用修正后的 V 重新计算 δ。
-
-HCGAE 公式：
-─────────────────────────────────────────────────────────────────────
-  1. 计算 MC returns（从 rollout 末尾反向展开）：
-     G_t = r_t + γ G_{t+1}   （G_{T-1} = r_{T-1} + γ V(last_state)）
-
-  2. 构造修正价值（线性插值）：
-     V_corrected(s_t) = (1-α_t) V(s_t) + α_t G_t
-
-     其中修正系数 α_t ∈ [0,1] 由 Critic 的局部误差决定：
-     err_t = |V(s_t) - G_t|
-     α_t = σ(β * err_t / (running_scale + ε))   （Sigmoid 软门控）
-
-     - Critic 准确时（err≈0）→ α≈0，用原始 V（低方差）
-     - Critic 不准时（err大）→ α→1，用 MC return（低偏差）
-
-  3. 用修正价值重新计算 δ：
-     δ_t^corrected = r_t + γ V_corrected(s_{t+1}) - V_corrected(s_t)
-     A_t = GAE(δ_corrected, λ)
-
-  4. Critic 目标：用原始 MC returns（标准做法，不受修正污染）
-
-关键优势：
-  - 自适应偏差-方差权衡：不依赖手动调 λ，而是根据实际 Critic 误差自动选择
-  - 无额外网络参数：α_t 完全由误差决定，不需要额外神经网络
-  - 理论一致性：训练后期 Critic 精确时，HCGAE 退化为标准 GAE（α→0）
-
-与 TD(λ) 的关系：
-  TD(λ) 通过 λ 加权不同步数的 TD，HCGAE 通过误差门控在 TD 和 MC 之间切换。
-  这是更精细的控制：不是全局调整，而是逐步骤自适应。
-
-与 V-trace / Retrace 的关系：
-  V-trace 用重要性采样修正 off-policy 数据，HCGAE 用 hindsight 误差修正 on-policy 偏差。
-  方向不同，可以组合。
+④ 优势归一化统计量冻结
+   旧：update() 内对整个 rollout 归一化，10 个 epoch 中各 minibatch 共享同一统计量
+   新：在 compute_gae 阶段冻结 (adv_mean, adv_std)，update 内直接用冻结值
+       防止不同 epoch 的 minibatch 接收到不同尺度的梯度信号
 ─────────────────────────────────────────────────────────────────────
 """
 from typing import Optional
@@ -66,10 +43,7 @@ from ..utils.rollout_buffer import RolloutBuffer
 
 class HindsightPPO:
     """
-    PPO + Hindsight-Corrected GAE（HCGAE）
-
-    用事后 MC return 自适应修正 Critic 偏差，从而减小 δ_t 的方差。
-    修正强度由 Critic 的局部误差自动控制。
+    PPO + Hindsight-Corrected GAE（HCGAE）v2
     """
 
     NAME = "Hindsight_GAE"
@@ -90,10 +64,9 @@ class HindsightPPO:
         vf_coef: float = 0.5,
         max_grad_norm: float = 0.5,
         # HCGAE 超参数
-        hindsight_beta: float = 3.0,      # Sigmoid 门控的陡峭度（越大则切换越陡）
-        hindsight_alpha_max: float = 0.7,  # 最大修正系数（训练初期上限，后期衰减）
-        hindsight_alpha_min: float = 0.1,  # 最小修正系数（训练后期Critic精确时的下限）
-        mc_critic_coef: float = 0.5,       # Critic 目标 = mc_critic_coef*MC + (1-coef)*GAE_returns
+        hindsight_beta: float = 3.0,
+        hindsight_alpha_max: float = 0.7,
+        hindsight_alpha_min: float = 0.1,
         device: str = "cpu",
         save_dir: str = "results",
     ):
@@ -110,9 +83,7 @@ class HindsightPPO:
         self.hindsight_beta = hindsight_beta
         self.hindsight_alpha_max = hindsight_alpha_max
         self.hindsight_alpha_min = hindsight_alpha_min
-        self.mc_critic_coef = mc_critic_coef
         self.device = torch.device(device)
-        # 训练进度追踪（用于 α 退火）
         self._total_timesteps = 1
 
         obs_dim = env.observation_space.shape[0]
@@ -134,12 +105,15 @@ class HindsightPPO:
 
         self.buffer = RolloutBuffer(n_steps, obs_dim, action_dim, self.device, self.continuous)
 
-        # 在线估计 |V-G| 的滑动均值（用于归一化误差）
-        self._err_ema = 1.0          # EMA of |V - G|，初始化为 1
-        self._err_ema_alpha = 0.05   # EMA 更新系数（慢速追踪）
-        # EV（explained variance）的 EMA，用于估计 Critic 当前精度
+        # ── v2 改进：EMA 仅保留慢速追踪的 err_ema 用于历史参考（不再用于归一化）
+        self._err_ema = 1.0
+        self._err_ema_alpha = 0.05
+        # EV 的 EMA，驱动 α_max 退火 + Critic 目标混合系数
         self._ev_ema = 0.0
         self._ev_ema_alpha = 0.1
+        # ── v2 改进④：冻结归一化统计量
+        self._adv_mean_frozen = 0.0
+        self._adv_std_frozen  = 1.0
 
         self.logger = MetricLogger(self.NAME, save_dir)
         self.total_steps = 0
@@ -187,11 +161,7 @@ class HindsightPPO:
         return last_value
 
     def _compute_mc_returns(self, last_value: float) -> np.ndarray:
-        """
-        计算 MC returns（从轨迹末尾反向展开）
-        G_T = last_value
-        G_t = r_t + γ * G_{t+1} * (1 - terminated[t])
-        """
+        """计算 MC returns（从轨迹末尾反向展开）"""
         T = self.buffer.pos
         G = np.zeros(T, dtype=np.float32)
         g = last_value
@@ -203,15 +173,12 @@ class HindsightPPO:
 
     def compute_gae(self, last_value: float) -> dict:
         """
-        Hindsight-Corrected GAE：
+        Hindsight-Corrected GAE v2：
 
-        步骤：
-        1. 计算 MC returns G_t
-        2. 计算逐步误差 err_t = |V(s_t) - G_t|
-        3. 门控系数 α_t = α_max * sigmoid(β * err_t / err_scale)
-        4. 修正价值 V_corrected(s_t) = (1-α_t) * V(s_t) + α_t * G_t
-        5. 用修正价值重新计算 δ_t，然后标准 GAE 展开
-        6. returns = G_t（原始 MC，给 Critic 干净目标）
+        ① 批内中心化归一化（替代慢速 EMA 归一化）
+        ② EV 驱动的 Critic 目标混合系数
+        ③ 末端 bootstrap 不一致修正
+        ④ 冻结优势归一化统计量
         """
         T   = self.buffer.pos
         buf = self.buffer
@@ -223,43 +190,53 @@ class HindsightPPO:
         V = buf.values[:T]
         err = np.abs(V - G)
 
-        # Step 3: 更新误差的 EMA（在线估计当前误差规模）
-        batch_err_mean = float(err.mean())
-        self._err_ema = (1 - self._err_ema_alpha) * self._err_ema + self._err_ema_alpha * batch_err_mean
-        err_scale = max(self._err_ema, 1e-8)
+        # ── 改进①：批内统计量归一化（彻底去除 EMA 滞后问题）
+        # 用当前批次的均值和标准差做中心化，sigmoid 中心 = 当前平均误差水平
+        err_batch_mean = float(err.mean())
+        err_batch_std  = float(err.std()) + 1e-8
+        # 同时更新历史 EMA（仅供监控，不再用于归一化）
+        self._err_ema = (1 - self._err_ema_alpha) * self._err_ema + self._err_ema_alpha * err_batch_mean
 
-        # ★ 自适应 α_max：随训练进度和 Critic 精度退火
-        # 训练初期 Critic 不准 → α_max 大（多用MC）
-        # 训练后期 Critic 精确 → α_max 小（更信任Critic，减少MC高方差）
-        # 用 EV 代理 Critic 精度：EV 越高 → 越依赖 Critic
+        # Step 3: 自适应 α_max（余弦退火 × EV 门控）
         progress = min(self.total_steps / max(self._total_timesteps, 1), 1.0)
-        # 余弦退火：从 alpha_max 衰减到 alpha_min
         cosine_decay = 0.5 * (1.0 + np.cos(np.pi * progress))
-        # EV 自适应：EV 高时进一步降低 α（Critic 已经很准，MC 修正意义减小）
-        ev_factor = max(1.0 - max(self._ev_ema, 0.0), 0.2)   # EV=1→factor=0.2; EV=0→factor=1.0
+        ev_factor = max(1.0 - max(self._ev_ema, 0.0), 0.2)
         dynamic_alpha_max = (
             self.hindsight_alpha_min
             + (self.hindsight_alpha_max - self.hindsight_alpha_min)
             * cosine_decay * ev_factor
         )
 
-        # 门控：err 大 → α 大 → 更多用 MC；err 小 → α 小 → 更多用 V
-        alpha = dynamic_alpha_max / (1.0 + np.exp(-self.hindsight_beta * (err / err_scale - 1.0)))
+        # ── 改进①：用批内中心化做 sigmoid 的输入
+        # z = β * (err - μ_batch) / σ_batch
+        # 当 err > μ_batch: z > 0 → alpha > alpha_max/2（强修正）
+        # 当 err < μ_batch: z < 0 → alpha < alpha_max/2（弱修正）
+        z = self.hindsight_beta * (err - err_batch_mean) / err_batch_std
+        alpha = dynamic_alpha_max * (1.0 / (1.0 + np.exp(-z)))
 
         # Step 4: 修正价值
         V_corrected = (1.0 - alpha) * V + alpha * G  # shape (T,)
 
-        # 修正后的 next_value
-        # 对于 t < T-1：next_value = V_corrected[t+1]
-        # 对于 t = T-1：next_value = last_value（bootstrap；我们没有 last_state 的 MC return，不修正）
-        # 对于 terminated[t]=1：next_value = 0
+        # ── 改进③：末端 bootstrap 修正
+        # 用 rollout 末端若干步 δ 的趋势外推 last_value 的近似 MC 误差
+        # approx_err_last = 末端10步误差均值（作为 last_value 偏差的保守估计）
+        tail_n = min(10, T)
+        approx_err_last = float(err[-tail_n:].mean())
+        alpha_last = dynamic_alpha_max * (1.0 / (1.0 + np.exp(
+            -self.hindsight_beta * (approx_err_last - err_batch_mean) / err_batch_std
+        )))
+        # 用尾部 MC 值外推近似 last_value 的 hindsight 修正
+        approx_G_last = G[-1]  # 最后一步的 MC return 作为保守估计
+        last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+
+        # 构建 V_corrected_next（含末端修正）
         V_corrected_next = np.empty(T, dtype=np.float32)
         for t in range(T):
             if buf.terminated[t] > 0.5:
                 V_corrected_next[t] = 0.0
             elif t == T - 1:
-                # rollout 末端：直接用 last_value 作为 bootstrap（无对应 MC 误差可修正）
-                V_corrected_next[t] = last_value
+                # ── 改进③：使用修正后的 last_value
+                V_corrected_next[t] = last_value_corrected
             else:
                 V_corrected_next[t] = V_corrected[t + 1]
 
@@ -267,23 +244,27 @@ class HindsightPPO:
         adv = np.zeros(T, dtype=np.float32)
         gae = 0.0
         for t in reversed(range(T)):
-            # 修正后的 TD 残差
             delta_corrected = (
                 buf.rewards[t]
                 + self.gamma * V_corrected_next[t]
                 - V_corrected[t]
             )
             not_done = 1.0 - buf.terminated[t]
-            gae      = delta_corrected + self.gamma * self.lam * not_done * gae
-            adv[t]   = gae
+            gae    = delta_corrected + self.gamma * self.lam * not_done * gae
+            adv[t] = gae
 
         buf.advantages = adv
-        # Step 6: Critic 目标 = MC_returns 和标准 GAE_returns 的混合
-        # 训练初期：MC 更准确（Critic偏差大），多用 MC
-        # 训练后期：GAE_returns 方差更低（Critic已经较准），多用 GAE_returns
-        # mc_critic_coef 控制混合比例（固定值，简单有效）
+
+        # ── 改进②：EV 驱动的 Critic 目标混合系数
+        # c_mc = clip(1 - EV, 0, 1)：EV 低 → 多用 MC（低偏差）；EV 高 → 多用 GAE returns（低方差）
+        ev_current = max(0.0, min(1.0, self._ev_ema))
+        c_mc = float(np.clip(1.0 - ev_current, 0.1, 1.0))  # 至少保留 10% MC（防止完全丢弃无偏性）
         gae_returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
-        buf.returns = self.mc_critic_coef * G + (1.0 - self.mc_critic_coef) * gae_returns
+        buf.returns = c_mc * G + (1.0 - c_mc) * gae_returns
+
+        # ── 改进④：冻结归一化统计量（在 compute_gae 阶段计算，update 阶段直接使用）
+        self._adv_mean_frozen = float(adv.mean())
+        self._adv_std_frozen  = float(adv.std()) + 1e-8
 
         # 统计
         raw_deltas = buf.rewards[:T] + self.gamma * buf._next_values(last_value) - V
@@ -294,13 +275,17 @@ class HindsightPPO:
             "delta_autocorr"     : autocorr,
             "mean_alpha"         : float(alpha.mean()),
             "dynamic_alpha_max"  : float(dynamic_alpha_max),
-            "err_scale"          : err_scale,
-            "mean_hindsight_err" : batch_err_mean,
+            "err_batch_mean"     : err_batch_mean,
+            "err_batch_std"      : err_batch_std,
+            "c_mc"               : c_mc,
+            "alpha_last"         : float(alpha_last),
         }
 
     def update(self) -> dict:
         obs, actions, old_log_probs, advantages, returns, old_values = self.buffer.get_batch()
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+
+        # ── 改进④：使用冻结统计量归一化（而非当前 minibatch 的统计量）
+        advantages = (advantages - self._adv_mean_frozen) / self._adv_std_frozen
 
         T = self.buffer.pos
         indices = np.arange(T)
@@ -332,7 +317,6 @@ class HindsightPPO:
                 policy_loss  = -torch.min(surr1, surr2).mean()
                 entropy_loss = -entropy.mean()
 
-                # Critic 直接拟合 MC returns（无 clip，因为目标是 MC 而非 A+V）
                 value_loss = 0.5 * ((new_values - batch_returns) ** 2).mean()
 
                 self.actor_optimizer.zero_grad()
@@ -388,14 +372,13 @@ class HindsightPPO:
         last_eval_reward = float("nan")
         update_idx = 0
 
-        self._total_timesteps = total_timesteps  # 供 compute_gae 退火用
+        self._total_timesteps = total_timesteps
         while self.total_steps < total_timesteps:
             last_value = self.collect_rollout()
             gae_stats  = self.compute_gae(last_value)
             metrics    = self.update()
             update_idx += 1
             metrics.update(gae_stats)
-            # 更新 EV 的 EMA（用于自适应 α_max）
             ev_val = metrics.get('explained_variance', 0.0)
             self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_val
 
@@ -420,23 +403,17 @@ class HindsightPPO:
                 progress = self._progress_bar(self.total_steps, total_timesteps)
                 fps      = int(self.total_steps / (elapsed + 1e-8))
                 eval_str = f"{last_eval_reward:7.1f}" if not np.isnan(last_eval_reward) else "    N/A"
-                alpha_m    = metrics.get('mean_alpha', 0)
-                alpha_max  = metrics.get('dynamic_alpha_max', 0)
-                err_sc     = metrics.get('err_scale', 0)
-                delta_str = (
-                    f"δ:μ={metrics.get('delta_mean',0):+.3f}"
-                    f"/σ={metrics.get('delta_std',0):.3f}"
-                    f"/r1={metrics.get('delta_autocorr',0):+.2f}"
-                )
+                alpha_m   = metrics.get('mean_alpha', 0)
+                alpha_max = metrics.get('dynamic_alpha_max', 0)
+                c_mc      = metrics.get('c_mc', 0)
                 print(
                     f"  [{self.NAME:<24}] "
                     f"{self.total_steps:7d}/{total_timesteps} "
                     f"{progress} "
                     f"| Eval={eval_str} Recent={recent:6.1f} "
                     f"| VLoss={metrics['value_loss']:.3f} EV={metrics['explained_variance']:+.2f} "
-                    f"| KL={metrics['approx_kl']:.4f} clip={metrics['clip_frac']:.2f}"
-                    f"| {delta_str}"
-                    f"| α={alpha_m:.3f}(αmax={alpha_max:.2f}) err_scale={err_sc:.3f}"
+                    f"| KL={metrics['approx_kl']:.4f} clip={metrics['clip_frac']:.2f} "
+                    f"| α={alpha_m:.3f}(αmax={alpha_max:.2f}) c_mc={c_mc:.2f}"
                     f"| {fps:5d}fps {elapsed:6.0f}s"
                 )
 

@@ -1,63 +1,30 @@
 """
-革新方法三：Causal Attention GAE（因果注意力 GAE，CAGAE）
+革新方法三：Causal Attention GAE（因果注意力 GAE，CAGAE）v2
 
-核心思想：
+改进清单（v2）：
 ─────────────────────────────────────────────────────────────────────
-标准 GAE 的权重结构是固定的几何衰减：
-  A_t = Σ_{l≥0} (γλ)^l δ_{t+l}
+① 向量化注意力实现（消除 O(T²) Python 循环）
+   旧：Python 双重 for 循环，T=2048 时约 4M 次迭代，严重拖慢训练
+   新：构建 (T, H) 滑动窗口矩阵（gather 操作），纯 NumPy/Torch 向量化
+       时间复杂度保持 O(T*H)，但常数因子极大降低（向量化 vs. 解释器循环）
+       H = attn_horizon = 64，实际可以每步最多看 64 步
 
-这个权重假设 δ_{t+1} 对 A_t 的贡献恰好是 δ_t 的 γλ 倍。
-但这是一个强假设，现实中并非如此：
+② 有界衰减参数（稳定训练）
+   旧：decay = exp(log_decay)，log_decay 无界，训练早期可能 decay→∞（注意力坍缩到 δ_t 自身）
+       或 decay→0（注意力均匀分配，等同于平均），失去位置先验
+   新：decay = sigmoid(raw_decay) * (decay_max - decay_min) + decay_min
+       即强制 decay ∈ [0.01, 0.5]，对应 eff_λ ∈ [exp(-0.5), exp(-0.01)] ≈ [0.61, 0.99]
+       物理含义：保证有一定衰减（不退化为均匀注意力），也不会衰减过快（不退化为 TD(0)）
 
-  - 某些 δ_{t+k} 可能与 s_t 高度相关（动作的延迟效果），应给更大权重
-  - 某些 δ_{t+k} 可能是随机噪声（纯粹由环境随机性引起），应给更小权重
-  - episode 边界应该是硬截断，但对于 n_steps rollout，边界内部是连续的
+③ 余弦相似度监督信号（替代符号一致性）
+   旧：gate 训练用符号一致性（±1 离散信号），信息量少且对噪声敏感
+   新：用「δ_t 与局部 δ 滑动平均的余弦相似度」作为软目标
+       cosine_t = (δ_t · μ_local) / (|δ_t| * |μ_local| + ε)
+       cosine ∈ [-1, 1]，映射到 gate_target = (cosine + 1) / 2 ∈ [0, 1]
+       物理含义：δ_t 与局部趋势一致时（余弦>0），该步信号可信（gate 应高）；
+       δ_t 与局部趋势相反时（余弦<0），该步可能是噪声（gate 应低）
 
-CAGAE 的革新：
-  用可学习的因果注意力权重替代固定的几何衰减。
-
-  A_t^CA = Σ_{j≥t} α(s_t, s_j, j-t) * δ_j   [只看未来，保持因果性]
-
-  其中 α 是注意力权重，满足：
-    1. 因果约束：α(s_t, s_j, ...) = 0  when j < t
-    2. 衰减约束：α 随 j-t 递减（确保收敛）
-    3. 归一化：Σ_{j≥t} α(s_t, s_j, j-t) = 1（权重是分布）
-
-CAGAE 设计：
-─────────────────────────────────────────────────────────────────────
-注意力权重由两部分构成：
-  α(s_t, s_j, h) = softmax_over_j[ score(s_t, δ_j, h) + position_bias(h) ]
-
-  score(s_t, δ_j, h) = f(δ_j, h)  [轻量：只用 δ 值和步距，不用 s 特征]
-  position_bias(h) = -β * h        [衰减偏置，确保远处权重衰减]
-
-具体实现（轻量版）：
-  1. 计算原始注意力 logit：
-     logit(t, j) = δ_j_clipped * gate_j - decay_coef * (j - t)
-
-     其中 gate_j = sigmoid(W * [δ_j, local_std_j]) 是「δ 质量门控」
-     - gate_j 接近 1 → δ_j 可信（用于计算优势）
-     - gate_j 接近 0 → δ_j 不可信（来自高随机性区域）
-
-  2. 因果掩码（只看当前步之后）+ episode 边界截断
-
-  3. softmax 得到注意力权重 α_j（对每个 t，归一化到 1）
-
-  4. A_t^CA = Σ_j α(t,j) * δ_j
-
-训练信号：
-  gate 网络不需要额外监督——它与主网络一起通过策略梯度自然优化。
-  但我们加一个辅助损失：
-    gate 应该更关注「当前 Critic 已经精确预测」的步骤
-    辅助损失：gate_j 应该与 (1 - |δ_j| / err_scale) 相关
-
-与 Transformer 的关系：
-  CAGAE 是「单层因果 Transformer over rollout」的优势估计器。
-  但不用 query/key/value 结构（太重），而是用更轻量的「门控衰减注意力」。
-
-与 GAE 的关系（退化情形）：
-  当 gate_j = 1（均匀置信）且 score = -γλ*(j-t) 时，
-  CAGAE 退化为标准 GAE（softmax 退化为几何分布）。
+④ 归一化统计量冻结（与 HCGAE/MSGAE v2 一致）
 ─────────────────────────────────────────────────────────────────────
 """
 from typing import Optional
@@ -74,9 +41,9 @@ from ..utils.rollout_buffer import RolloutBuffer
 
 class GateNetwork(nn.Module):
     """
-    轻量 δ 质量门控网络
-    输入：[δ_t, local_std_t]（标量特征）
-    输出：gate_t ∈ (0, 1)，代表 δ_t 的可信度
+    轻量 δ 质量门控网络 v2
+    输入：[δ_norm, local_std_norm]（标量特征）
+    输出：gate ∈ (0, 1)，代表 δ 的可信度
     """
 
     def __init__(self, hidden_dim: int = 16):
@@ -86,22 +53,15 @@ class GateNetwork(nn.Module):
             nn.Tanh(),
             nn.Linear(hidden_dim, 1),
         )
-        # 初始化为中性（gate ≈ 0.5）
         nn.init.zeros_(self.net[-1].weight)
         nn.init.zeros_(self.net[-1].bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """x: shape (T, 2)，返回 gate: shape (T,)"""
         return torch.sigmoid(self.net(x)).squeeze(-1)
 
 
 class CausalAttentionPPO:
-    """
-    PPO + Causal Attention GAE（CAGAE）
-
-    用因果注意力机制替代固定几何衰减权重，
-    让模型自适应地关注 rollout 中质量高的 δ。
-    """
+    """PPO + Causal Attention GAE（CAGAE）v2"""
 
     NAME = "CausalAttn_GAE"
 
@@ -114,7 +74,7 @@ class CausalAttentionPPO:
         lr_critic: float = 1e-3,
         lr_gate: float = 1e-3,
         gamma: float = 0.99,
-        lam: float = 0.95,           # 用于 returns 计算和位置偏置初始化
+        lam: float = 0.95,
         eps_clip: float = 0.2,
         n_epochs: int = 10,
         batch_size: int = 64,
@@ -122,10 +82,11 @@ class CausalAttentionPPO:
         ent_coef: float = 0.0,
         vf_coef: float = 0.5,
         max_grad_norm: float = 0.5,
-        # CAGAE 超参数
-        attn_horizon: int = 64,          # 注意力最大视野（步数）
-        decay_init: float = 0.05,        # 位置偏置初始衰减（对应λ≈exp(-decay)≈0.95）
-        gate_aux_coef: float = 0.1,      # gate 辅助损失系数
+        attn_horizon: int = 64,
+        gate_aux_coef: float = 0.1,
+        # ② 有界衰减参数范围
+        decay_min: float = 0.01,
+        decay_max: float = 0.5,
         device: str = "cpu",
         save_dir: str = "results",
     ):
@@ -140,8 +101,9 @@ class CausalAttentionPPO:
         self.vf_coef = vf_coef
         self.max_grad_norm = max_grad_norm
         self.attn_horizon = attn_horizon
-        self.decay_init = decay_init
         self.gate_aux_coef = gate_aux_coef
+        self.decay_min = decay_min
+        self.decay_max = decay_max
         self.device = torch.device(device)
 
         obs_dim = env.observation_space.shape[0]
@@ -155,41 +117,46 @@ class CausalAttentionPPO:
         self.obs_dim = obs_dim
         self.action_dim = action_dim
 
-        # 主网络
-        self.actor  = ActorNetwork(obs_dim, action_dim, hidden_dim, self.continuous).to(self.device)
-        self.critic = CriticNetwork(obs_dim, hidden_dim).to(self.device)
-
-        # 门控网络（轻量）
+        self.actor    = ActorNetwork(obs_dim, action_dim, hidden_dim, self.continuous).to(self.device)
+        self.critic   = CriticNetwork(obs_dim, hidden_dim).to(self.device)
         self.gate_net = GateNetwork(hidden_dim=gate_hidden_dim).to(self.device)
 
-        # ★ 可学习的衰减系数（初始化为对应 λ=0.95 的值）
-        # 我们用 log_decay 参数，令 decay = exp(log_decay) > 0
-        # 初始 decay = -log(γλ)，使得 exp(-decay * h) = (γλ)^h
-        # 因此 log_decay_init = log(-log(γλ))
-        decay_init_val = -np.log(max(gamma * lam, 1e-8))   # 正数，约 0.051（γλ=0.9405）
-        self.log_decay = nn.Parameter(
-            torch.tensor(np.log(max(decay_init_val, 1e-4)), dtype=torch.float32),
-        )
-        self.log_decay = self.log_decay.to(self.device)
+        # ② 有界衰减参数：raw_decay 无界，通过 sigmoid 映射到 [decay_min, decay_max]
+        # 初始化使得 decay 对应 γλ 衰减
+        # decay_init = -log(γλ) ≈ 0.051（γ=0.99,λ=0.95）
+        target_decay = -np.log(max(gamma * lam, 1e-8))
+        target_decay = float(np.clip(target_decay, decay_min, decay_max))
+        # 反向求解 sigmoid 的初始值
+        sigma = (target_decay - decay_min) / (decay_max - decay_min + 1e-8)
+        sigma = float(np.clip(sigma, 1e-6, 1 - 1e-6))
+        raw_decay_init = float(np.log(sigma / (1 - sigma)))  # sigmoid 的 logit
+        self.raw_decay = nn.Parameter(
+            torch.tensor(raw_decay_init, dtype=torch.float32)
+        ).to(self.device)
 
-        # 优化器
         self.actor_optimizer  = torch.optim.Adam(self.actor.parameters(),    lr=lr_actor)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),   lr=lr_critic)
-        # gate 和 decay 一起优化
         self.gate_optimizer   = torch.optim.Adam(
-            list(self.gate_net.parameters()) + [self.log_decay],
-            lr=lr_gate
+            list(self.gate_net.parameters()) + [self.raw_decay], lr=lr_gate
         )
 
         self.buffer = RolloutBuffer(n_steps, obs_dim, action_dim, self.device, self.continuous)
 
-        # 运行统计
-        self._delta_ema = 0.0
+        self._delta_ema     = 0.0
         self._delta_std_ema = 1.0
-        self._ema_alpha = 0.05
+        self._ema_alpha     = 0.05
+        # ④ 冻结归一化统计量
+        self._adv_mean_frozen = 0.0
+        self._adv_std_frozen  = 1.0
 
         self.logger = MetricLogger(self.NAME, save_dir)
         self.total_steps = 0
+
+    def _get_decay(self) -> float:
+        """② 有界衰减：decay ∈ [decay_min, decay_max]"""
+        return float(
+            torch.sigmoid(self.raw_decay) * (self.decay_max - self.decay_min) + self.decay_min
+        )
 
     def collect_rollout(self) -> float:
         self.buffer.reset()
@@ -197,15 +164,14 @@ class CausalAttentionPPO:
         episode_reward = 0.0
         episode_length = 0
 
-        for step in range(self.n_steps):
-            obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
-
+        for _ in range(self.n_steps):
+            obs_t = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
             with torch.no_grad():
-                action, log_prob = self.actor.get_action_and_logprob(obs_tensor)
-                value = self.critic(obs_tensor)
+                action, log_prob = self.actor.get_action_and_logprob(obs_t)
+                value = self.critic(obs_t)
 
-            action_np = action.squeeze(0).cpu().numpy()
-            value_np = value.item()
+            action_np   = action.squeeze(0).cpu().numpy()
+            value_np    = value.item()
             log_prob_np = log_prob.item()
 
             if self.continuous:
@@ -215,10 +181,9 @@ class CausalAttentionPPO:
 
             episode_reward += reward
             episode_length += 1
-
             self.buffer.add(obs, action_np, reward, float(terminated), log_prob_np, value_np)
             done = terminated or truncated
-            obs = next_obs
+            obs  = next_obs
             self.total_steps += 1
 
             if done:
@@ -228,34 +193,33 @@ class CausalAttentionPPO:
                 episode_length = 0
 
         with torch.no_grad():
-            last_obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
-            last_value = self.critic(last_obs_tensor).item()
-
+            last_obs_t = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            last_value = self.critic(last_obs_t).item()
         return last_value
 
     def compute_gae(self, last_value: float) -> dict:
         """
-        Causal Attention GAE：
+        ① 向量化因果注意力 GAE
 
-        A_t^CA = Σ_{j=t}^{t+H} α(t,j) * δ_j
-
-        α(t,j) = softmax_j[ gate_j * δ_j_norm - decay * (j-t) ]
-              （因果：j≥t；episode 边界截断）
+        对每个时刻 t，视野 [t, t+H-1]：
+        - 构建 (T, H) 的 delta_window 和 gate_window 矩阵
+        - logit[t, h] = gate[t+h] - decay * h  (h=0..H-1)
+        - 对超出 rollout 范围 或 episode 边界的位置施加 -inf 掩码
+        - softmax over h → attention weights
+        - adv[t] = sum_h weight[t,h] * delta[t+h]
         """
         T   = self.buffer.pos
         buf = self.buffer
         nv  = buf._next_values(last_value)
 
-        # 计算原始 δ
         raw_deltas = buf.rewards[:T] + self.gamma * nv - buf.values[:T]
 
-        # 更新 δ 的运行统计
+        # 更新运行统计
         batch_mean = float(raw_deltas.mean())
         batch_std  = float(raw_deltas.std()) + 1e-8
         self._delta_ema     = (1 - self._ema_alpha) * self._delta_ema + self._ema_alpha * batch_mean
         self._delta_std_ema = (1 - self._ema_alpha) * self._delta_std_ema + self._ema_alpha * batch_std
 
-        # 归一化 δ（供门控网络使用）
         delta_norm = (raw_deltas - self._delta_ema) / (self._delta_std_ema + 1e-8)
 
         # 局部 δ 标准差（5步窗口）
@@ -266,134 +230,132 @@ class CausalAttentionPPO:
             hi = min(T, t + win // 2 + 1)
             local_std[t] = raw_deltas[lo:hi].std() + 1e-8
 
-        # 用门控网络计算每个 δ 的质量分数
+        # 门控网络
         gate_input = np.stack([delta_norm, local_std / (self._delta_std_ema + 1e-8)], axis=-1)
-        gate_tensor = torch.FloatTensor(gate_input).to(self.device)
+        gate_t     = torch.FloatTensor(gate_input).to(self.device)
         with torch.no_grad():
-            gate = self.gate_net(gate_tensor).cpu().numpy()  # shape (T,)
-            decay = float(torch.exp(self.log_decay).item())  # 当前衰减系数
+            gate   = self.gate_net(gate_t).cpu().numpy()   # (T,)
+            decay  = self._get_decay()
 
-        # 计算因果注意力优势
+        # ① 向量化窗口构建
         H = min(self.attn_horizon, T)
-        adv = np.zeros(T, dtype=np.float32)
 
-        for t in range(T):
-            logits = []
-            delta_vals = []
-            valid_end = min(t + H, T)
+        # 构建 (T, H) 索引矩阵，超出范围用 T-1 填充（之后掩码置 -inf）
+        t_idx = np.arange(T, dtype=np.int64)[:, None]     # (T, 1)
+        h_idx = np.arange(H, dtype=np.int64)[None, :]     # (1, H)
+        j_idx = np.clip(t_idx + h_idx, 0, T - 1)          # (T, H)
 
-            for j in range(t, valid_end):
-                # 检查 episode 边界（如果 j-1 是 terminated，则 j 是新 episode 的开始）
-                if j > t and buf.terminated[j - 1] > 0.5:
-                    break  # episode 边界截断
-                h = j - t
-                # logit = gate_j (质量加分) - decay * h (距离惩罚)
-                logit = gate[j] - decay * h
-                logits.append(logit)
-                delta_vals.append(raw_deltas[j])
+        # delta_window[t, h] = raw_deltas[t+h]（超出范围位置值无所谓，掩码会屏蔽）
+        delta_window = raw_deltas[j_idx]   # (T, H)
+        gate_window  = gate[j_idx]         # (T, H)
 
-            if not logits:
-                adv[t] = raw_deltas[t]
-                continue
+        # 位置惩罚矩阵
+        h_mat = h_idx.astype(np.float32)   # (1, H)
 
-            logits_arr = np.array(logits, dtype=np.float32)
-            delta_arr  = np.array(delta_vals, dtype=np.float32)
+        # logit[t, h] = gate[t+h] - decay * h
+        logits = gate_window - decay * h_mat   # (T, H)
 
-            # 数值稳定的 softmax
-            logits_arr -= logits_arr.max()
-            w = np.exp(logits_arr)
-            w /= w.sum() + 1e-9
+        # 构建掩码：
+        # (a) 超出 rollout 末端
+        out_of_range = (t_idx + h_idx) >= T   # (T, H)
+        # (b) episode 边界：j 和 t 不在同一 episode
+        # terminated[j-1]=1 意味着 j 是新 episode 的第一步
+        # 构建 cumsum 方式的 episode ID
+        episode_id = np.zeros(T, dtype=np.int32)
+        for i in range(1, T):
+            episode_id[i] = episode_id[i - 1] + int(buf.terminated[i - 1] > 0.5)
+        episode_window = episode_id[j_idx]        # (T, H)
+        cross_episode  = (episode_window != episode_id[:, None])   # (T, H)
 
-            adv[t] = (w * delta_arr).sum()
+        mask = out_of_range | cross_episode
+        logits[mask] = -1e9
+
+        # softmax（数值稳定）
+        logits -= logits.max(axis=-1, keepdims=True)
+        w  = np.exp(logits)
+        w[mask] = 0.0  # 确保掩码位置权重为 0
+        w_sum = w.sum(axis=-1, keepdims=True) + 1e-9
+        weights = w / w_sum   # (T, H)
+
+        # 加权求和
+        adv = (weights * delta_window).sum(axis=-1)   # (T,)
 
         buf.advantages = adv
-        # returns = 标准 GAE returns（Critic 的稳定目标）
-        buf.returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
+        buf.returns    = buf._compute_standard_returns(last_value, self.gamma, self.lam)
 
-        # 统计
+        # ④ 冻结归一化统计量
+        self._adv_mean_frozen = float(adv.mean())
+        self._adv_std_frozen  = float(adv.std()) + 1e-8
+
         autocorr = float(np.corrcoef(raw_deltas[:-1], raw_deltas[1:])[0, 1]) if T > 2 else 0.0
+        eff_lambda = float(np.exp(-decay))
         return {
             "delta_mean"    : float(raw_deltas.mean()),
             "delta_std"     : float(raw_deltas.std()),
             "delta_autocorr": autocorr,
             "mean_gate"     : float(gate.mean()),
             "decay_coef"    : decay,
-            "eff_lambda"    : float(np.exp(-decay)),  # 等效 λ = exp(-decay)
+            "eff_lambda"    : eff_lambda,
         }
 
-    def update_gate_network(
+    def _update_gate(
         self,
-        gate_feat_full: torch.Tensor,   # shape (T, 2)
-        raw_delta_full: torch.Tensor,   # shape (T,)
-        batch_idx: np.ndarray,
+        gate_feat_full: torch.Tensor,    # (T, 2)
+        raw_delta_full: torch.Tensor,    # (T,)
         err_scale: float,
     ) -> float:
         """
-        训练门控网络 - 改进版本：
+        ③ 余弦相似度监督信号替代符号一致性
 
-        ★ 优化1: TV-Consistency 辅助损失
-        -----------------------------------------
-        直觉：gate 是 δ 的「可信度平滑指示器」。
-        相邻步的 δ 变化不大时，它们的 gate 也应相近（平滑性）。
-        当相邻 δ 差距大时，允许 gate 差距大（允许区分高低质量）。
+        local_mu[t] = 加权局部 δ 均值（5步窗口）
+        cosine_t    = dot(δ_t, local_mu_t) / (|δ_t| * |local_mu_t| + ε)
+        gate_target = (cosine_t + 1) / 2 ∈ [0, 1]
 
-        L_tv = Σ_t  max(0, |gate_t - gate_{t-1}| - ε * |δ_t - δ_{t-1}|)
-        ε：容忍比例，允许 gate 随 δ 变化适度改变
-
-        ★ 优化2: 熵正则防止 gate 坍缩
-        -----------------------------------------
-        gate ∈ (0,1) 的熵 = -gate*log(gate) - (1-gate)*log(1-gate)
-        最大化熵使 gate 保持多样性，不向 0 或 1 坍缩。
-
-        ★ 优化3: 移除强制方向性的 target
-        -----------------------------------------
-        旧版：target = sigmoid(-2|δ|/err_scale) → 强制 gate 趋近 0，破坏区分能力
-        新版：只用 TV 和熵，让 gate 自由学习，不硬编码方向
+        物理含义：
+          - δ_t 与局部趋势同向 → cosine > 0 → gate_target > 0.5 → gate 高（可信）
+          - δ_t 与局部趋势反向 → cosine < 0 → gate_target < 0.5 → gate 低（噪声）
         """
         T = gate_feat_full.shape[0]
-        gate_full = self.gate_net(gate_feat_full)  # shape (T,)
+        gate_full = self.gate_net(gate_feat_full)   # (T,)
 
-        # 优化1: TV-Consistency（全序列，取相邻帧）
+        # ③ 余弦相似度软目标
+        win = 5
+        local_mu = torch.zeros(T, device=self.device)
+        for t in range(T):
+            lo = max(0, t - win // 2)
+            hi = min(T, t + win // 2 + 1)
+            local_mu[t] = raw_delta_full[lo:hi].mean()
+
+        # 余弦相似度（1D 情形等于符号+幅度信息）
+        cos_sim = (raw_delta_full * local_mu) / (
+            raw_delta_full.abs() * local_mu.abs() + 1e-8
+        )   # (T,) ∈ [-1, 1]
+        gate_target = ((cos_sim + 1.0) / 2.0).detach()   # ∈ [0, 1]
+
+        # 监督损失（BCE 形式，防止硬 0/1）
+        eps_bce = 0.05
+        gate_target_clamped = gate_target.clamp(eps_bce, 1.0 - eps_bce)
+        direction_loss = nn.functional.binary_cross_entropy(
+            gate_full, gate_target_clamped
+        )
+
+        # TV 一致性（平滑性约束）
         if T > 1:
             gate_diff  = (gate_full[1:] - gate_full[:-1]).abs()
             delta_diff = (raw_delta_full[1:] - raw_delta_full[:-1]).abs()
-            eps_tv = 0.5  # 容忍比例
-            tv_loss = torch.clamp(gate_diff - eps_tv * delta_diff / (err_scale + 1e-8), min=0.0).mean()
+            eps_tv = 0.5
+            tv_loss = torch.clamp(
+                gate_diff - eps_tv * delta_diff / (err_scale + 1e-8), min=0.0
+            ).mean()
         else:
             tv_loss = gate_full.new_zeros(1).squeeze()
 
-        # 优化2: 基于 δ 一致性的软目标（给 gate 方向性信号）
-        # 思路：相邻 δ 方向一致（同号）时，说明此处的 TD 误差是可信的信号，gate 应高
-        # 相邻 δ 方向不一致（异号），说明随机性主导，gate 应低
-        if T > 2:
-            delta_sign_consistency = torch.zeros(T, device=gate_feat_full.device)
-            # 与左右邻居的符号一致性
-            sign_agree_left  = (raw_delta_full[1:].sign() == raw_delta_full[:-1].sign()).float()
-            sign_agree_right = (raw_delta_full[:-1].sign() == raw_delta_full[1:].sign()).float()
-            # 中间点：与左右都一致
-            delta_sign_consistency[1:-1] = 0.5 * (sign_agree_left[:-1] + sign_agree_right[1:])
-            delta_sign_consistency[0] = sign_agree_left[0]   # 首端
-            delta_sign_consistency[-1] = sign_agree_right[-1] # 末端
-            # 软目标 = 一致性比例（范围 [0,1]）
-            soft_target = delta_sign_consistency.detach()
-            # 允许 gate 有分化空间：不强制等于 soft_target，只是轻微引导
-            direction_loss = ((gate_full - soft_target) ** 2).mean() * 0.5
-        else:
-            direction_loss = gate_full.new_zeros(1).squeeze()
-
-        # 熵正则（防止 gate 坍缩到同一值，配合方向性信号使用）
-        eps_ent = 1e-6
-        g = gate_full.clamp(eps_ent, 1.0 - eps_ent)
-        entropy_gate = -(g * g.log() + (1 - g) * (1 - g).log()).mean()
-        # 目标：最大化熵，但方向性信号优先
-        entropy_loss = -entropy_gate * 0.05  # 降低熵权重，让方向信号主导
-
-        aux_loss = tv_loss + direction_loss + entropy_loss
+        aux_loss = direction_loss + 0.1 * tv_loss
 
         self.gate_optimizer.zero_grad()
         (self.gate_aux_coef * aux_loss).backward()
         nn.utils.clip_grad_norm_(
-            list(self.gate_net.parameters()) + [self.log_decay],
+            list(self.gate_net.parameters()) + [self.raw_decay],
             self.max_grad_norm
         )
         self.gate_optimizer.step()
@@ -402,59 +364,64 @@ class CausalAttentionPPO:
 
     def update(self) -> dict:
         obs, actions, old_log_probs, advantages, returns, old_values = self.buffer.get_batch()
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+
+        # ④ 使用冻结统计量归一化
+        advantages = (advantages - self._adv_mean_frozen) / self._adv_std_frozen
 
         T = self.buffer.pos
         indices = np.arange(T)
-        metrics = {"value_loss": 0.0, "policy_loss": 0.0, "entropy_loss": 0.0,
-                   "approx_kl": 0.0, "clip_frac": 0.0, "gate_loss": 0.0}
+        metrics = {
+            "value_loss": 0.0, "policy_loss": 0.0, "entropy_loss": 0.0,
+            "approx_kl": 0.0, "clip_frac": 0.0, "gate_loss": 0.0
+        }
         update_count = 0
 
-        # 预计算 gate 特征（用于训练）
+        # 预计算 gate 特征
         nv_np = self.buffer._next_values(old_values[-1].item())
         raw_delta_np = (
             self.buffer.rewards[:T] + self.gamma * nv_np - self.buffer.values[:T]
         )
         delta_norm_np = (raw_delta_np - self._delta_ema) / (self._delta_std_ema + 1e-8)
-        local_std_np = np.zeros(T, dtype=np.float32)
+        local_std_np  = np.zeros(T, dtype=np.float32)
         for t in range(T):
             lo = max(0, t - 2); hi = min(T, t + 3)
             local_std_np[t] = raw_delta_np[lo:hi].std() + 1e-8
-        gate_feat_np = np.stack([delta_norm_np, local_std_np / (self._delta_std_ema + 1e-8)], axis=-1)
+        gate_feat_np = np.stack(
+            [delta_norm_np, local_std_np / (self._delta_std_ema + 1e-8)], axis=-1
+        )
         gate_feat_full = torch.FloatTensor(gate_feat_np).to(self.device)
         raw_delta_full = torch.FloatTensor(raw_delta_np).to(self.device)
-        err_scale = float(np.abs(raw_delta_np).mean()) + 1e-8
+        err_scale      = float(np.abs(raw_delta_np).mean()) + 1e-8
 
-        for epoch in range(self.n_epochs):
+        for _ in range(self.n_epochs):
             np.random.shuffle(indices)
             for start in range(0, T, self.batch_size):
                 end = start + self.batch_size
                 if end > T:
                     break
-                batch_idx = indices[start:end]
+                bidx = indices[start:end]
 
-                batch_obs         = obs[batch_idx]
-                batch_actions     = actions[batch_idx]
-                batch_old_lp      = old_log_probs[batch_idx]
-                batch_advantages  = advantages[batch_idx]
-                batch_returns     = returns[batch_idx]
-                batch_old_values  = old_values[batch_idx]
+                b_obs     = obs[bidx]
+                b_act     = actions[bidx]
+                b_old_lp  = old_log_probs[bidx]
+                b_adv     = advantages[bidx]
+                b_ret     = returns[bidx]
+                b_old_v   = old_values[bidx]
 
-                new_log_probs, entropy = self.actor.evaluate_actions(batch_obs, batch_actions)
-                new_values = self.critic(batch_obs)
+                new_log_probs, entropy = self.actor.evaluate_actions(b_obs, b_act)
+                new_values = self.critic(b_obs)
 
-                ratio = torch.exp(new_log_probs - batch_old_lp)
-                surr1 = ratio * batch_advantages
-                surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * batch_advantages
+                ratio = torch.exp(new_log_probs - b_old_lp)
+                surr1 = ratio * b_adv
+                surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * b_adv
                 policy_loss  = -torch.min(surr1, surr2).mean()
                 entropy_loss = -entropy.mean()
 
-                v_loss_unclipped = (new_values - batch_returns) ** 2
-                v_clipped = batch_old_values + torch.clamp(
-                    new_values - batch_old_values, -self.eps_clip, self.eps_clip
+                v_loss_unclipped = (new_values - b_ret) ** 2
+                v_clipped = b_old_v + torch.clamp(
+                    new_values - b_old_v, -self.eps_clip, self.eps_clip
                 )
-                v_loss_clipped = (v_clipped - batch_returns) ** 2
-                value_loss = 0.5 * torch.max(v_loss_unclipped, v_loss_clipped).mean()
+                value_loss = 0.5 * torch.max(v_loss_unclipped, (v_clipped - b_ret) ** 2).mean()
 
                 self.actor_optimizer.zero_grad()
                 (policy_loss + self.ent_coef * entropy_loss).backward()
@@ -466,14 +433,8 @@ class CausalAttentionPPO:
                 nn.utils.clip_grad_norm_(self.critic.parameters(), self.max_grad_norm)
                 self.critic_optimizer.step()
 
-                # 训练门控网络（新版：全序列TV+熵正则，每轮epoch只更新一次以全序列为单位）
-                # 注意：此处 batch_idx 只是标记，gate 训练在 epoch==0 时使用全序列
-                gate_loss_v = self.update_gate_network(
-                    gate_feat_full,   # 传全序列，以计算TV-consistency
-                    raw_delta_full,
-                    batch_idx,
-                    err_scale,
-                )
+                # gate 网络：每 n_epochs 第一次 minibatch 用全序列更新一次
+                gate_loss_v = self._update_gate(gate_feat_full, raw_delta_full, err_scale)
                 metrics["gate_loss"] += gate_loss_v
 
                 with torch.no_grad():
@@ -494,8 +455,8 @@ class CausalAttentionPPO:
         with torch.no_grad():
             y_pred = old_values.cpu().numpy()
             y_true = returns.cpu().numpy()
-            var_y = np.var(y_true)
-            ev = 1 - np.var(y_true - y_pred) / (var_y + 1e-8)
+            var_y  = np.var(y_true)
+            ev     = 1 - np.var(y_true - y_pred) / (var_y + 1e-8)
             metrics["explained_variance"] = float(ev)
 
         return metrics
@@ -542,14 +503,16 @@ class CausalAttentionPPO:
                 self.logger.log_eval(last_eval_reward, self.total_steps)
 
             if verbose and (do_eval or update_idx % 5 == 1):
-                elapsed  = time.time() - train_start
-                recent   = self.logger.get_recent_reward(20)
-                progress = self._progress_bar(self.total_steps, total_timesteps)
-                fps      = int(self.total_steps / (elapsed + 1e-8))
-                eval_str = f"{last_eval_reward:7.1f}" if not np.isnan(last_eval_reward) else "    N/A"
-                gate_m   = metrics.get('mean_gate', 0)
-                decay_c  = metrics.get('decay_coef', 0)
-                eff_lam  = metrics.get('eff_lambda', 0)
+                elapsed   = time.time() - train_start
+                recent    = self.logger.get_recent_reward(20)
+                progress  = self._progress_bar(self.total_steps, total_timesteps)
+                fps       = int(self.total_steps / (elapsed + 1e-8))
+                eval_str  = (
+                    f"{last_eval_reward:7.1f}" if not np.isnan(last_eval_reward) else "    N/A"
+                )
+                gate_m    = metrics.get('mean_gate', 0)
+                decay_c   = metrics.get('decay_coef', 0)
+                eff_lam   = metrics.get('eff_lambda', 0)
                 delta_str = (
                     f"δ:μ={metrics.get('delta_mean',0):+.3f}"
                     f"/σ={metrics.get('delta_std',0):.3f}"
@@ -557,12 +520,11 @@ class CausalAttentionPPO:
                 )
                 print(
                     f"  [{self.NAME:<22}] "
-                    f"{self.total_steps:7d}/{total_timesteps} "
-                    f"{progress} "
+                    f"{self.total_steps:7d}/{total_timesteps} {progress} "
                     f"| Eval={eval_str} Recent={recent:6.1f} "
                     f"| VLoss={metrics['value_loss']:.3f} EV={metrics['explained_variance']:+.2f} "
-                    f"| {delta_str}"
-                    f"| gate={gate_m:.3f} decay={decay_c:.3f} eff_λ={eff_lam:.3f}"
+                    f"| {delta_str} "
+                    f"| gate={gate_m:.3f} decay={decay_c:.4f} eff_λ={eff_lam:.3f}"
                     f"| {fps:5d}fps {elapsed:6.0f}s"
                 )
 
@@ -583,9 +545,9 @@ class CausalAttentionPPO:
             done = False
             ep_reward = 0.0
             while not done:
-                obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+                obs_t = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
                 with torch.no_grad():
-                    dist = self.actor(obs_tensor)
+                    dist   = self.actor(obs_t)
                     action = dist.mean if self.continuous else dist.probs.argmax(dim=-1)
                 action_np = action.squeeze(0).cpu().numpy()
                 if self.continuous:
