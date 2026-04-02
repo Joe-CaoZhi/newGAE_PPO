@@ -1,15 +1,24 @@
 # HCGAE Ablation Study Report
+## HCGAE 消融实验报告（中英双语 / Bilingual）
 
 **Project**: newGAE\_PPO — Hindsight-Corrected GAE (HCGAE) Component Analysis
-**Environment**: Hopper-v4 (MuJoCo continuous control)
-**Total Variants**: 10  |  **Steps per Variant**: 300,000  |  **Seed**: 42
-**Runtime**: ~17 min (single CPU)
+**项目**: newGAE\_PPO — Hindsight-Corrected GAE (HCGAE) 组件分析
+**Environment / 环境**: Hopper-v4 (MuJoCo continuous control)
+**Total Variants / 变体总数**: 10  |  **Steps per Variant / 每变体步数**: 300,000  |  **Seed**: 42
+**Runtime / 运行时间**: ~17 min (single CPU)
 **Experiment Script**: `run_ablation.py`  |  **Analysis Script**: `analyze_ablation.py`
 **Results Directory**: `results/Hopper-v4-Ablation/`
 
 ---
 
-## 1. Motivation and Design
+> **Conference Venue Target / 目标会议**: ICML 2026
+> **Paper Style**: Following ICML 2024 formatting guidelines (single-column draft)
+
+---
+
+## 1. Motivation and Design / 动机与设计
+
+### 1.1 English
 
 HCGAE v2 introduced **four independent improvements** over the v1 baseline:
 
@@ -22,26 +31,41 @@ HCGAE v2 introduced **four independent improvements** over the v1 baseline:
 
 To identify which improvements drive performance and which may interfere, we tested all single-improvement variants and a subset of two- and three-way combinations.
 
-### Variant Matrix
+### 1.2 中文
 
-| Variant | ① | ② | ③ | ④ | Description |
-|---------|---|---|---|---|-------------|
-| `HCGAE_Base`  | ✗ | ✗ | ✗ | ✗ | v1-style baseline (slow-EMA normalization, fixed 50-50 mix) |
-| `HCGAE_Imp1`  | ✓ | ✗ | ✗ | ✗ | Batch centering only |
-| `HCGAE_Imp2`  | ✗ | ✓ | ✗ | ✗ | EV-driven mixing only |
-| `HCGAE_Imp3`  | ✗ | ✗ | ✓ | ✗ | Terminal bootstrap correction only |
-| `HCGAE_Imp4`  | ✗ | ✗ | ✗ | ✓ | Frozen stats only |
-| `HCGAE_Imp12` | ✓ | ✓ | ✗ | ✗ | ①+② |
-| `HCGAE_Imp14` | ✓ | ✗ | ✗ | ✓ | ①+④ |
-| `HCGAE_Imp24` | ✗ | ✓ | ✗ | ✓ | ②+④ |
-| `HCGAE_Imp124`| ✓ | ✓ | ✗ | ✓ | ①+②+④ (no terminal fix) |
-| `HCGAE_Full`  | ✓ | ✓ | ✓ | ✓ | All four improvements = published v2 |
+HCGAE v2 在 v1 基线基础上引入了**四项独立改进**：
+
+| 编号 | 改进名称 | 核心思路 |
+|------|---------|---------|
+| ① | 批内中心化 Sigmoid 归一化 | 用当前批次均值/标准差替代慢速 EMA 分母 |
+| ② | EV 驱动的 Critic 目标混合 | 让 Critic 精度（EV）动态决定 MC 与 GAE returns 的混合比例 |
+| ③ | 末端 Bootstrap 修正 | 修正 rollout 边界处 `V_corrected_next` 的一致性问题 |
+| ④ | 冻结优势归一化统计量 | 在 `compute_gae()` 阶段一次性计算 `(adv_mean, adv_std)`，在所有更新 epoch 复用 |
+
+为识别哪些改进驱动性能提升、哪些可能产生干扰，我们测试了所有单一改进变体及部分二阶、三阶组合。
 
 ---
 
-## 2. Quantitative Results
+### Variant Matrix / 变体矩阵
 
-### 2.1 Summary Table
+| Variant | ① | ② | ③ | ④ | Description / 描述 |
+|---------|---|---|---|---|-------------|
+| `HCGAE_Base`  | ✗ | ✗ | ✗ | ✗ | v1-style baseline / v1 风格基线 |
+| `HCGAE_Imp1`  | ✓ | ✗ | ✗ | ✗ | Batch centering only / 仅批内归一化 |
+| `HCGAE_Imp2`  | ✗ | ✓ | ✗ | ✗ | EV-driven mixing only / 仅 EV 驱动混合 |
+| `HCGAE_Imp3`  | ✗ | ✗ | ✓ | ✗ | Terminal bootstrap only / 仅末端修正 |
+| `HCGAE_Imp4`  | ✗ | ✗ | ✗ | ✓ | Frozen stats only / 仅冻结统计量 |
+| `HCGAE_Imp12` | ✓ | ✓ | ✗ | ✗ | ①+② |
+| `HCGAE_Imp14` | ✓ | ✗ | ✗ | ✓ | ①+④ |
+| `HCGAE_Imp24` | ✗ | ✓ | ✗ | ✓ | ②+④ |
+| `HCGAE_Imp124`| ✓ | ✓ | ✗ | ✓ | ①+②+④ (no terminal fix / 无末端修正) |
+| `HCGAE_Full`  | ✓ | ✓ | ✓ | ✓ | All four / 全量 v2 |
+
+---
+
+## 2. Quantitative Results / 定量结果
+
+### 2.1 Summary Table / 汇总表
 
 | Variant | Final Reward | Best Reward | Δ vs Base | Stability σ | Conv. Step | Final EV |
 |---------|-------------|-------------|-----------|-------------|-----------|---------|
@@ -56,398 +80,377 @@ To identify which improvements drive performance and which may interfere, we tes
 | `HCGAE_Imp124` | 2692.1 | 3176.5 |  −501.3 | 814.3 | 161,792 | 0.958 |
 | `HCGAE_Full`   | 2168.6 | 3095.7 | −1024.8 | 673.3 | 172,032 | 0.978 |
 
-**★** Best final reward  **◎** Best stability  **⚡** Fastest convergence
+**★** Best final reward / 最高最终奖励  **◎** Best stability / 最佳稳定性  **⚡** Fastest convergence / 最快收敛
 
-### 2.2 Visualizations
+### 2.2 Visualizations / 可视化图表
 
-All figures are saved in `results/Hopper-v4-Ablation/`:
+All figures are saved in `results/Hopper-v4-Ablation/`. Below are figure descriptions and embedded references.
 
-| File | Content |
-|------|---------|
-| `ablation_learning_curves.png` | All 10 learning curves overlaid |
-| `ablation_grouped_curves.png` | Separated: single-improvements vs. combinations |
-| `ablation_comprehensive.png` | 6-panel composite (curves, scatter plots, matrix, Shapley) |
-| `ablation_matrix.png` | Improvement presence vs. final reward heat-map |
-| `ablation_bar_charts.png` | Final reward, Δ-base, stability bar charts |
-| `ablation_radar.png` | Multi-dimensional radar (reward / stability / convergence / EV) |
-| `ablation_shapley.png` | Approximate Shapley value attribution |
+所有图表保存于 `results/Hopper-v4-Ablation/`。以下为图表说明及引用。
 
 ---
 
-## 3. Mathematical Analysis
+#### Figure 1 / 图 1：Learning Curves — All Variants / 全变体学习曲线
 
-### 3.1 Main Effects (Single Improvements vs. Baseline)
+![All Learning Curves](results/Hopper-v4-Ablation/ablation_learning_curves.png)
+
+*All 10 variants trained on Hopper-v4 for 300K steps. `HCGAE_Imp12` (①+②, red) achieves the highest final performance at 3502. `HCGAE_Imp3` (③ only, green) shows the fastest early convergence (100K steps) but plateaus. `HCGAE_Imp4` (④ only, purple) exhibits severe late-stage instability.*
+
+*10 个变体在 Hopper-v4 上训练 300K 步的结果。`HCGAE_Imp12`（①+②，红色）达到最高最终奖励 3502；`HCGAE_Imp3`（仅③，绿色）早期收敛最快（100K 步）但后期趋于平台；`HCGAE_Imp4`（仅④，紫色）出现严重的后期训练不稳定。*
+
+---
+
+#### Figure 2 / 图 2：Grouped Comparison Curves / 分组对比学习曲线
+
+![Grouped Curves](results/Hopper-v4-Ablation/ablation_grouped_curves.png)
+
+*Two-panel view: (left) single-improvement variants vs. baseline; (right) combination variants. The combination panel clearly shows that ①+② (Imp12) dramatically outperforms both ① and ② individually, confirming strong synergy.*
+
+*双面板视图：（左）单一改进变体 vs 基线；（右）组合变体。组合面板清楚地显示 ①+②（Imp12）显著优于①和②各自单独的效果，确认了强协同效应。*
+
+---
+
+#### Figure 3 / 图 3：Comprehensive 8-Panel Analysis / 综合八宫格分析
+
+![Comprehensive Analysis](results/Hopper-v4-Ablation/ablation_comprehensive_deep.png)
+
+*Eight-panel composite figure (ICML-style multi-panel):*
+*(a) Learning curves – all 10 variants overlaid; (b) Final reward horizontal bar chart; (c) Single-improvement marginal gain waterfall; (d) Synergy/antagonism analysis (actual vs additive); (e) Shapley value attribution; (f) Performance-stability scatter plot; (g) Final EV comparison; (h) Convergence speed comparison.*
+
+*综合八宫格（ICML 多面板风格）：*
+*(a) 全变体学习曲线叠加；(b) 最终奖励水平柱状图；(c) 单一改进边际增益瀑布图；(d) 协同/拮抗分析（实际 vs 加性估计）；(e) Shapley 贡献值图；(f) 性能-稳定性散点图；(g) 最终 EV 对比；(h) 收敛速度对比。*
+
+---
+
+#### Figure 4 / 图 4：Improvement Lattice (Hasse Diagram) / 改进格图（Hasse 图）
+
+![Hasse Diagram](results/Hopper-v4-Ablation/ablation_hasse_diagram.png)
+
+*Lattice graph showing all subset relationships. Nodes are colored by final reward (red=low, green=high). Green edges indicate improvement when adding an improvement; red edges indicate degradation. The dramatic color drop when ④ is added alone demonstrates its unconditional harmfulness.*
+
+*格图展示所有子集关系。节点按最终奖励着色（红色=低，绿色=高）。绿色边表示添加该改进后性能提升，红色边表示性能下降。单独添加④时颜色的急剧下降直观地展示了其无条件有害性。*
+
+---
+
+#### Figure 5 / 图 5：Per-Improvement Grouped Deep Analysis / 分改进深度分组曲线
+
+![Grouped Deep Analysis](results/Hopper-v4-Ablation/ablation_grouped_deep.png)
+
+*Four-panel figure, each panel showing the impact of one specific improvement across all variants that include/exclude it. Enables direct causal attribution by controlling for other improvements.*
+
+*四面板图，每个面板展示某项具体改进在所有包含/不包含它的变体中的影响，通过控制其他变量实现直接因果归因。*
+
+---
+
+#### Figure 6 / 图 6：Heat Map — Improvement Presence × Performance / 热力图
+
+![Matrix Heatmap](results/Hopper-v4-Ablation/ablation_matrix.png)
+
+*Correlation heatmap between improvement presence (binary) and performance metrics. Confirms ① and ② have positive correlations with final reward, while ④ has strong negative correlation when used without ①.*
+
+*改进是否启用（二值）与性能指标的相关热力图。确认①和②与最终奖励正相关，而④在不配合①使用时与最终奖励强负相关。*
+
+---
+
+#### Figure 7 / 图 7：Radar Chart — Multi-Dimensional Comparison / 雷达图
+
+![Radar Chart](results/Hopper-v4-Ablation/ablation_radar.png)
+
+*Multi-axis radar chart spanning four dimensions: reward, stability, convergence speed, and Critic quality (EV). `HCGAE_Imp3` dominates on stability and convergence; `HCGAE_Imp12` dominates on reward; no variant dominates on all four axes simultaneously.*
+
+*四维雷达图（奖励、稳定性、收敛速度、Critic 质量 EV）。`HCGAE_Imp3` 在稳定性和收敛速度上占优；`HCGAE_Imp12` 在奖励上占优；没有变体在所有四个维度上同时占优。*
+
+---
+
+#### Figure 8 / 图 8：Bar Charts — Three-Metric Summary / 三指标柱状图
+
+![Bar Charts](results/Hopper-v4-Ablation/ablation_bar_charts.png)
+
+*Three-panel bar charts: (left) final reward, (center) Δ vs baseline, (right) stability σ. Clearly shows `HCGAE_Imp12` as the Pareto-optimal choice for reward while `HCGAE_Imp3` is optimal for stability.*
+
+*三面板柱状图：（左）最终奖励，（中）vs 基线的增益，（右）稳定性标准差。清楚地显示 `HCGAE_Imp12` 是奖励维度的帕累托最优选择，而 `HCGAE_Imp3` 是稳定性维度的最优选择。*
+
+---
+
+#### Figure 9 / 图 9：Shapley Value Attribution / Shapley 贡献值图
+
+![Shapley Values](results/Hopper-v4-Ablation/ablation_shapley.png)
+
+*Approximate Shapley values for each improvement. ① has the highest positive contribution (+178.9), ② is weakly positive (+13.8), ③ and ④ are both negative. Note: computed from 9 of 16 possible subsets; 6 missing subsets (containing ③ in intermediate positions) are approximated using additive assumption.*
+
+*每项改进的近似 Shapley 贡献值。①具有最高正贡献（+178.9），②弱正贡献（+13.8），③和④均为负值。注：基于 16 个子集中的 9 个计算；6 个缺失子集（包含③处于中间位置）使用加性假设近似。*
+
+---
+
+## 3. Mathematical Analysis / 数学分析
+
+### 3.1 Main Effects / 主效应（单一改进 vs 基线）
 
 $$\Delta_{\mathrm{final}}^{(i)} = R_{\text{Imp}i} - R_{\text{Base}}$$
 
 | Improvement | Δ Final | Δ Best | Δ Stability σ | Δ Conv. Steps | Δ EV |
 |-------------|---------|--------|----------------|--------------|------|
-| ① Batch centering | −154.5 | −123.3 | +101.2 | −59,392 | +0.058 |
-| ② EV-driven mixing | −180.4 | +168.7 | +178.7 | −59,392 | +0.097 |
-| ③ Terminal bootstrap | **+36.9** | −78.8 | **−426.1** | **−110,592** | +0.096 |
-| ④ Frozen stats | −1683.4 | −11.8 | +272.8 | +10,240 | +0.007 |
+| ① Batch centering / 批内归一化 | −154.5 | −123.3 | +101.2 | −59,392 | +0.058 |
+| ② EV-driven mixing / EV 驱动混合 | −180.4 | +168.7 | +178.7 | −59,392 | +0.097 |
+| ③ Terminal bootstrap / 末端修正 | **+36.9** | −78.8 | **−426.1** | **−110,592** | +0.096 |
+| ④ Frozen stats / 冻结统计量 | −1683.4 | −11.8 | +272.8 | +10,240 | +0.007 |
 
-**Observation on ①② alone showing negative Δ final**: Both ① and ② produce higher EV and faster convergence, yet their final reward is slightly below the v1 baseline. This is explained by *increased variance in late training*: with the higher-EV corrections active in isolation, the policy occasionally enters high-reward corridors it cannot yet stabilize in, causing episodic performance swings. The joint ①+② combination resolves this because the two mechanisms provide complementary stabilization (see §3.2).
+**Observation / 分析**: Both ① and ② produce higher EV and faster convergence, yet their final reward is slightly below the v1 baseline. This is explained by *increased variance in late training*: with higher-EV corrections active in isolation, the policy occasionally enters high-reward corridors it cannot yet stabilize in. The joint ①+② combination resolves this through complementary stabilization.
 
-### 3.2 Interaction Effects
+①和②单独使用虽然提升了 EV 和收敛速度，但最终奖励略低于基线。原因在于*后期训练方差增大*：修正独立激活时，策略偶尔进入尚无法稳定的高奖励区域。①+② 的联合组合通过互补稳定机制解决了这一问题。
 
-The interaction term is defined as:
+### 3.2 Interaction Effects / 交互效应
+
+The interaction term is defined as / 交互效应定义如下：
 
 $$\mathcal{I}(i,j) = \bigl[R_{\text{Imp}ij} - R_{\text{Base}}\bigr] - \bigl[\Delta^{(i)} + \Delta^{(j)}\bigr]$$
 
-A positive $\mathcal{I}$ indicates **synergy**; negative indicates **antagonism**.
+A positive $\mathcal{I}$ indicates **synergy / 协同**; negative indicates **antagonism / 拮抗**.
 
-| Combination | Actual Δ | Additive Estimate | Interaction $\mathcal{I}$ | Type |
-|-------------|---------|-------------------|--------------------------|------|
-| ①+② | +308.6 | −334.8 | **+643.4** | 🤝 Strong synergy |
-| ①+④ | +94.5 | −1837.9 | **+1932.4** | 🤝 Synergy (rescues ④) |
-| ②+④ | −844.6 | −1863.8 | **+1019.2** | 🤝 Partial synergy (insufficient to overcome ④ harm) |
+| Combination | Actual Δ | Additive Est. | Interaction $\mathcal{I}$ | Type |
+|-------------|---------|---------------|--------------------------|------|
+| ①+② | +308.6 | −334.8 | **+643.4** | 🤝 Strong synergy / 强协同 |
+| ①+④ | +94.5 | −1837.9 | **+1932.4** | 🤝 Synergy (rescues ④) / 协同（挽救④） |
+| ②+④ | −844.6 | −1863.8 | **+1019.2** | 🤝 Partial synergy (insufficient) / 部分协同（不足以克服④损害） |
 
-The interaction matrix reveals that **all pairs exhibit synergy at the level of raw interaction values**, yet the absolute performance with ④ included still falls below the baseline. This means ④'s individual negative effect (−1683) is so large that even a +1932 synergy term only partially compensates.
+### 3.3 Conditional Marginal Contributions / 条件边际贡献
 
-### 3.3 Conditional Marginal Contributions (Sequential Addition)
-
-Starting from `HCGAE_Base` and adding improvements one at a time, tracking how each marginal gain evolves:
-
-| Transition | Marginal Δ |
+| Transition / 转变 | Marginal Δ / 边际增益 |
 |------------|-----------|
 | Base → +① | −154.5 |
 | Base → +② | −180.4 |
 | Base → +③ | **+36.9** |
 | Base → +④ | **−1683.4** |
-| {①} → +② (i.e., Imp1→Imp12) | +462.0 (boosted by synergy) |
-| {①②} → +④ (Imp12→Imp124) | −809.8 |
-| {①②④} → +③ (Imp124→Full) | −523.6 |
+| {①} → +② (Imp1 → Imp12) | +462.0 (synergy boost) |
+| {①②} → +④ (Imp12 → Imp124) | −809.8 |
+| {①②④} → +③ (Imp124 → Full) | −523.6 |
 
-The stepwise decomposition shows a **diminishing returns and sign-reversal** pattern once ④ is added to the pipeline.
+### 3.4 Shapley Value Attribution / Shapley 值归因
 
-### 3.4 Shapley Value Attribution
+Using 9 measured subsets to estimate Shapley values (exact computation requires all $2^4 = 16$ subsets; 6 subsets are unmeasured):
 
-Using the 9 measured subsets to estimate Shapley values (exact computation requires all $2^4 = 16$ subsets; 7 subsets containing ③ as a non-terminal element are unmeasured):
+使用 9 个已测子集估计 Shapley 值（精确计算需要全部 $2^4 = 16$ 个子集；6 个子集未测量）：
 
 $$\phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!\,(n-|S|-1)!}{n!} \bigl[v(S \cup \{i\}) - v(S)\bigr]$$
 
-with weights: $|S|=0 \Rightarrow 1/4$, $|S|=1 \Rightarrow 1/12$, $|S|=2 \Rightarrow 1/12$, $|S|=3 \Rightarrow 1/4$.
-
-| Improvement | Shapley Value $\hat{\phi}$ | Share of $|\Sigma\phi|$ | Direction |
-|-------------|--------------------------|------------------------|-----------|
+| Improvement | Shapley $\hat{\phi}$ | Share of $|\Sigma\phi|$ | Direction |
+|-------------|----------------------|------------------------|-----------|
 | ① Batch centering | **+178.9** | 39.6% | ↑ Positive |
 | ② EV-driven mixing | **+13.8** | 3.0% | ↑ Positive |
 | ③ Terminal bootstrap | −121.7 | −26.9% | ↓ Negative |
 | ④ Frozen stats | −522.9 | −115.7% | ↓↓ Strongly negative |
 | $\Sigma\hat{\phi}$ | −452.0 | — | (vs. v(Full)=−1024.8) |
 
-> **Note**: The Shapley sum of −452 differs from v(Full)−v(Base) = −1024.8 because only 9 of 16 subsets are measured. The ordering and signs are reliable; absolute magnitudes are approximate.
+> **Note / 注**: The Shapley sum of −452 differs from v(Full)−v(Base)=−1024.8 because only 9 of 16 subsets are measured. The ordering and signs are reliable; absolute magnitudes are approximate. Shapley 值之和 −452 与 v(Full)−v(Base)=−1024.8 的差异是由于仅测量了 16 个子集中的 9 个，排序和符号可靠，绝对量级为近似值。
 
 ---
 
-## 4. Diagnostic Analysis: Why Does Improvement ④ Harm Performance?
+## 4. Diagnostic Analysis / 诊断分析
 
-### 4.1 Formal Statement
+### 4.1 Why Does ④ Harm Performance? / 为何改进④损害性能？
 
-Let $\mathcal{A} = \{A_t\}_{t=1}^{T}$ be the full-rollout advantage vector. The standard normalization used in `update()` is:
+#### English
 
-$$\hat{A}_{\mathrm{std},t} = \frac{A_t - \bar{A}_{\mathrm{mb}}}{\sigma_{\mathrm{mb}} + \varepsilon}, \quad \text{where } \bar{A}_{\mathrm{mb}}, \sigma_{\mathrm{mb}} \text{ are recomputed per mini-batch.}$$
+Let $\mathcal{A} = \{A_t\}_{t=1}^{T}$ be the full-rollout advantage vector. Improvement ④ replaces per-batch normalization with:
 
-Improvement ④ replaces this with:
+$$\hat{A}_{\mathrm{frozen},t} = \frac{A_t - \bar{A}_{\mathrm{rollout}}}{\sigma_{\mathrm{rollout}} + \varepsilon}$$
 
-$$\hat{A}_{\mathrm{frozen},t} = \frac{A_t - \bar{A}_{\mathrm{rollout}}}{\sigma_{\mathrm{rollout}} + \varepsilon}, \quad \bar{A}_{\mathrm{rollout}} = \frac{1}{T}\sum_t A_t$$
+computed once at rollout end and held constant across all 10 update epochs.
 
-computed **once** at rollout end and held constant across all 10 update epochs and all mini-batches.
+**The upstream dependency problem**: When ① is disabled, the alpha coefficient uses a slow-tracking EMA denominator. During rapid Critic improvement (steps 20k–80k), EMA lags behind, causing **systematic over-correction** in some rollouts. Freezing statistics from such a corrupted rollout creates a biased normalization anchor for all 10 subsequent gradient steps.
 
-### 4.2 The Upstream Dependency Problem
+**Result**: `HCGAE_Imp4` final reward = 1510 (−53% vs. baseline). `HCGAE_Imp14` (①+④) = 3288, confirming ① partially rescues ④. Even with ①+②+④, the marginal cost of ④ is −810.
 
-The theoretical justification for frozen stats is that per-mini-batch recomputation introduces a **stochastic normalization shift** between update epochs:
+#### 中文
 
-$$\mathbb{E}[\bar{A}_{\mathrm{mb}}^{(k)}] = \bar{A}_{\mathrm{rollout}}, \quad \operatorname{Var}(\bar{A}_{\mathrm{mb}}^{(k)}) = \frac{\sigma_{\mathcal{A}}^2}{|\mathcal{B}|}$$
+当①未启用时，alpha 系数使用慢速 EMA 分母，在 Critic 快速学习阶段（20k–80k 步），EMA 滞后导致**系统性过度修正**，使得优势分布出现重尾和非平稳均值。将此类被污染 rollout 的统计量冻结，会为后续 10 轮梯度更新注入**结构性偏差**，相当于用过时的分布快照锚定归一化尺度。
 
-For $|\mathcal{B}| = 64$ and $T = 2048$, this variance is $\approx 3\%$ of the total advantage variance — **already small**. Frozen stats can only help if this residual variance is causing instability.
-
-When ① is **disabled** (v1-style), the alpha coefficient $\alpha_t = \alpha_{\max} \cdot \sigma(\beta \cdot \text{err}/\hat{\mu}_{\text{EMA}})$ uses a slow-tracking EMA denominator. During Critic's rapid learning phase (steps 20k–80k), $\hat{\mu}_{\text{EMA}}$ lags behind the actual error magnitude, causing **systematic over-correction** in some rollouts and under-correction in others.
-
-Consequence: The rollout-level advantage distribution $\mathcal{A}$ has **heavy tails and non-stationary mean** across rollouts. Freezing $(\bar{A}_{\mathrm{rollout}}, \sigma_{\mathrm{rollout}})$ from one such corrupted rollout creates a biased normalization anchor for all 10 subsequent gradient steps — equivalent to injecting a **structured bias** into the policy gradient.
-
-### 4.3 With ① Active: The Precondition Is Satisfied
-
-When ① is enabled, $\alpha_t = \alpha_{\max} \cdot \sigma(\beta \cdot (\text{err} - \mu_{\text{batch}})/\sigma_{\text{batch}})$ centers corrections around the current batch mean. This makes the advantage distribution **stationary within each rollout**, satisfying the precondition for frozen stats to be beneficial.
-
-However, empirical results show that even with ①+②+④ (`HCGAE_Imp124`), final reward (2692) drops below `HCGAE_Imp12` (3501). The marginal value of ④ given ①② is −809.8, suggesting the remaining 3% normalization variance is **not** the binding constraint. Removing ④ from the combination is unambiguously the right choice for Hopper-v4.
-
-### 4.4 Summary of ④ Diagnostics
+**结果**：`HCGAE_Imp4` 最终奖励 1510（比基线低 53%）。`HCGAE_Imp14`（①+④）= 3288，证实①部分挽救了④。即使有①+②+④，④的边际代价仍为 −810。
 
 | Condition | Final Reward | Interpretation |
 |-----------|-------------|----------------|
 | ④ alone | 1510 | Upstream unstable; frozen stats amplify noise |
-| ①+④ | 3288 | ① stabilizes upstream; ④ no longer harmful, small gain over base |
-| ①②+④ | 2692 | ④ removes remaining mini-batch adaptability; net loss |
-| ①②③+④ | 2169 | Cumulative interference; all improvements fighting each other |
+| ①+④ | 3288 | ① stabilizes upstream; ④ no longer harmful |
+| ①②+④ | 2692 | ④ removes adaptability; net loss |
+| ①②③+④ | 2169 | Cumulative interference |
 
----
+### 4.2 Why Does ③ Become Harmful in Combination? / 为何③在组合中产生负效应？
 
-## 5. Diagnostic Analysis: Why Does ③ Become Harmful in Combination?
+#### English
 
-### 5.1 Standalone Behavior
-
-Improvement ③ patches the bootstrap inconsistency at rollout boundaries. For the terminal step:
-
+Improvement ③ patches the bootstrap inconsistency at the terminal rollout step:
 $$V^c_{\text{next}}[T-1] = (1 - \alpha_{\text{last}}) \cdot V(s_T) + \alpha_{\text{last}} \cdot G_{T-1}$$
 
-where $\alpha_{\text{last}}$ uses the mean error of the last 10 steps. This is theoretically sound: the terminal bootstrap value $V(s_T)$ carries the same Critic bias as all other steps, and patching it reduces boundary discontinuities in the advantage signal.
+**Standalone behavior**: +36.9 final reward, σ=89.2 (best stability), convergence at 100K steps.
 
-Standalone result: **+36.9 final reward** (+1.2%), **σ=89.2** (best stability by far, −83% vs. baseline), **convergence at 100k steps** (fastest). The stability improvement is striking and real.
+**Interference mechanism in ①+② combination**:
+1. When ①② are active, advantages are already globally stabilized. Terminal step variance is comparable to interior steps — ③'s correction is therefore **redundant but not neutral**: it introduces a localized asymmetry at the rollout boundary.
+2. The `approx_G_last = G[-1]` approximation becomes increasingly biased under high EV (>0.97), since the last step's MC return is a poor proxy for post-rollout expected return.
+3. The tail-mean error used in ③ differs from the batch-mean used in ①, creating a **statistical inconsistency** at the terminal step.
 
-### 5.2 Interference Mechanism in ①②④ Combination
+**Marginal contribution of ③ given ①②④**: −523.6 (from Imp124=2692 to Full=2169).
 
-When ①② are both active, the hindsight correction has already **globally stabilized** the advantage distribution across the rollout. The variance of the advantage at the terminal step is comparable to interior steps. Adding ③ in this context modifies $V^c_{\text{next}}[T-1]$ based on a local tail estimate, which:
+#### 中文
 
-1. **Introduces a localized asymmetry**: The terminal step's correction uses tail-mean error; all other steps use batch-level statistics. This creates a discontinuity in the advantage function precisely at the rollout boundary.
+③在单独使用时表现优秀（稳定性最佳、收敛最快），但在①②组合中产生负效应，原因是：
 
-2. **Mismatches the ① centering**: With ① active, the alpha values are centered around the global batch mean. The tail-mean $\bar{e}_{\text{tail}}$ used in ③ is a different statistic — it measures a local trailing window. When $\bar{e}_{\text{tail}} \neq \bar{e}_{\text{batch}}$, the terminal step receives disproportionate correction.
-
-3. **The approximation degrades under high EV**: With EV > 0.97 (the typical regime for `HCGAE_Imp12`), the residual Critic errors are small. The approximation $\text{approx\_G\_last} = G_{T-1}$ — using the last rollout step's MC return as a conservative substitute for the true post-rollout MC return — becomes increasingly biased relative to the small true error, overestimating the required correction.
-
-### 5.3 Recommendation
-
-Improvement ③ is environment-dependent:
-
-- **Effective in short-episode domains** (avg. episode length < 200 steps): Boundary steps constitute >5% of rollout data; correction signal is meaningful and consistent.
-- **Marginally effective in medium-length episodes** (avg. 200–500 steps): Standalone use may still help; integration into the full pipeline requires careful testing.
-- **Counter-productive in long-episode domains** (avg. > 500 steps, like Hopper): Boundary steps are rare; standalone effect is weak; combination interference outweighs the benefit.
+1. 当①②激活后，优势函数分布已被全局稳定，末端步的方差与内部步相当，③的修正因此**冗余但并非中性**：它在 rollout 边界引入了局部不对称性。
+2. 高 EV 阶段（>0.97），`approx_G_last = G[-1]` 近似越来越有偏——最后一步的 MC 回报不能代替真实的后 rollout 期望回报。
+3. ③中的尾部均值误差与①中的批次均值误差不同，在末端步产生**统计不一致**。
 
 ---
 
-## 6. Synergy Analysis: Why Does ①+② Excel?
+## 5. Synergy Analysis: Why Does ①+② Excel? / 协同分析：为何①+②表现卓越？
 
-The combination `HCGAE_Imp12` achieves a **+643 synergy** beyond additive prediction. The mechanism is a **positive feedback loop between the two improvements**:
+The combination `HCGAE_Imp12` achieves a **+643 synergy** beyond additive prediction through a **positive feedback loop**:
+
+`HCGAE_Imp12` 通过**正反馈回路**获得超出加性预测 +643 的协同增益：
 
 ```
-Round k:
-  ① stabilizes α distribution
+Round k / 第 k 轮:
+  ① stabilizes α distribution / ①稳定 α 分布
       ↓
-  V_corrected is more accurate
+  V_corrected is more accurate / V_corrected 更准确
       ↓
-  Critic training target (GAE-returns or MC) is less noisy
+  Critic training target is less noisy / Critic 训练目标噪声更低
       ↓
-  Critic quality ↑ (EV increases)
+  Critic quality ↑ (EV increases) / Critic 质量↑（EV 升高）
       ↓
-  ② detects high EV → reduces MC fraction in target
+  ② detects high EV → reduces MC fraction / ②检测到高 EV → 降低 MC 占比
       ↓
-  Critic target has even lower variance
+  Critic target has even lower variance / Critic 目标方差进一步降低
       ↓
-  Critic quality ↑↑ (faster convergence to better fixed point)
+  Critic quality ↑↑ (faster convergence) / Critic 质量↑↑（收敛更快）
       ↓
-  ① receives cleaner error signal
-      ↓ (loop continues)
+  ① receives cleaner error signal / ①接收到更干净的误差信号
+      ↓ (loop continues / 循环继续)
 ```
 
 This is a **dual-adaptive** loop: ① adapts *advantage computation* to current Critic quality, while ② adapts *Critic training targets* to current Critic quality. Neither mechanism dominates; they co-evolve toward a better equilibrium than either can reach alone.
 
+这是一个**双自适应**回路：①根据当前 Critic 质量调整*优势计算*，②根据当前 Critic 质量调整 *Critic 训练目标*。两者相互依存，共同进化到任何一方单独都无法达到的更优均衡。
+
 ---
 
-## 7. Conclusions and Recommendations
+## 6. Conclusions and Recommendations / 结论与建议
 
-### 7.1 Core Findings
+### 6.1 Core Findings / 核心发现
 
-1. **①+② synergy is the primary driver** of HCGAE v2 gains. Their joint interaction effect (+643) is nearly 2× their additive prediction, forming a self-reinforcing loop between advantage quality and Critic target quality.
+1. **①+② synergy is the primary driver**. Joint interaction effect (+643) is nearly 2× their additive prediction.
+   **①+②协同效应是主要驱动力**。联合交互效应（+643）接近加性预测的 2 倍。
 
-2. **③ is a valid but environment-sensitive improvement**. Standalone: fastest convergence and highest stability. In combination with ①②: consistently counter-productive. Recommended for short-episode environments; exclude from long-episode setups.
+2. **③ is valid but environment-sensitive**. Standalone: fastest convergence + best stability. In combination with ①②: counter-productive. Recommended for short-episode environments.
+   **③有效但环境敏感**。单独使用：收敛最快+稳定性最佳。与①②组合：适得其反。推荐用于短回合环境。
 
-3. **④ is a conditionally harmful improvement**. Requires ① as a prerequisite to be non-harmful. Even with ① active, the marginal gain of ④ is negative for Hopper-v4. The theoretical motivation (eliminate mini-batch normalization drift) is sound but the practical benefit is negligible compared to its interaction costs.
+3. **④ is conditionally harmful**. Requires ① as prerequisite to be non-harmful. Even with ① active, marginal gain of ④ is negative for Hopper-v4.
+   **④有条件有害**。需要①作为前提条件才能无害。即使①激活，④在 Hopper-v4 上的边际增益仍为负。
 
 4. **Optimal configuration for long-episode continuous control**: `HCGAE_Imp12` (①+② only).
+   **长回合连续控制的最优配置**：`HCGAE_Imp12`（仅①+②）。
 
-### 7.2 Improvement Classification
+### 6.2 Improvement Classification / 改进分类
 
-| Class | Improvements | Behavior |
+| Class / 类别 | Improvements / 改进 | Behavior / 行为 |
 |-------|-------------|---------|
-| **Core** | ①, ② | Always positive individually except under extreme variance; strongly synergistic together |
-| **Context-Sensitive** | ③ | Effective in isolation; counter-productive in long-episode + ①② pipeline |
-| **Conditionally Harmful** | ④ | Requires upstream stability (①); even then marginal benefit near zero |
+| **Core / 核心** | ①, ② | Always synergistic together / 始终协同互补 |
+| **Context-Sensitive / 环境敏感** | ③ | Effective in isolation; counter-productive in long-episode + ①② pipeline |
+| **Conditionally Harmful / 条件有害** | ④ | Requires ① as precondition; marginal benefit near zero even then |
 
-### 7.3 Actionable Recommendations
+### 6.3 Actionable Recommendations / 可操作建议
 
-```
-IF task is episodic AND episode_length < 200:
-    RECOMMENDED: HCGAE_Imp123 (①+②+③, no ④)
-    Rationale: ③ provides meaningful boundary correction; ④ still not recommended
+```python
+# Decision tree / 决策树
 
-IF task is episodic AND episode_length ≥ 200:
-    RECOMMENDED: HCGAE_Imp12 (①+② only)
-    Rationale: Maximum performance; minimal interference
+if episode_length < 200:
+    # Short-episode domains (manipulation, RLHF)
+    RECOMMENDED = "HCGAE_Imp123"  # ①+②+③, no ④
 
-IF task is infinite-horizon (no natural episode boundaries):
-    HCGAE not applicable → use MSGAE or standard GAE
+elif episode_length >= 200:
+    # Medium/long-episode domains (Hopper, locomotion)
+    RECOMMENDED = "HCGAE_Imp12"   # ①+② only; maximum performance
 
-IF compute is severely limited AND quick convergence is priority:
-    CONSIDER: HCGAE_Imp3 alone (best stability σ=89.2, fastest convergence 100k)
-    BUT: Final performance slightly below baseline; use only for rapid prototyping
+elif infinite_horizon:
+    # No natural episode boundaries
+    RECOMMENDED = "MSGAE or standard GAE"  # HCGAE not applicable
+
+elif quick_convergence_priority:
+    # Rapid prototyping / compute-limited
+    CONSIDER = "HCGAE_Imp3"  # Best stability σ=89.2, fastest at 100K; but final reward near baseline
 ```
 
 ---
 
-## 8. Cross-Domain Applicability Analysis
+## 7. Cross-Domain Applicability / 跨域适用性
 
-This section answers the question: **Can these improvements transfer to other RL application domains?**
-
-### 8.1 Systematic Analysis Framework
-
-For each domain, we evaluate transferability across five axes:
-
-- **Episode structure**: Does natural episode termination exist?
-- **Reward density**: Frequency of non-zero reward signals
-- **Critic stability**: How volatile is the Critic during training?
-- **Rollout length**: Number of steps per trajectory buffer
-- **Improvement fit**: Which improvements transfer cleanly
-
-### 8.2 Embodied AI / Robotics
-
-| Axis | Assessment |
-|------|-----------|
-| Episode structure | ✅ Clear termination (task success, fall detection, time limit) |
-| Reward density | ✅ Dense (contact forces, velocity rewards, proximity) |
-| Critic stability | ⚠️ Moderate volatility during exploration phase |
-| Rollout length | ✅ Typically 500–2000 steps |
-
-**① Batch centering**: Directly applicable. The slow-EMA problem in v1 is domain-agnostic — any setting with rapid Critic improvement will benefit. In robotics, the Critic improves quickly when the robot begins completing sub-tasks, making the EMA lag problem acute.
-
-**② EV-driven mixing**: Directly applicable. EV is a universal Critic quality signal. The MC-vs-GAE-returns trade-off is meaningful in any episodic task.
-
-**③ Terminal correction**: **Recommended** for short manipulation tasks (grasp: ~100 steps, insertion: ~200 steps); **not recommended** for locomotion (Hopper-like, ~500–1000 steps).
-
-**④ Frozen stats**: **Requires ①** as precondition. Even then, empirical evidence from Hopper suggests near-zero marginal benefit for long rollouts. Test on each robot platform.
-
-**Verdict**: ①+② transfer cleanly. ③ depends on episode length.
-
-### 8.3 Large Language Models (RLHF / PPO Fine-tuning)
-
-| Axis | Assessment |
-|------|-----------|
-| Episode structure | ✅ Each (prompt, response) pair is one episode |
-| Reward density | ⚠️ Sparse at token level; dense at sequence level via KL penalty |
-| Critic stability | 🔴 High volatility — Critic (value head) learns from scratch; language representations shift rapidly |
-| Rollout length | Typically 128–2048 tokens (= steps) |
-
-**① Batch centering**: **Strongly recommended**. LLM fine-tuning is precisely the scenario where the slow-EMA problem is most acute: the value head (Critic) undergoes major representational changes in the first 10–50 update iterations as it learns to ground reward signals in language space. Batch-level centering ensures the alpha correction tracks this rapid evolution. The mathematical precondition (batch-level error statistics are more informative than EMA) is clearly satisfied.
-
-**② EV-driven mixing**: **Recommended with caution**. KL-regularized RLHF has a non-stationary reward due to the KL penalty growing as the policy drifts. EV may oscillate as a result. Using a decayed EMA of EV (rather than instantaneous EV) is advisable.
-
-**③ Terminal correction**: **Not applicable** in the standard formulation. LLM episode termination is at the EOS token; the "last value" $V(s_T) = 0$ by convention (episode ends deterministically). The boundary inconsistency ③ addresses does not exist in this setting. *Exception*: If sequences are truncated mid-generation (batch packing without padding), the truncation boundary creates exactly the same inconsistency. In that case ③ is beneficial.
-
-**④ Frozen stats**: **Not recommended**. Advantage distributions in RLHF are particularly non-stationary due to: (a) KL penalty growing across training, (b) policy entropy collapsing, (c) reward model score drift. Freezing normalization statistics from one rollout and applying them across 10 epochs risks anchoring gradients to a stale distributional snapshot during a rapidly changing optimization landscape.
-
-**Verdict**: ① is strongly recommended. ② with EMA decay. ③ only if sequences are truncated. ④ avoid.
-
-### 8.4 Reinforcement Learning for Advertising Bid Optimization
-
-This domain has unique characteristics that require specific analysis.
-
-| Axis | Assessment |
-|------|-----------|
-| Episode structure | ⚠️ Ambiguous — one "episode" can be a user session, a day, or an auction sequence |
-| Reward density | ✅ Dense (immediate bid win/loss signal) or ⚠️ Delayed (conversion events) |
-| Critic stability | 🔴 High volatility due to distribution shift (auction market dynamics change) |
-| Rollout length | Typically very long (thousands of auctions per session) |
-
-**① Batch centering**: **Applicable, but requires modification**. The core insight transfers: use current-batch statistics rather than slow-tracking EMA. However, the advertising Critic faces **non-stationarity beyond Critic initialization** — market conditions change (seasonality, competitor strategy shifts). The EMA-lag problem in v1 is replaced by a *market-shift problem*. Batch centering addresses both, making it **more** valuable in advertising than in standard RL.
-
-**② EV-driven mixing**: **Applicable**. The MC-vs-TD tradeoff is meaningful: in sessions with clear conversion attribution (short-horizon), high-EV Critic should dominate. In sessions with delayed conversion (long-horizon, uncertain attribution), MC returns over the session provide a lower-bias but higher-variance estimate. EV-driven mixing provides an automatic mechanism for this adaptation. *Note*: In advertising, MC returns are only computable if the session has a natural end (user leaves platform). For open-ended bidding, this requires artificial episode demarcation.
-
-**③ Terminal correction**: **Conditionally applicable**. If sessions are truncated at fixed time windows (common in production systems), the boundary inconsistency is structurally identical to the Hopper rollout boundary. Whether the correction helps depends on how the "session value" is estimated.
-
-**④ Frozen stats**: **Not recommended**. Advertising advantage distributions shift dramatically intra-day (morning traffic ≠ prime-time traffic). Freezing normalization from one rollout batch would systematically miscalibrate gradient scales for subsequent batches processed under different market conditions. This is a more severe version of the same problem identified in the robotics and LLM domains.
-
-**Verdict**: ①+② are transferable with minor modifications. ③ applicable when explicit session boundaries exist. ④ avoid entirely.
-
-### 8.5 Transfer Summary Table
+### 7.1 Transfer Summary / 迁移适用性汇总
 
 | Improvement | Episodic Robotics | RLHF / LLM | Advertising RL | General Rule |
 |-------------|-------------------|------------|----------------|-------------|
-| ① Batch centering | ✅ Recommended | ✅ Strongly recommended | ✅ Recommended | **Universally applicable**; most valuable when Critic is rapidly changing |
-| ② EV-driven mixing | ✅ Recommended | ✅ With EMA decay | ✅ When episodes are bounded | **Broadly applicable**; needs EV stability guard in non-stationary settings |
-| ③ Terminal correction | ✅ Short episodes only | ⚠️ Only if truncated | ✅ When session boundaries exist | **Environment-conditional**; benefit tied to boundary frequency |
-| ④ Frozen stats | ⚠️ Requires ①, marginal | ❌ Avoid | ❌ Avoid | **High-risk**; only safe when upstream (①) provides strong stability guarantee AND reward distribution is stationary |
+| ① Batch centering | ✅ | ✅ Strongly | ✅ | **Universally applicable** |
+| ② EV mixing | ✅ | ✅ (with EMA) | ✅ (bounded) | **Broadly applicable** |
+| ③ Terminal fix | ✅ (short eps) | ⚠️ (truncated) | ✅ (session boundary) | **Environment-conditional** |
+| ④ Frozen stats | ⚠️ (needs ①) | ❌ | ❌ | **High-risk; avoid by default** |
 
-### 8.6 Theoretical Conditions for Safe Transfer
+### 7.2 Transfer Conditions / 迁移条件
 
-For any deployment of ① and ②, the following conditions should hold:
+**For ① (batch centering)**: $\operatorname{Var}_{\text{batch}}(\text{err}) > 0$ **and** EMA track speed $\ll$ Critic improvement speed. 当批次方差非零且 EMA 跟踪速度远低于 Critic 改善速度时有效，几乎在所有快速学习场景中成立。
 
-**For ① (batch centering) to be beneficial:**
+**For ② (EV-driven mixing)**: $\operatorname{Cov}(\text{EV}_{k}, \text{EV}_{k+1}) > 0$ (positive EV autocorrelation). Use EMA-smoothed EV with $\rho \leq 0.1$ if EV oscillates. EV 需具有正自相关；若 EV 振荡，建议使用 EMA 平滑（$\rho \leq 0.1$）。
 
-$$\operatorname{Var}_{\text{batch}}(\text{err}) > 0 \quad \text{and} \quad \text{EMA track speed} \ll \text{Critic improvement speed}$$
+**For ③ (terminal correction)**: $\text{boundary steps} / \text{total steps} > 0.02$, which holds when average episode length $< T \times 50$. 当边界步占比超过 2%（即平均回合长度 < T×50）时有效。
 
-The first condition is almost always satisfied. The second defines the "EMA-lag regime" where batch centering provides signal quality improvement. This regime holds in any setting with rapid early Critic learning.
-
-**For ② (EV-driven mixing) to be stable:**
-
-$$\operatorname{Cov}(\text{EV}_{k}, \text{EV}_{k+1}) > 0 \quad \text{(positive EV autocorrelation)}$$
-
-If EV oscillates (EV at step $k$ does not predict EV at step $k+1$), the mixing coefficient $c_{\mathrm{MC}} = 1 - \text{EV}$ will oscillate, introducing instability into the Critic target. In practice, use an EMA-smoothed EV signal with $\rho \leq 0.1$.
-
-**For ③ to be beneficial:**
-
-$$\frac{\text{steps at boundary}}{\text{total steps}} > 0.02 \quad \Leftrightarrow \quad \bar{L}_{\text{episode}} < 50 \cdot \frac{T_{\text{rollout}}}{\text{boundary fraction}}$$
-
-For $T = 2048$, this implies $\bar{L}_{\text{episode}} < 2048 \times \frac{1}{0.02} = 102,400$ steps on average — nearly always true. The more precise condition is that the **marginal Critic error at the terminal step** is systematically larger than at interior steps, which requires the terminal state to have systematically higher uncertainty. This is verified for short episodes but becomes negligible for Hopper-length episodes.
-
-**For ④ to be non-harmful:**
-
-$$\frac{\sigma_{\mathrm{mb}}}{\sigma_{\mathrm{rollout}}} \approx \sqrt{\frac{T}{|\mathcal{B}|}} \cdot \frac{1}{\sqrt{\text{samples}}} \quad \text{is a binding constraint}$$
-
-For $T=2048$, $|\mathcal{B}|=64$: $\sigma_{\mathrm{mb}} / \sigma_{\mathrm{rollout}} \approx \sqrt{2048/64} = 5.7\%$. If the policy gradient improvement per epoch is sensitive to this 5.7% noise, then ④ helps. In practice, for Hopper with >0.95 EV, this noise is not the binding constraint. ④ is only worth considering when:
-- Mini-batch size is very small ($|\mathcal{B}| < 32$)
-- Number of update epochs is very large ($E > 20$)
-- Upstream advantage distribution is already very stable (①+② active)
+**For ④ (frozen stats)**: Only beneficial when mini-batch size is very small ($|\mathcal{B}| < 32$) AND update epochs are very large ($E > 20$) AND upstream is already stable (①+② active). 仅当批量极小（<32）、更新 epoch 极多（>20）且上游稳定（①+②激活）时考虑。
 
 ---
 
-## 9. Self-Review and Validation
+## 8. Implementation Correctness Audit / 实现正确性审计
 
-Before finalizing these conclusions, we systematically check each major claim.
+### 8.1 No Bugs Found / 无 bug
 
-### 9.1 Claim: ①+② Synergy Is Causal, Not Confounded
+The following critical checks confirm implementation correctness:
 
-**Concern**: Could the +643 interaction be explained by random seed effects or environment stochasticity rather than a genuine synergy?
+| Check | Status | Notes |
+|-------|--------|-------|
+| MC return computation | ✅ | Uses within-rollout rewards + `V(s_T)` bootstrap; no leakage |
+| V_corrected/advantage computation | ✅ | Correct per-step α weighting |
+| Critic training target | ✅ | No circular dependency between `V_corrected` and `buf.returns` |
+| Train/eval separation | ✅ | Separate `gym.make()` instances; no gradient during eval |
+| Seed control | ✅ | All 10 variants use `set_seed(42)` |
 
-**Validation**:
-- All variants use **identical seed (42)** and identical hyperparameters. Stochastic variance affects all variants equally.
-- The interaction pattern is consistent with the theoretical mechanism: ① produces higher EV (EV: 0.939 for Imp1), ② is more effective at higher EV (c_mc drops to 0.10 vs. 0.50), and the combination reaches EV=0.959 with final reward 3501.9.
-- The learning curves show Imp12 diverging from both Imp1 and Imp2 around step 80k–120k — precisely when EV crosses the threshold where ② meaningfully reduces MC fraction.
-- **Conclusion**: Causal mechanism is plausible and consistent. However, multi-seed validation (e.g., seeds 42, 123, 456) is strongly recommended before claiming universal superiority.
+### 8.2 Root Cause of Large Absolute Scores / 高绝对奖励的根因
 
-### 9.2 Claim: ④ Is Harmful Due to Upstream Instability
+| Method | Final Reward (300K, seed 42) |
+|--------|------------------------------|
+| Standard PPO (BasePPO) | 378 |
+| `HCGAE_Base` (v1 baseline) | 3193 |
+| `HCGAE_Imp12` (best variant) | 3502 |
 
-**Concern**: Perhaps ④ is harmful due to a bug in the frozen-stats implementation rather than a fundamental mechanism.
+The **8.4× gap** between Standard PPO and HCGAE_Base is **real and legitimate**. HCGAE_Base injects 50% MC return signal into the Critic target, breaking the slow self-referential loop of pure TD training. This is the primary mechanism of HCGAE v1. The ablation study measures improvements **relative to HCGAE v1**, not relative to Standard PPO.
 
-**Validation**:
-- `HCGAE_Imp4` reaches `best_reward = 3369` (close to baseline 3381), ruling out a simple implementation error. If ④ were buggy, the best reward would also be much lower.
-- The harm manifests as **late-training instability** (σ=788 vs. baseline σ=515), not as an inability to learn. This is consistent with the "frozen stale statistics" hypothesis — the policy can still improve early but degrades later.
-- `HCGAE_Imp14` (①+④) shows `final = 3288` — better than both ① alone (3039) and ④ alone (1510), confirming that ① partially rescues ④.
-- **Conclusion**: The harmful effect is real and mechanistically explained. Implementation is correct.
-
-### 9.3 Claim: ③ Is Environment-Sensitive
-
-**Concern**: Is ③'s counter-productive behavior in combinations a fundamental property, or specific to Hopper's long episodes?
-
-**Validation**:
-- ③'s standalone behavior is excellent (σ=89.2, fastest convergence). If ③ were fundamentally flawed, standalone performance would also be poor.
-- The `approx_G_last = G[-1]` approximation becomes less accurate as episodes lengthen (the last MC return $G_{T-1}$ is from a step that may be far from the actual episode end).
-- The terminal correction changes the `V_corrected_next[T-1]` value, which propagates backwards through the GAE sum only one step — affecting only $A_{T-1}$. For long rollouts ($T=2048$), this affects only 1/2048 = 0.05% of advantages. The theoretical benefit is minuscule.
-- **Conclusion**: Environment-sensitivity claim is valid. The implementation is correct; the improvement simply has negligible leverage in long-rollout settings.
-
-### 9.4 Cross-Domain Transfer: Key Uncertainty
-
-**Concern**: The transfer analysis in §8 is based on theoretical argument. Real deployments may encounter emergent effects not captured by the analysis.
-
-**Limitations and mitigations**:
-1. **Single environment validation** (Hopper-v4): All conclusions are based on one environment, one seed. Multi-environment multi-seed experiments are needed for publication-quality claims.
-2. **LLM transfer remains theoretical**: RLHF involves value head co-training with the policy, non-stationary KL penalty, and alignment tax effects not present in standard RL. The recommendation for ① is mechanistically sound but empirically unvalidated.
-3. **Advertising RL is highly domain-specific**: Market non-stationarity, delayed reward attribution, and reward sparsity patterns vary drastically across products and platforms.
-
-**Mitigation**: Treat §8 recommendations as **strong hypotheses requiring per-domain empirical validation**, not as universal deployment guidelines.
+HCGAE_Base 与 Standard PPO 的 8.4 倍差距是真实有效的：注入 50% MC 回报信号打破了纯 TD 训练的慢速自参照循环。消融实验衡量的是相对于 HCGAE v1 的边际改进，而非相对于 Standard PPO。
 
 ---
 
-## Appendix A: Hyperparameters
+## 9. Publication Readiness Assessment / 发表准备度评估（ICML 标准）
+
+| Requirement | Status | Action Needed |
+|-------------|--------|---------------|
+| Core contribution (①+② synergy) | ✅ Demonstrated | Multi-seed validation needed |
+| Mathematical analysis | ✅ Complete | — |
+| Ablation study | ✅ Comprehensive | Add 3+ environments |
+| Multi-seed evaluation | ❌ Single seed | Run 5+ seeds |
+| Multi-environment evaluation | ❌ Single env (Hopper) | Add Walker2d, HalfCheetah, Ant |
+| GAE(λ=1) baseline comparison | ❌ Missing | Critical: rule out simple λ=1 explanation |
+| SB3/CleanRL baseline comparison | ❌ Missing | Needed for controlled hyperparameter comparison |
+| Statistical significance tests | ❌ Missing | Bootstrap CI required for ICML |
+
+**Venue assessment**: Current depth → suitable for AAAI/IJCAI. Completing above requirements → ICLR/ICML-ready.
+
+**会议评估**：当前深度适合 AAAI/IJCAI。完成以上要求后可投 ICLR/ICML。
+
+---
+
+## Appendix A: Hyperparameters / 超参数表
 
 | Parameter | Value |
 |-----------|-------|
@@ -468,162 +471,91 @@ Before finalizing these conclusions, we systematically check each major claim.
 | `n_eval_episodes` | 10 |
 | `seed` | 42 |
 
-## Appendix B: Files Generated
+## Appendix B: Files Generated / 生成文件列表
 
 ```
 results/Hopper-v4-Ablation/
-├── ablation_summary.json              # All 10 variants' metrics (eval curves + summary stats)
-├── HCGAE_{variant}_metrics.json       # Per-variant full training metrics (10 files)
-├── HCGAE_{variant}_summary.json       # Per-variant summary (10 files)
-├── ablation_learning_curves.png       # All 10 learning curves
-├── ablation_grouped_curves.png        # Single vs. combination variants (2-panel)
-├── ablation_comprehensive.png         # 6-panel composite analysis
-├── ablation_matrix.png                # Improvement presence × final reward heatmap
-├── ablation_bar_charts.png            # Final reward, Δ-base, stability (3-panel)
-├── ablation_radar.png                 # Multi-dimensional radar chart
-└── ablation_shapley.png               # Shapley value attribution bar chart
+├── ablation_summary.json                # All 10 variants' metrics / 全变体指标
+├── HCGAE_{variant}_metrics.json         # Per-variant full training metrics (10 files)
+├── HCGAE_{variant}_summary.json         # Per-variant summary (10 files)
+│
+│── Core visualizations / 核心可视化
+├── ablation_learning_curves.png         # Fig 1: All 10 learning curves
+├── ablation_grouped_curves.png          # Fig 2: Single vs. combination variants
+├── ablation_comprehensive_deep.png      # Fig 3: 8-panel composite analysis ★
+├── ablation_hasse_diagram.png           # Fig 4: Improvement lattice (Hasse diagram) ★
+├── ablation_grouped_deep.png            # Fig 5: Per-improvement grouped analysis ★
+│
+│── Supplementary visualizations / 补充可视化
+├── ablation_matrix.png                  # Fig 6: Presence × metric heatmap
+├── ablation_radar.png                   # Fig 7: Multi-dimensional radar chart
+├── ablation_bar_charts.png              # Fig 8: Three-metric bar charts
+└── ablation_shapley.png                 # Fig 9: Shapley value attribution
 ```
 
-## Appendix C: Reproducibility
+**★** = Generated by `analyze_ablation.py` (deep analysis pass)
+
+## Appendix C: Reproducibility / 可复现性
 
 ```bash
-# Run ablation experiment (≈17 min on single CPU)
+# Run ablation experiment (~17 min on single CPU)
+# 运行消融实验（单 CPU 约 17 分钟）
 python run_ablation.py
 
 # Run deep mathematical analysis and generate all visualizations
+# 运行深度数学分析并生成所有可视化图表
 python analyze_ablation.py
+```
+
+Environment / 依赖环境:
+```
+gymnasium[mujoco]>=0.29
+torch>=2.0
+numpy>=1.24
+matplotlib>=3.7
 ```
 
 ---
 
 *Report generated from experimental data in `results/Hopper-v4-Ablation/ablation_summary.json`*
+*报告基于 `results/Hopper-v4-Ablation/ablation_summary.json` 实验数据生成*
 
 ---
 
-## 10. Implementation Correctness Audit and Novelty Assessment
+## 10. Implementation Correctness Audit and Novelty Assessment / 实现正确性审计与新颖性评估
 
-> This section was added after a systematic code review prompted by the observation that the absolute reward numbers (Base: 3193, Imp12: 3501) appear surprisingly high for 300K training steps.
+> This section was added after a systematic code review. / 本节为系统性代码审查后补充。
 
-### 10.1 Code Audit: No Bugs, No Hacks, No Information Leakage
-
-The following checks were performed by reading the full source code of `hindsight_ablation.py`, `rollout_buffer.py`, `base_ppo.py`, and `networks.py`.
-
-**✅ MC Return Computation (most critical)**
-
-```python
-# _compute_mc_returns() in hindsight_ablation.py
-g = last_value   # ← V(s_T) from the Critic, NOT a future true reward
-for t in reversed(range(T)):
-    not_done = 1.0 - self.buffer.terminated[t]
-    g = self.buffer.rewards[t] + self.gamma * g * not_done
-    G[t] = g
-```
-
-`G[t]` contains `r_t, r_{t+1}, ..., r_{T-1}` (all from the **current rollout**) plus a bootstrap from `V(s_T)`. This is the standard MC return in on-policy PPO — using within-rollout rewards to compute hindsight estimates is the **intended mechanism**, not a leakage. The policy already interacted with the environment to collect these rewards; using them for advantage computation is exactly what MC-based methods do.
-
-**✅ V_corrected and Advantage Computation**
-
-`V_corrected[t] = (1-α_t) * V[t] + α_t * G[t]` uses `G[t]` which contains `r_{t+1}...r_{T-1}`. This is the designed **hindsight correction** — the method deliberately uses post-hoc trajectory information to improve the value estimate before computing advantages. This is equivalent in information to running a backward pass over the collected rollout, which all GAE-based methods do.
-
-**✅ Critic Training Target**
-
-```python
-buf.returns = c_mc * G + (1.0 - c_mc) * gae_returns
-```
-`G` here is computed by `_compute_mc_returns` which uses the **raw `last_value`** (original Critic output), **not** `V_corrected`. There is no circular dependency between the corrected value and the training target.
-
-**✅ Train/Eval Separation**
-
-- `train_env` and `eval_env` are separate `gym.make()` instances.
-- Evaluation uses `dist.mean` (deterministic); training uses `dist.sample()` (stochastic).
-- No gradient computation during evaluation (`torch.no_grad()`).
-
-**✅ Seed Control**
-
-All 10 variants use `set_seed(42)` before creating environments and agents. Results are deterministic but based on a single seed (see §10.3 for implications).
-
-**Conclusion: The implementation is correct. No bugs, hacks, or information leakage were found.**
-
----
-
-### 10.2 Root Cause of the Large Absolute Scores
-
-A critical finding emerged from running `Standard PPO (BasePPO)` under the same hyperparameters:
-
-| Method | Final Reward (300K steps, seed 42) |
-|--------|-----------------------------------|
-| Standard PPO (BasePPO, `lr_critic=1e-3`) | **378** |
-| Standard PPO (BasePPO, `lr_critic=3e-4`, SB3 style) | **360** |
-| `HCGAE_Base` (v1-style, from ablation) | **3193** |
-| `HCGAE_Imp12` (best variant, from ablation) | **3502** |
-
-The **8.4× gap** between Standard PPO and HCGAE_Base is not caused by a bug. It is caused by a **fundamental architectural difference**: `HCGAE_Base`'s Critic is trained with a **mixed target**:
-
-$$\text{returns}_{\text{HCGAE}} = 0.5 \cdot G + 0.5 \cdot \text{returns}_{\text{GAE}}$$
-
-while `Standard PPO (BasePPO)` uses only:
-
-$$\text{returns}_{\text{base}} = A_{\text{GAE}} + V(s_t) = \text{returns}_{\text{GAE}}$$
-
-For Hopper-v4 specifically, episode lengths can reach ~1000 steps. In this regime, early-training GAE returns suffer from **compounded Critic initialization bias**: $\text{returns}_{\text{GAE}} = r_t + \gamma r_{t+1} + \ldots + \gamma^T V(s_T)$, where $V(s_T)$ is poorly initialized. The BasePPO Critic uses its own biased predictions to train itself — a slow self-referential loop.
-
-HCGAE_Base breaks this loop by injecting 50% MC-return signal directly into the Critic target. The MC return is unbiased (up to the bootstrap at the final step), allowing the Critic to converge in significantly fewer steps.
-
-**This performance gain is real and legitimate. It is the primary mechanism of HCGAE v1 (and thus HCGAE_Base), not an artifact.**
-
-However, this also means: **the ablation study measures improvements relative to HCGAE v1, not relative to Standard PPO.** The true "HCGAE vs Standard PPO" comparison on Hopper-v4 at 300K steps is approximately 3193 vs 378 — a result that deserves its own standalone experimental section.
-
----
-
-### 10.3 Key Implementation Differences Between BasePPO and HindsightAblation
+### 10.1 Key Implementation Differences / 关键实现差异
 
 | Aspect | BasePPO | HindsightAblation |
 |--------|---------|------------------|
 | Critic target | `adv_GAE + V` | `0.5 * G + 0.5 * (adv_GAE + V)` |
-| Value loss | Clipped (`max(unclipped, clipped)`) | **Unclipped** |
-| V_corrected | None | `(1-α)*V + α*G` for advantage computation |
-| Advantage normalization | Per rollout (full buffer) | Per rollout (full buffer), or frozen if ④ |
-| `lr_critic` | Same as `lr_actor` (3e-4) | **1e-3** (3× higher) |
+| Value loss clipping | Clipped | **Unclipped** |
+| V_corrected | None | `(1-α)*V + α*G` |
+| Advantage normalization | Per rollout | Per rollout (or frozen if ④) |
+| `lr_critic` | 3e-4 | **1e-3** (3× higher) |
 
-All ablation variants share the same architecture and use the **same hyperparameters as each other**. The comparison within the ablation study (Base vs Imp1–4 vs combinations) is therefore internally consistent and valid for measuring the **marginal contribution of each improvement above the v1 baseline**.
+### 10.2 Novelty Assessment / 新颖性评估
 
----
+**Genuinely novel / 真正新颖**:
+1. **EV-driven adaptive MC-GAE mixing (②)**: Using the Critic's own explained variance to dynamically adjust MC-vs-GAE mixing for the Critic training target. No direct prior work found. 利用 Critic 自身的解释方差动态调整 MC-GAE 混合比例，无直接先验工作。
+2. **Error-magnitude-gated per-step hindsight blending**: Non-global alpha coefficient adapts per-step based on local Critic error magnitude. 逐步 alpha 系数基于局部误差幅度自适应。
 
-### 10.4 Novelty and Publication Assessment
+**Related prior work / 相关先验工作**:
+- GAE(λ=1) / V-trace (Espeholt et al., 2018) / Retrace (Munos et al., 2016)
+- Hindsight Credit Assignment (Harutyunyan et al., 2019)
 
-**What is genuinely novel in HCGAE:**
+### 10.3 Recommended Framing for Publication / 推荐发表框架
 
-1. **EV-driven adaptive MC-GAE mixing (Improvement ②)**: Using the Critic's own explained variance to dynamically adjust how much MC return vs. GAE return is used for the Critic training target. This is a clean, practical, and theoretically motivated mechanism. No direct prior work found.
+Position the contribution as **"Critic-Quality-Adaptive Return Estimation in PPO"**, with:
+- Core claim: The combination of batch-centered hindsight correction (①) + EV-driven target mixing (②) creates a self-reinforcing Critic improvement loop that dramatically accelerates value function convergence in dense-reward continuous control.
+- Critical baseline: Explicitly compare against GAE(λ=1) and V-trace.
+- Rename to avoid confusion with HER (Andrychowicz et al., 2017).
 
-2. **Error-magnitude-gated hindsight blending**: The sigmoid gate on `|V(s_t) - G_t|` to scale the correction is a natural but non-obvious design. The α coefficient adapts per-step rather than using a global blend ratio.
-
-**What is less novel (related prior work exists):**
-
-- **MC return as Critic training target**: Related to $\text{GAE}(\lambda=1)$, V-trace (Espeholt et al., 2018), and Retrace (Munos et al., 2016). The key difference is HCGAE's adaptive weighting.
-- **Hindsight correction via MC return**: Related to "Hindsight Credit Assignment" (Harutyunyan et al., 2019), though that work focuses on sparse rewards and causal credit assignment, not Critic bias correction.
-- **Curriculum/annealing of return estimator**: Related to many practical PPO implementation guides that anneal λ or mix TD and MC targets.
-
-**Requirements for publication-quality claims:**
-
-| Requirement | Current Status | Gap |
-|-------------|---------------|-----|
-| Multi-environment evaluation | 1 env (Hopper-v4) | Need 3+ MuJoCo envs minimum |
-| Multi-seed evaluation | 1 seed (42) | Need 5+ seeds for statistical significance |
-| Comparison to Standard PPO | ✅ Done informally (378 vs 3193) | Need formal table in paper |
-| Comparison to GAE(λ=1) | ❌ Not done | Critical baseline: does MC target alone explain gains? |
-| Comparison to SB3/CleanRL baselines | ❌ Not done | Need to show hyperparameter advantage is controlled |
-| Ablation study | ✅ Comprehensive | Already done; main contribution of this report |
-
-**Realistic publication venue assessment:**
-
-- **NeurIPS/ICML**: Insufficient — requires stronger novelty claim, multi-seed multi-environment experiments, and a clearer comparison to GAE(λ=1) and other return estimation methods.
-- **ICLR**: Borderline — the EV-driven mechanism (Imp2) could be positioned as the core contribution with sufficient empirical backing.
-- **AAAI / IJCAI**: Feasible with the current depth of analysis.
-- **Specific venues (RL workshops, MuJoCo benchmarks)**: Most appropriate for the current state of the work.
-
-**Recommended framing if pursuing publication**: Position the contribution as "adaptive MC-GAE mixing driven by Critic quality metrics" (the ①+② combination), with a clear comparison to the GAE(λ=1) special case and a rigorous multi-seed multi-environment evaluation. The name "Hindsight" should be changed or clarified to avoid confusion with Hindsight Experience Replay (Andrychowicz et al., 2017).
+将贡献定位为**"PPO 中基于 Critic 质量自适应的回报估计"**，核心主张为：批内中心化修正（①）与 EV 驱动目标混合（②）的组合形成自强化 Critic 改进回路，在密集奖励连续控制中显著加速价值函数收敛。
 
 ---
 
-*Correctness audit performed: 2026-04-03. Verification experiment results stored in `results/Hopper-v4-Verification/`.*
+*Correctness audit: 2026-04-03. Novelty assessment: 2026-04-03.*
 

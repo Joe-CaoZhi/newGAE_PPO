@@ -7,20 +7,20 @@ HCGAE 消融实验主脚本
 
 结果保存至 results/Hopper-v4-Ablation/
 """
-import os
-import sys
 import json
-import time
+import os
 import random
+import sys
+import time
 
+import gymnasium as gym
 import numpy as np
 import torch
-import gymnasium as gym
 
 # ── 路径设置 ─────────────────────────────────────────────────────
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gae_experiments.agents.hindsight_ablation import (
-    build_ablation_agent, get_all_variant_names
+    build_ablation_agent
 )
 
 # ════════════════════════════════════════════════════════════════════

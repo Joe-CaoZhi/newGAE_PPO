@@ -537,9 +537,10 @@ def build_ablation_agent(
             f"可用变体：{list(_ABLATION_CONFIGS.keys())}"
         )
     imp1, imp2, imp3, imp4 = _ABLATION_CONFIGS[variant_name]
+    # 如果 kwargs 里没有 name，使用 variant_name 作为默认名称
+    kwargs.setdefault("name", variant_name)
     return HindsightAblation(
         env=env,
-        name=variant_name,
         use_imp1=imp1,
         use_imp2=imp2,
         use_imp3=imp3,
