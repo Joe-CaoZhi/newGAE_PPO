@@ -9,6 +9,7 @@ from .double_critic_ppo import ConservativeBootstrapPPO
 from .hindsight_ablation import HindsightAblation, build_ablation_agent, get_all_variant_names
 from .hindsight_ppo import HindsightPPO
 from .multiscale_ppo import MultiScalePPO
+from .ppo_baselines import PPOBaseline, build_ppo_baseline, get_all_baseline_names
 
 __all__ = [
     "BasePPO",
@@ -28,5 +29,8 @@ __all__ = [
     "DCPPO",
     "build_dcppo_agent",
     "get_all_dcppo_variant_names",
+    "PPOBaseline",
+    "build_ppo_baseline",
+    "get_all_baseline_names",
 ]
 
