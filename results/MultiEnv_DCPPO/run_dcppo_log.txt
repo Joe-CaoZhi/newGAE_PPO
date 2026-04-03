@@ -1,0 +1,352 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Hopper-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+Traceback (most recent call last):
+  File "/Users/joe-caozhi/newGAE_ppo/run_dcppo_multiseed.py", line 100, in run_single
+    agent = build_dcppo_agent(
+  File "/Users/joe-caozhi/newGAE_ppo/gae_experiments/agents/dcppo.py", line 738, in build_dcppo_agent
+    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+TypeError: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+
+=================================================================
+  DCPPO Multi-Seed Experiment
+  Missing: 30 runs
+    Hopper-v4             DCPPO_Base       seed=42
+    Hopper-v4             DCPPO_Base       seed=123
+    Hopper-v4             DCPPO_Base       seed=456
+    Hopper-v4             DCPPO_Base       seed=789
+    Hopper-v4             DCPPO_Base       seed=1234
+    Hopper-v4             DCPPO_ImpS       seed=42
+    Hopper-v4             DCPPO_ImpS       seed=123
+    Hopper-v4             DCPPO_ImpS       seed=456
+    Hopper-v4             DCPPO_ImpS       seed=789
+    Hopper-v4             DCPPO_ImpS       seed=1234
+    Hopper-v4             DCPPO_Full       seed=42
+    Hopper-v4             DCPPO_Full       seed=123
+    Hopper-v4             DCPPO_Full       seed=456
+    Hopper-v4             DCPPO_Full       seed=789
+    Hopper-v4             DCPPO_Full       seed=1234
+    Walker2d-v4           DCPPO_Base       seed=42
+    Walker2d-v4           DCPPO_Base       seed=123
+    Walker2d-v4           DCPPO_Base       seed=456
+    Walker2d-v4           DCPPO_Base       seed=789
+    Walker2d-v4           DCPPO_Base       seed=1234
+    Walker2d-v4           DCPPO_ImpS       seed=42
+    Walker2d-v4           DCPPO_ImpS       seed=123
+    Walker2d-v4           DCPPO_ImpS       seed=456
+    Walker2d-v4           DCPPO_ImpS       seed=789
+    Walker2d-v4           DCPPO_ImpS       seed=1234
+    Walker2d-v4           DCPPO_Full       seed=42
+    Walker2d-v4           DCPPO_Full       seed=123
+    Walker2d-v4           DCPPO_Full       seed=456
+    Walker2d-v4           DCPPO_Full       seed=789
+    Walker2d-v4           DCPPO_Full       seed=1234
+=================================================================
+
+
+  [1/30] Hopper-v4 | DCPPO_Base | seed=42
+  ERROR DCPPO_Base Hopper-v4 seed=42: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Hopper-v4 s42: 0.0 (0s)
+
+  [2/30] Hopper-v4 | DCPPO_Base | seed=123
+  ERROR DCPPO_Base Hopper-v4 seed=123: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Hopper-v4 s123: 0.0 (0s)
+
+  [3/30] Hopper-v4 | DCPPO_Base | seed=456
+  ERROR DCPPO_Base Hopper-v4 seed=456: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Hopper-v4 s456: 0.0 (0s)
+
+  [4/30] Hopper-v4 | DCPPO_Base | seed=789
+  ERROR DCPPO_Base Hopper-v4 seed=789: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Hopper-v4 s789: 0.0 (0s)
+
+  [5/30] Hopper-v4 | DCPPO_Base | seed=1234
+  ERROR DCPPO_Base Hopper-v4 seed=1234: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Hopper-v4 s1234: 0.0 (0s)
+
+  [6/30] Hopper-v4 | DCPPO_ImpS | seed=42
+  ERROR DCPPO_ImpS Hopper-v4 seed=42: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Hopper-v4 s42: 0.0 (0s)
+
+  [7/30] Hopper-v4 | DCPPO_ImpS | seed=123
+  ERROR DCPPO_ImpS Hopper-v4 seed=123: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Hopper-v4 s123: 0.0 (0s)
+
+  [8/30] Hopper-v4 | DCPPO_ImpS | seed=456
+  ERROR DCPPO_ImpS Hopper-v4 seed=456: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Hopper-v4 s456: 0.0 (0s)
+
+  [9/30] Hopper-v4 | DCPPO_ImpS | seed=789
+  ERROR DCPPO_ImpS Hopper-v4 seed=789: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Hopper-v4 s789: 0.0 (0s)
+
+  [10/30] Hopper-v4 | DCPPO_ImpS | seed=1234
+  ERROR DCPPO_ImpS Hopper-v4 seed=1234: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Hopper-v4 s1234: 0.0 (0s)
+
+  [11/30] Hopper-v4 | DCPPO_Full | seed=42
+  ERROR DCPPO_Full Hopper-v4 seed=42: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Hopper-v4 s42: 0.0 (0s)
+
+  [12/30] Hopper-v4 | DCPPO_Full | seed=123
+  ERROR DCPPO_Full Hopper-v4 seed=123: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Hopper-v4 s123: 0.0 (0s)
+
+  [13/30] Hopper-v4 | DCPPO_Full | seed=456
+  ERROR DCPPO_Full Hopper-v4 seed=456: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Hopper-v4 s456: 0.0 (0s)
+
+  [14/30] Hopper-v4 | DCPPO_Full | seed=789
+  ERROR DCPPO_Full Hopper-v4 seed=789: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Hopper-v4 s789: 0.0 (0s)
+
+  [15/30] Hopper-v4 | DCPPO_Full | seed=1234
+  ERROR DCPPO_Full Hopper-v4 seed=1234: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Hopper-v4 s1234: 0.0 (0s)
+
+  [16/30] Walker2d-v4 | DCPPO_Base | seed=42
+  ERROR DCPPO_Base Walker2d-v4 seed=42: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Walker2d-v4 s42: 0.0 (0s)
+
+  [17/30] Walker2d-v4 | DCPPO_Base | seed=123
+  ERROR DCPPO_Base Walker2d-v4 seed=123: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Walker2d-v4 s123: 0.0 (0s)
+
+  [18/30] Walker2d-v4 | DCPPO_Base | seed=456
+  ERROR DCPPO_Base Walker2d-v4 seed=456: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Walker2d-v4 s456: 0.0 (0s)
+
+  [19/30] Walker2d-v4 | DCPPO_Base | seed=789
+  ERROR DCPPO_Base Walker2d-v4 seed=789: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Walker2d-v4 s789: 0.0 (0s)
+
+  [20/30] Walker2d-v4 | DCPPO_Base | seed=1234
+  ERROR DCPPO_Base Walker2d-v4 seed=1234: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Base Walker2d-v4 s1234: 0.0 (0s)
+
+  [21/30] Walker2d-v4 | DCPPO_ImpS | seed=42
+  ERROR DCPPO_ImpS Walker2d-v4 seed=42: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Walker2d-v4 s42: 0.0 (0s)
+
+  [22/30] Walker2d-v4 | DCPPO_ImpS | seed=123
+  ERROR DCPPO_ImpS Walker2d-v4 seed=123: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Walker2d-v4 s123: 0.0 (0s)
+
+  [23/30] Walker2d-v4 | DCPPO_ImpS | seed=456
+  ERROR DCPPO_ImpS Walker2d-v4 seed=456: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Walker2d-v4 s456: 0.0 (0s)
+
+  [24/30] Walker2d-v4 | DCPPO_ImpS | seed=789
+  ERROR DCPPO_ImpS Walker2d-v4 seed=789: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Walker2d-v4 s789: 0.0 (0s)
+
+  [25/30] Walker2d-v4 | DCPPO_ImpS | seed=1234
+  ERROR DCPPO_ImpS Walker2d-v4 seed=1234: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_ImpS Walker2d-v4 s1234: 0.0 (0s)
+
+  [26/30] Walker2d-v4 | DCPPO_Full | seed=42
+  ERROR DCPPO_Full Walker2d-v4 seed=42: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Walker2d-v4 s42: 0.0 (0s)
+
+  [27/30] Walker2d-v4 | DCPPO_Full | seed=123
+  ERROR DCPPO_Full Walker2d-v4 seed=123: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Walker2d-v4 s123: 0.0 (0s)
+
+  [28/30] Walker2d-v4 | DCPPO_Full | seed=456
+  ERROR DCPPO_Full Walker2d-v4 seed=456: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Walker2d-v4 s456: 0.0 (0s)
+
+  [29/30] Walker2d-v4 | DCPPO_Full | seed=789
+  ERROR DCPPO_Full Walker2d-v4 seed=789: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Walker2d-v4 s789: 0.0 (0s)
+
+  [30/30] Walker2d-v4 | DCPPO_Full | seed=1234
+  ERROR DCPPO_Full Walker2d-v4 seed=1234: gae_experiments.agents.dcppo.DCPPO() got multiple values for keyword argument 'name'
+  -> DCPPO_Full Walker2d-v4 s1234: 0.0 (0s)
+
+  All done in 0s
+  Summary saved -> results/MultiEnv_DCPPO/dcppo_multiseed_summary.json
+
+=================================================================
+  Variant            |        Hopper-v4 |      Walker2d-v4
+  ------------------ | ---------------- | ----------------
+  DCPPO_Base         |              N/A |              N/A
+  DCPPO_ImpS         |              N/A |              N/A
+  DCPPO_Full         |              N/A |              N/A
+=================================================================
+

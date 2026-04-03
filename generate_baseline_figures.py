@@ -13,14 +13,14 @@ Style: ICML/Nature-inspired color palette, SEM error bars, professional layout.
 """
 
 import json
-import os
 from pathlib import Path
-import numpy as np
+
 import matplotlib
+import numpy as np
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.gridspec import GridSpec
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Paths

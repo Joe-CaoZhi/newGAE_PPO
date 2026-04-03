@@ -25,11 +25,10 @@ import os
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import numpy as np
-from scipy.ndimage import uniform_filter1d
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Paths
@@ -379,9 +378,9 @@ def fig5_dcppo_multienv():
     labels_dcppo = {"Standard_PPO": "Standard PPO", "DCPPO_S": "DCPPO-S (Ours)"}
     colors_dcppo = {"Standard_PPO": "#7F7F7F", "DCPPO_S": "#E64B35"}
 
-    fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+    fig, axes = plt.subplots(1, 4, figsize=(14, 4.5))
     fig.suptitle("DCPPO-S vs Standard PPO: Multi-Environment (5 seeds x 300K steps)",
-                 fontsize=12, fontweight="bold", y=1.02)
+                 fontsize=12, fontweight="bold")
 
     for ax, env_name in zip(axes, envs_all):
         env_data = results.get(env_name, {})
@@ -409,14 +408,14 @@ def fig5_dcppo_multienv():
 
         if len(means_d) == 2 and means_d[0] > 0:
             pct = (means_d[1] - means_d[0]) / abs(means_d[0]) * 100
-            y_pos = max(means_d[1] + stds_d[1] if stds_d else means_d[1], means_d[0]) + max(means_d) * 0.05
             color_ann = "#E64B35" if pct > 0 else "#7F7F7F"
-            ax.text(0.5, y_pos, f"{pct:+.0f}%", ha="center", fontsize=10,
-                    fontweight="bold", color=color_ann, transform=ax.get_xaxis_transform())
+            # Use axes-fraction coordinates (0-1 range) to avoid giant pixel issues
+            ax.text(0.5, 0.95, f"{pct:+.0f}%", ha="center", va="top", fontsize=10,
+                    fontweight="bold", color=color_ann, transform=ax.transAxes)
 
     plt.tight_layout()
     for ext in ["png", "pdf"]:
-        plt.savefig(OUT_DIR / f"fig5_dcppo_multienv.{ext}")
+        plt.savefig(OUT_DIR / f"fig5_dcppo_multienv.{ext}", dpi=150)
     plt.close()
     print("  Saved fig5_dcppo_multienv")
 

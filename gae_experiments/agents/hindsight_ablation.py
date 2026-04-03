@@ -21,6 +21,21 @@ HCGAE_Imp12     ✓   ✓   ✗   ✗   ①+② 组合
 HCGAE_Imp124    ✓   ✓   ✗   ✓   ①+②+④（不含末端修正）
 HCGAE_Full      ✓   ✓   ✓   ✓   全量 v2（= 正式版本）
 ─────────────────────────────────────────────────────────────────
+
+SCR (Signal-to-Correction Ratio) 在线估计器
+─────────────────────────────────────────────────────────────────
+SCR = |Bias_t| / Var[G_t]^{1/2}
+
+诊断逻辑：
+  SCR > scr_threshold (默认 1.0)：Critic 偏差 > MC 方差 → HCGAE 有益
+  SCR < scr_threshold：MC 方差主导 → 校正反而引入噪声 → 适当抑制校正
+
+实现方式：
+  - 使用滑动平均 SCR EMA（alpha=0.1）避免单次 rollout 噪声干扰
+  - 当 use_scr_adapt=True 时，alpha_max 会根据 SCR EMA 动态缩放
+  - scr_scale_factor = clip(scr_ema / scr_threshold, scr_min_scale, 1.0)
+  - 这将 HCGAE 从「只对某些环境有益」→「自适应所有环境安全部署」
+─────────────────────────────────────────────────────────────────
 """
 from typing import Optional
 
@@ -49,6 +64,11 @@ class HindsightAblation:
         use_imp2: bool = False,   # ② EV 驱动混合
         use_imp3: bool = False,   # ③ 末端 Bootstrap 修正
         use_imp4: bool = False,   # ④ 冻结优势统计量
+        # SCR 自适应校正强度（⑤ 在线 SCR 估计 + 自动环境适配）
+        use_scr_adapt: bool = False,   # ⑤ SCR 驱动的校正强度自适应
+        scr_threshold: float = 1.0,    # SCR > 此值时 HCGAE 有益；< 此值时抑制校正
+        scr_min_scale: float = 0.1,    # SCR 极低时的最小 alpha_max 缩放因子
+        scr_ema_alpha: float = 0.1,    # SCR EMA 更新速率
         # 标准 PPO 超参
         hidden_dim: int = 64,
         lr_actor: float = 3e-4,
@@ -74,6 +94,11 @@ class HindsightAblation:
         self.use_imp2 = use_imp2
         self.use_imp3 = use_imp3
         self.use_imp4 = use_imp4
+        # SCR 自适应参数
+        self.use_scr_adapt = use_scr_adapt
+        self.scr_threshold = scr_threshold
+        self.scr_min_scale = scr_min_scale
+        self.scr_ema_alpha = scr_ema_alpha
 
         self.env = env
         self.gamma = gamma
@@ -119,6 +144,10 @@ class HindsightAblation:
         # 冻结统计量（④ 使用）
         self._adv_mean_frozen = 0.0
         self._adv_std_frozen  = 1.0
+        # SCR EMA（⑤ 在线 SCR 估计，用于诊断和自适应校正强度）
+        # SCR = bias_proxy / mc_std；初始化为 threshold，表示「中性」
+        self._scr_ema = scr_threshold
+        self._scr_history = []   # 最近 N 次 rollout 的 SCR 值，用于统计分析
 
         self.logger = MetricLogger(self.NAME, save_dir)
         self.total_steps = 0
@@ -191,6 +220,19 @@ class HindsightAblation:
         V = buf.values[:T]
         err = np.abs(V - G)
 
+        # ── ⑤ 在线 SCR 估计（每次 rollout 更新，诊断 HCGAE 适用性）──────
+        # SCR = |bias| / std(G)；> threshold 表示 HCGAE 有益（偏差主导）
+        # < threshold 表示 MC 方差主导（校正可能引入噪声）
+        mc_std = float(np.std(G)) + 1e-8
+        bias_proxy_raw = float(np.mean(np.abs(V - G)))   # |V - G| 均值作为偏差代理
+        scr_current = bias_proxy_raw / mc_std
+        # EMA 平滑，减少单次 rollout 噪声
+        self._scr_ema = (1 - self.scr_ema_alpha) * self._scr_ema + self.scr_ema_alpha * scr_current
+        # 记录历史（最多保留最近 50 次）
+        self._scr_history.append(scr_current)
+        if len(self._scr_history) > 50:
+            self._scr_history.pop(0)
+
         # ── 改进① / v1 EMA 归一化 的分叉 ──────────────────────────
         if self.use_imp1:
             # 改进①：批内中心化归一化
@@ -215,6 +257,21 @@ class HindsightAblation:
             + (self.hindsight_alpha_max - self.hindsight_alpha_min)
             * cosine_decay * ev_factor
         )
+
+        # ── ⑤ SCR 自适应缩放 alpha_max ─────────────────────────────
+        # 当 scr_ema > threshold 时：Critic 偏差主导，HCGAE 有益，保持/放大校正
+        # 当 scr_ema < threshold 时：MC 方差主导，校正引入噪声，抑制校正强度
+        if self.use_scr_adapt:
+            # scr_scale ∈ [scr_min_scale, 1.0]
+            # 线性缩放：scr_ema / threshold，饱和于 1.0
+            scr_scale = float(np.clip(
+                self._scr_ema / (self.scr_threshold + 1e-8),
+                self.scr_min_scale,
+                1.0,
+            ))
+            dynamic_alpha_max = dynamic_alpha_max * scr_scale
+        else:
+            scr_scale = 1.0
 
         alpha = dynamic_alpha_max * (1.0 / (1.0 + np.exp(-z)))
         alpha = np.clip(alpha, 0.0, dynamic_alpha_max)
@@ -307,6 +364,12 @@ class HindsightAblation:
             "adv_snr"           : snr,
             "V_correction_norm" : float(np.mean(np.abs(V_corrected - V))),  # ||ΔV||_1
             "mc_gae_diff"       : float(np.mean(np.abs(G - (adv + V)))),    # MC vs GAE returns 差异
+            # SCR 诊断
+            "scr_current"       : scr_current,           # 当次 rollout SCR
+            "scr_ema"           : float(self._scr_ema),  # 平滑后 SCR EMA
+            "scr_scale"         : scr_scale,             # SCR 对 alpha_max 的缩放因子
+            "mc_std"            : mc_std,                # MC 回报标准差（分母）
+            "bias_abs_proxy"    : bias_proxy_raw,        # |V-G| 均值（分子）
         }
 
     # ──────────────────────────────────────────────────────────────
@@ -451,19 +514,26 @@ class HindsightAblation:
                     f"②{'✓' if self.use_imp2 else '✗'}"
                     f"③{'✓' if self.use_imp3 else '✗'}"
                     f"④{'✓' if self.use_imp4 else '✗'}"
+                    f"⑤{'✓' if self.use_scr_adapt else '✗'}"
+                )
+                scr_str = (
+                    f"SCR={metrics.get('scr_ema', 0):.3f}(×{metrics.get('scr_scale',1):.2f}) "
+                    if self.use_scr_adapt else
+                    f"scr={metrics.get('scr_current', 0):.3f} "
                 )
                 print(
                     f"  [{self.NAME:<18}|{imp_flags}] "
                     f"{self.total_steps:7d}/{total_timesteps} {self._bar(self.total_steps, total_timesteps)} "
                     f"| Eval={eval_str} Rec={recent:6.1f} "
                     f"| VL={metrics['value_loss']:.3f} EV={metrics['explained_variance']:+.3f} "
-                    f"| ᾱ={metrics.get('mean_alpha',0):.3f}(±{metrics.get('alpha_std',0):.3f}) "
+                    f"| ᾱ={metrics.get('mean_alpha',0):.3f}(±{metrics.get('alpha_std',0):.3f}) "
                     f"αmax={metrics.get('dynamic_alpha_max',0):.2f} "
                     f"| c_mc={metrics.get('c_mc',0):.2f} "
                     f"| bias={metrics.get('bias_proxy',0):+.3f} "
                     f"var={metrics.get('variance_proxy',0):.3f} "
                     f"SNR={metrics.get('adv_snr',0):.3f} "
-                    f"| ΔV={metrics.get('V_correction_norm',0):.3f} "
+                    f"| {scr_str}"
+                    f"ΔV={metrics.get('V_correction_norm',0):.3f} "
                     f"err_μ={metrics.get('err_batch_mean',0):.3f} "
                     f"err_ema={metrics.get('err_ema',0):.3f} "
                     f"| δ:μ={metrics.get('delta_mean',0):+.3f} "
@@ -522,7 +592,13 @@ _ABLATION_CONFIGS = {
     "HCGAE_Imp24": (False, True,  False, True ),  # ②+④
     "HCGAE_Imp124":(True,  True,  False, True ),  # ①+②+④（不含末端）
     "HCGAE_Full":  (True,  True,  True,  True ),  # 全量 v2
+    # SCR 自适应变体（⑤）
+    "HCGAE_Imp12_SCR": (True,  True,  False, False),  # ①+②+⑤(SCR 自适应)
+    "HCGAE_Full_SCR":  (True,  True,  True,  True ),  # 全量 v2 + SCR 自适应
 }
+
+# SCR 自适应开关（仅 SCR 变体启用）
+_SCR_ADAPT_VARIANTS = {"HCGAE_Imp12_SCR", "HCGAE_Full_SCR"}
 
 
 def build_ablation_agent(
@@ -542,6 +618,9 @@ def build_ablation_agent(
     imp1, imp2, imp3, imp4 = _ABLATION_CONFIGS[variant_name]
     # 如果 kwargs 里没有 name，使用 variant_name 作为默认名称
     kwargs.setdefault("name", variant_name)
+    # SCR 自适应变体自动启用 use_scr_adapt
+    if variant_name in _SCR_ADAPT_VARIANTS:
+        kwargs.setdefault("use_scr_adapt", True)
     return HindsightAblation(
         env=env,
         use_imp1=imp1,

@@ -1,0 +1,796 @@
+
+======================================================================
+  Baseline Comparison – Missing Experiments Runner
+  Total missing: 12 runs
+    HalfCheetah-v4        PPO_VClip             seed=789
+    HalfCheetah-v4        PPO_VClip             seed=1234
+    HalfCheetah-v4        PPO_Full_Baseline     seed=42
+    HalfCheetah-v4        PPO_Full_Baseline     seed=123
+    HalfCheetah-v4        PPO_Full_Baseline     seed=456
+    HalfCheetah-v4        PPO_Full_Baseline     seed=789
+    HalfCheetah-v4        PPO_Full_Baseline     seed=1234
+    HalfCheetah-v4        HCGAE_Imp12           seed=42
+    HalfCheetah-v4        HCGAE_Imp12           seed=123
+    HalfCheetah-v4        HCGAE_Imp12           seed=456
+    HalfCheetah-v4        HCGAE_Imp12           seed=789
+    HalfCheetah-v4        HCGAE_Imp12           seed=1234
+======================================================================
+
+
+  [1/12] HalfCheetah-v4 | PPO_VClip | seed=789
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment HalfCheetah-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+  [PPO_VClip_s789      ]    2048/300000 | Eval=    N/A Rec=-635.1 | VL=65.657 EV=-0.026 | KL=0.0083 clip=0.115 |  2611fps     1s
+  [PPO_VClip_s789      ]   10240/300000 | Eval=   -1.8 Rec=-579.9 | VL=48.217 EV=+0.041 | KL=0.0089 clip=0.126 |  2095fps     5s
+  [PPO_VClip_s789      ]   12288/300000 | Eval=   -1.8 Rec=-583.1 | VL=55.629 EV=+0.057 | KL=0.0094 clip=0.141 |  2019fps     6s
+  [PPO_VClip_s789      ]   20480/300000 | Eval=   -5.5 Rec=-562.0 | VL=57.815 EV=+0.095 | KL=0.0104 clip=0.154 |  1935fps    11s
+  [PPO_VClip_s789      ]   22528/300000 | Eval=   -5.5 Rec=-545.9 | VL=29.272 EV=+0.102 | KL=0.0105 clip=0.157 |  1946fps    12s
+  [PPO_VClip_s789      ]   30720/300000 | Eval=   -4.7 Rec=-505.2 | VL=21.458 EV=+0.286 | KL=0.0088 clip=0.130 |  1803fps    17s
+  [PPO_VClip_s789      ]   32768/300000 | Eval=   -4.7 Rec=-486.3 | VL=18.013 EV=+0.180 | KL=0.0094 clip=0.141 |  1829fps    18s
+  [PPO_VClip_s789      ]   40960/300000 | Eval=    5.0 Rec=-436.3 | VL=14.975 EV=+0.066 | KL=0.0112 clip=0.165 |  1842fps    22s
+  [PPO_VClip_s789      ]   43008/300000 | Eval=    5.0 Rec=-428.1 | VL=21.099 EV=+0.223 | KL=0.0106 clip=0.162 |  1861fps    23s
+  [PPO_VClip_s789      ]   51200/300000 | Eval=   48.7 Rec=-388.1 | VL=20.071 EV=+0.172 | KL=0.0116 clip=0.178 |  1776fps    29s
+  [PPO_VClip_s789      ]   53248/300000 | Eval=   48.7 Rec=-375.8 | VL=8.494 EV=+0.495 | KL=0.0147 clip=0.226 |  1792fps    30s
+  [PPO_VClip_s789      ]   61440/300000 | Eval=  243.8 Rec=-335.6 | VL=4.463 EV=+0.532 | KL=0.0144 clip=0.219 |  1810fps    34s
+  [PPO_VClip_s789      ]   63488/300000 | Eval=  243.8 Rec=-325.4 | VL=4.771 EV=+0.488 | KL=0.0129 clip=0.202 |  1827fps    35s
+  [PPO_VClip_s789      ]   71680/300000 | Eval=  345.8 Rec=-273.5 | VL=4.994 EV=+0.395 | KL=0.0152 clip=0.232 |  1840fps    39s
+  [PPO_VClip_s789      ]   73728/300000 | Eval=  345.8 Rec=-267.7 | VL=4.251 EV=+0.488 | KL=0.0128 clip=0.195 |  1854fps    40s
+  [PPO_VClip_s789      ]   81920/300000 | Eval=  326.8 Rec=-231.0 | VL=3.448 EV=+0.365 | KL=0.0169 clip=0.251 |  1876fps    44s
+  [PPO_VClip_s789      ]   83968/300000 | Eval=  326.8 Rec=-218.8 | VL=4.570 EV=+0.314 | KL=0.0164 clip=0.241 |  1885fps    45s
+  [PPO_VClip_s789      ]   92160/300000 | Eval=  372.7 Rec=-179.2 | VL=7.965 EV=+0.266 | KL=0.0166 clip=0.249 |  1874fps    49s
+  [PPO_VClip_s789      ]   94208/300000 | Eval=  372.7 Rec=-163.6 | VL=4.593 EV=+0.273 | KL=0.0158 clip=0.235 |  1884fps    50s
+  [PPO_VClip_s789      ]  102400/300000 | Eval=  327.9 Rec= -94.9 | VL=5.733 EV=+0.186 | KL=0.0177 clip=0.261 |  1872fps    55s
+  [PPO_VClip_s789      ]  104448/300000 | Eval=  327.9 Rec= -80.0 | VL=5.954 EV=+0.367 | KL=0.0186 clip=0.259 |  1871fps    56s
+  [PPO_VClip_s789      ]  112640/300000 | Eval=  443.3 Rec= -15.0 | VL=8.629 EV=+0.402 | KL=0.0202 clip=0.290 |  1851fps    61s
+  [PPO_VClip_s789      ]  114688/300000 | Eval=  443.3 Rec=  -4.6 | VL=7.748 EV=+0.173 | KL=0.0201 clip=0.279 |  1848fps    62s
+  [PPO_VClip_s789      ]  122880/300000 | Eval=  454.2 Rec=  39.3 | VL=10.073 EV=+0.197 | KL=0.0212 clip=0.293 |  1822fps    67s
+  [PPO_VClip_s789      ]  124928/300000 | Eval=  454.2 Rec=  48.9 | VL=8.548 EV=+0.181 | KL=0.0210 clip=0.295 |  1823fps    68s
+  [PPO_VClip_s789      ]  133120/300000 | Eval=  483.0 Rec=  80.2 | VL=14.453 EV=+0.303 | KL=0.0215 clip=0.297 |  1822fps    73s
+  [PPO_VClip_s789      ]  135168/300000 | Eval=  483.0 Rec=  88.7 | VL=11.426 EV=+0.329 | KL=0.0229 clip=0.308 |  1816fps    74s
+  [PPO_VClip_s789      ]  143360/300000 | Eval=  727.3 Rec= 138.3 | VL=13.113 EV=+0.173 | KL=0.0217 clip=0.292 |  1811fps    79s
+  [PPO_VClip_s789      ]  145408/300000 | Eval=  727.3 Rec= 156.8 | VL=19.447 EV=+0.327 | KL=0.0231 clip=0.314 |  1817fps    80s
+  [PPO_VClip_s789      ]  153600/300000 | Eval=  646.7 Rec= 202.9 | VL=17.144 EV=+0.109 | KL=0.0244 clip=0.319 |  1813fps    85s
+  [PPO_VClip_s789      ]  155648/300000 | Eval=  646.7 Rec= 220.0 | VL=17.852 EV=+0.402 | KL=0.0244 clip=0.326 |  1807fps    86s
+  [PPO_VClip_s789      ]  163840/300000 | Eval=  629.3 Rec= 224.2 | VL=18.348 EV=+0.564 | KL=0.0288 clip=0.359 |  1789fps    92s
+  [PPO_VClip_s789      ]  165888/300000 | Eval=  629.3 Rec= 234.2 | VL=21.472 EV=+0.208 | KL=0.0259 clip=0.340 |  1790fps    93s
+  [PPO_VClip_s789      ]  174080/300000 | Eval=  711.8 Rec= 284.4 | VL=27.131 EV=+0.639 | KL=0.0271 clip=0.351 |  1789fps    97s
+  [PPO_VClip_s789      ]  176128/300000 | Eval=  711.8 Rec= 287.4 | VL=22.918 EV=+0.670 | KL=0.0285 clip=0.350 |  1790fps    98s
+  [PPO_VClip_s789      ]  184320/300000 | Eval=  699.5 Rec= 328.0 | VL=22.238 EV=+0.668 | KL=0.0269 clip=0.344 |  1779fps   104s
+  [PPO_VClip_s789      ]  186368/300000 | Eval=  699.5 Rec= 320.7 | VL=21.229 EV=+0.672 | KL=0.0302 clip=0.369 |  1784fps   104s
+  [PPO_VClip_s789      ]  194560/300000 | Eval=  668.3 Rec= 345.0 | VL=26.230 EV=+0.396 | KL=0.0318 clip=0.361 |  1783fps   109s
+  [PPO_VClip_s789      ]  196608/300000 | Eval=  668.3 Rec= 355.0 | VL=24.218 EV=+0.688 | KL=0.0321 clip=0.372 |  1782fps   110s
+  [PPO_VClip_s789      ]  204800/300000 | Eval=  813.8 Rec= 393.3 | VL=37.974 EV=+0.727 | KL=0.0321 clip=0.376 |  1764fps   116s
+  [PPO_VClip_s789      ]  206848/300000 | Eval=  813.8 Rec= 412.3 | VL=25.834 EV=+0.666 | KL=0.0322 clip=0.374 |  1767fps   117s
+  [PPO_VClip_s789      ]  215040/300000 | Eval=  822.2 Rec= 449.6 | VL=24.082 EV=+0.685 | KL=0.0373 clip=0.396 |  1773fps   121s
+  [PPO_VClip_s789      ]  217088/300000 | Eval=  822.2 Rec= 458.7 | VL=22.064 EV=+0.352 | KL=0.0349 clip=0.386 |  1774fps   122s
+  [PPO_VClip_s789      ]  225280/300000 | Eval=  831.6 Rec= 510.9 | VL=25.633 EV=+0.565 | KL=0.0368 clip=0.397 |  1767fps   127s
+  [PPO_VClip_s789      ]  227328/300000 | Eval=  831.6 Rec= 516.6 | VL=31.382 EV=+0.663 | KL=0.0349 clip=0.396 |  1769fps   128s
+  [PPO_VClip_s789      ]  235520/300000 | Eval=  830.7 Rec= 529.3 | VL=28.230 EV=+0.542 | KL=0.0358 clip=0.384 |  1764fps   133s
+  [PPO_VClip_s789      ]  237568/300000 | Eval=  830.7 Rec= 536.1 | VL=25.855 EV=+0.551 | KL=0.0359 clip=0.399 |  1759fps   135s
+  [PPO_VClip_s789      ]  245760/300000 | Eval=  874.4 Rec= 573.8 | VL=28.782 EV=+0.543 | KL=0.0354 clip=0.392 |  1716fps   143s
+  [PPO_VClip_s789      ]  247808/300000 | Eval=  874.4 Rec= 584.2 | VL=29.406 EV=+0.507 | KL=0.0404 clip=0.416 |  1714fps   145s
+  [PPO_VClip_s789      ]  256000/300000 | Eval=  886.8 Rec= 639.1 | VL=33.815 EV=+0.478 | KL=0.0376 clip=0.411 |  1688fps   152s
+  [PPO_VClip_s789      ]  258048/300000 | Eval=  886.8 Rec= 633.5 | VL=22.328 EV=+0.628 | KL=0.0466 clip=0.453 |  1687fps   153s
+  [PPO_VClip_s789      ]  266240/300000 | Eval=  908.0 Rec= 662.3 | VL=46.220 EV=+0.658 | KL=0.0425 clip=0.417 |  1673fps   159s
+  [PPO_VClip_s789      ]  268288/300000 | Eval=  908.0 Rec= 670.7 | VL=33.829 EV=+0.525 | KL=0.0389 clip=0.407 |  1673fps   160s
+  [PPO_VClip_s789      ]  276480/300000 | Eval=  952.0 Rec= 700.4 | VL=39.875 EV=+0.433 | KL=0.0454 clip=0.446 |  1670fps   166s
+  [PPO_VClip_s789      ]  278528/300000 | Eval=  952.0 Rec= 717.1 | VL=30.928 EV=+0.507 | KL=0.0422 clip=0.420 |  1668fps   167s
+  [PPO_VClip_s789      ]  286720/300000 | Eval=  946.0 Rec= 685.8 | VL=38.302 EV=+0.600 | KL=0.0480 clip=0.451 |  1641fps   175s
+  [PPO_VClip_s789      ]  288768/300000 | Eval=  946.0 Rec= 678.6 | VL=30.465 EV=+0.568 | KL=0.0448 clip=0.435 |  1638fps   176s
+  [PPO_VClip_s789      ]  296960/300000 | Eval= 1000.4 Rec= 660.8 | VL=45.158 EV=+0.721 | KL=0.0470 clip=0.450 |  1626fps   183s
+  [PPO_VClip_s789      ]  299008/300000 | Eval= 1000.4 Rec= 650.4 | VL=50.811 EV=+0.742 | KL=0.0443 clip=0.433 |  1627fps   184s
+  Done [PPO_VClip_s789] | time=184.7s | final=938.7 | best=1000.4
+  -> PPO_VClip HalfCheetah-v4 s789: final=938.7  (186s)
+
+  [2/12] HalfCheetah-v4 | PPO_VClip | seed=1234
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment HalfCheetah-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+  [PPO_VClip_s1234     ]    2048/300000 | Eval=    N/A Rec=-609.6 | VL=71.720 EV=-0.004 | KL=0.0077 clip=0.107 |  1746fps     1s
+  [PPO_VClip_s1234     ]   10240/300000 | Eval=  -10.7 Rec=-599.0 | VL=54.102 EV=+0.173 | KL=0.0091 clip=0.131 |  1105fps     9s
+  [PPO_VClip_s1234     ]   12288/300000 | Eval=  -10.7 Rec=-583.1 | VL=35.785 EV=+0.172 | KL=0.0084 clip=0.123 |  1161fps    11s
+  [PPO_VClip_s1234     ]   20480/300000 | Eval=   -1.2 Rec=-564.7 | VL=31.046 EV=+0.217 | KL=0.0097 clip=0.149 |  1131fps    18s
+  [PPO_VClip_s1234     ]   22528/300000 | Eval=   -1.2 Rec=-544.2 | VL=28.343 EV=+0.309 | KL=0.0098 clip=0.147 |  1180fps    19s
+  [PPO_VClip_s1234     ]   30720/300000 | Eval=  174.4 Rec=-472.1 | VL=34.233 EV=+0.278 | KL=0.0109 clip=0.168 |  1292fps    24s
+  [PPO_VClip_s1234     ]   32768/300000 | Eval=  174.4 Rec=-464.5 | VL=22.092 EV=+0.350 | KL=0.0100 clip=0.152 |  1315fps    25s
+  [PPO_VClip_s1234     ]   40960/300000 | Eval=   16.0 Rec=-397.3 | VL=16.786 EV=+0.415 | KL=0.0114 clip=0.173 |  1355fps    30s
+  [PPO_VClip_s1234     ]   43008/300000 | Eval=   16.0 Rec=-391.2 | VL=15.625 EV=+0.439 | KL=0.0113 clip=0.176 |  1380fps    31s
+  [PPO_VClip_s1234     ]   51200/300000 | Eval=   14.7 Rec=-373.8 | VL=22.547 EV=+0.387 | KL=0.0110 clip=0.164 |  1403fps    36s
+  [PPO_VClip_s1234     ]   53248/300000 | Eval=   14.7 Rec=-366.6 | VL=13.286 EV=+0.392 | KL=0.0114 clip=0.167 |  1414fps    38s
+  [PPO_VClip_s1234     ]   61440/300000 | Eval=  135.9 Rec=-332.9 | VL=17.953 EV=+0.371 | KL=0.0153 clip=0.235 |  1433fps    43s
+  [PPO_VClip_s1234     ]   63488/300000 | Eval=  135.9 Rec=-324.9 | VL=13.603 EV=+0.301 | KL=0.0124 clip=0.185 |  1442fps    44s
+  [PPO_VClip_s1234     ]   71680/300000 | Eval=   54.3 Rec=-270.8 | VL=8.044 EV=+0.271 | KL=0.0139 clip=0.212 |  1485fps    48s
+  [PPO_VClip_s1234     ]   73728/300000 | Eval=   54.3 Rec=-263.8 | VL=8.874 EV=+0.614 | KL=0.0139 clip=0.210 |  1497fps    49s
+  [PPO_VClip_s1234     ]   81920/300000 | Eval=  150.3 Rec=-224.5 | VL=10.121 EV=+0.444 | KL=0.0145 clip=0.219 |  1535fps    53s
+  [PPO_VClip_s1234     ]   83968/300000 | Eval=  150.3 Rec=-219.5 | VL=13.881 EV=+0.385 | KL=0.0133 clip=0.203 |  1550fps    54s
+  [PPO_VClip_s1234     ]   92160/300000 | Eval=   89.5 Rec=-176.5 | VL=10.446 EV=+0.365 | KL=0.0137 clip=0.213 |  1554fps    59s
+  [PPO_VClip_s1234     ]   94208/300000 | Eval=   89.5 Rec=-150.8 | VL=10.879 EV=+0.398 | KL=0.0143 clip=0.217 |  1557fps    60s
+  [PPO_VClip_s1234     ]  102400/300000 | Eval=   33.2 Rec=-134.2 | VL=8.684 EV=+0.711 | KL=0.0158 clip=0.237 |  1555fps    66s
+  [PPO_VClip_s1234     ]  104448/300000 | Eval=   33.2 Rec=-122.1 | VL=10.012 EV=+0.597 | KL=0.0170 clip=0.246 |  1564fps    67s
+  [PPO_VClip_s1234     ]  112640/300000 | Eval=  156.9 Rec= -96.7 | VL=11.002 EV=+0.369 | KL=0.0172 clip=0.256 |  1586fps    71s
+  [PPO_VClip_s1234     ]  114688/300000 | Eval=  156.9 Rec= -99.2 | VL=11.352 EV=+0.578 | KL=0.0165 clip=0.253 |  1594fps    72s
+  [PPO_VClip_s1234     ]  122880/300000 | Eval=  474.6 Rec= -53.1 | VL=13.396 EV=+0.642 | KL=0.0180 clip=0.267 |  1585fps    77s
+  [PPO_VClip_s1234     ]  124928/300000 | Eval=  474.6 Rec= -39.3 | VL=19.132 EV=+0.602 | KL=0.0165 clip=0.245 |  1588fps    79s
+  [PPO_VClip_s1234     ]  133120/300000 | Eval=  515.9 Rec=   5.0 | VL=14.951 EV=+0.648 | KL=0.0184 clip=0.266 |  1595fps    83s
+  [PPO_VClip_s1234     ]  135168/300000 | Eval=  515.9 Rec=  19.0 | VL=16.681 EV=+0.500 | KL=0.0189 clip=0.268 |  1601fps    84s
+  [PPO_VClip_s1234     ]  143360/300000 | Eval=  538.0 Rec=  84.8 | VL=17.668 EV=+0.473 | KL=0.0209 clip=0.292 |  1599fps    90s
+  [PPO_VClip_s1234     ]  145408/300000 | Eval=  538.0 Rec= 100.7 | VL=18.617 EV=+0.413 | KL=0.0206 clip=0.283 |  1606fps    91s
+  [PPO_VClip_s1234     ]  153600/300000 | Eval=  645.0 Rec=  98.8 | VL=12.197 EV=+0.819 | KL=0.0206 clip=0.293 |  1615fps    95s
+  [PPO_VClip_s1234     ]  155648/300000 | Eval=  645.0 Rec= 108.4 | VL=23.601 EV=+0.443 | KL=0.0193 clip=0.285 |  1617fps    96s
+  [PPO_VClip_s1234     ]  163840/300000 | Eval=  857.7 Rec= 152.1 | VL=26.895 EV=+0.394 | KL=0.0223 clip=0.305 |  1622fps   101s
+  [PPO_VClip_s1234     ]  165888/300000 | Eval=  857.7 Rec= 164.7 | VL=24.120 EV=+0.309 | KL=0.0197 clip=0.283 |  1629fps   102s
+  [PPO_VClip_s1234     ]  174080/300000 | Eval=  930.3 Rec= 199.5 | VL=25.867 EV=+0.426 | KL=0.0212 clip=0.294 |  1616fps   108s
+  [PPO_VClip_s1234     ]  176128/300000 | Eval=  930.3 Rec= 191.4 | VL=21.204 EV=+0.833 | KL=0.0214 clip=0.294 |  1621fps   109s
+  [PPO_VClip_s1234     ]  184320/300000 | Eval=  980.3 Rec= 209.8 | VL=31.618 EV=+0.423 | KL=0.0244 clip=0.328 |  1628fps   113s
+  [PPO_VClip_s1234     ]  186368/300000 | Eval=  980.3 Rec= 221.6 | VL=29.773 EV=+0.321 | KL=0.0230 clip=0.312 |  1633fps   114s
+  [PPO_VClip_s1234     ]  194560/300000 | Eval=  846.8 Rec= 379.3 | VL=44.276 EV=+0.482 | KL=0.0246 clip=0.336 |  1640fps   119s
+  [PPO_VClip_s1234     ]  196608/300000 | Eval=  846.8 Rec= 416.2 | VL=30.990 EV=+0.372 | KL=0.0239 clip=0.324 |  1645fps   120s
+  [PPO_VClip_s1234     ]  204800/300000 | Eval= 1029.1 Rec= 511.2 | VL=37.727 EV=+0.471 | KL=0.0253 clip=0.321 |  1654fps   124s
+  [PPO_VClip_s1234     ]  206848/300000 | Eval= 1029.1 Rec= 500.4 | VL=32.574 EV=+0.778 | KL=0.0250 clip=0.325 |  1657fps   125s
+  [PPO_VClip_s1234     ]  215040/300000 | Eval=  828.4 Rec= 503.3 | VL=33.025 EV=+0.487 | KL=0.0270 clip=0.337 |  1664fps   129s
+  [PPO_VClip_s1234     ]  217088/300000 | Eval=  828.4 Rec= 508.2 | VL=34.867 EV=+0.433 | KL=0.0245 clip=0.321 |  1669fps   130s
+  [PPO_VClip_s1234     ]  225280/300000 | Eval=  988.5 Rec= 488.0 | VL=41.939 EV=+0.679 | KL=0.0289 clip=0.358 |  1678fps   134s
+  [PPO_VClip_s1234     ]  227328/300000 | Eval=  988.5 Rec= 531.9 | VL=52.154 EV=+0.378 | KL=0.0259 clip=0.340 |  1681fps   135s
+  [PPO_VClip_s1234     ]  235520/300000 | Eval= 1063.1 Rec= 478.0 | VL=41.166 EV=+0.556 | KL=0.0286 clip=0.348 |  1689fps   139s
+  [PPO_VClip_s1234     ]  237568/300000 | Eval= 1063.1 Rec= 481.1 | VL=44.250 EV=+0.853 | KL=0.0294 clip=0.361 |  1689fps   141s
+  [PPO_VClip_s1234     ]  245760/300000 | Eval=  843.2 Rec= 517.7 | VL=36.310 EV=+0.500 | KL=0.0301 clip=0.374 |  1691fps   145s
+  [PPO_VClip_s1234     ]  247808/300000 | Eval=  843.2 Rec= 490.1 | VL=33.588 EV=+0.883 | KL=0.0309 clip=0.371 |  1695fps   146s
+  [PPO_VClip_s1234     ]  256000/300000 | Eval= 1006.5 Rec= 594.6 | VL=43.810 EV=+0.475 | KL=0.0321 clip=0.377 |  1699fps   151s
+  [PPO_VClip_s1234     ]  258048/300000 | Eval= 1006.5 Rec= 599.3 | VL=32.175 EV=+0.495 | KL=0.0300 clip=0.366 |  1702fps   152s
+  [PPO_VClip_s1234     ]  266240/300000 | Eval=  958.5 Rec= 650.7 | VL=51.410 EV=+0.509 | KL=0.0310 clip=0.378 |  1706fps   156s
+  [PPO_VClip_s1234     ]  268288/300000 | Eval=  958.5 Rec= 638.3 | VL=33.144 EV=+0.905 | KL=0.0357 clip=0.405 |  1707fps   157s
+  [PPO_VClip_s1234     ]  276480/300000 | Eval=  986.3 Rec= 624.5 | VL=32.846 EV=+0.894 | KL=0.0343 clip=0.399 |  1707fps   162s
+  [PPO_VClip_s1234     ]  278528/300000 | Eval=  986.3 Rec= 644.1 | VL=37.545 EV=+0.412 | KL=0.0347 clip=0.404 |  1709fps   163s
+  [PPO_VClip_s1234     ]  286720/300000 | Eval=  973.4 Rec= 586.5 | VL=34.618 EV=+0.498 | KL=0.0339 clip=0.386 |  1712fps   167s
+  [PPO_VClip_s1234     ]  288768/300000 | Eval=  973.4 Rec= 628.7 | VL=31.985 EV=+0.396 | KL=0.0323 clip=0.381 |  1714fps   168s
+  [PPO_VClip_s1234     ]  296960/300000 | Eval= 1121.2 Rec= 655.4 | VL=40.720 EV=+0.498 | KL=0.0372 clip=0.411 |  1695fps   175s
+  [PPO_VClip_s1234     ]  299008/300000 | Eval= 1121.2 Rec= 643.8 | VL=34.357 EV=+0.504 | KL=0.0354 clip=0.400 |  1696fps   176s
+  Done [PPO_VClip_s1234] | time=177.3s | final=1009.2 | best=1121.2
+  -> PPO_VClip HalfCheetah-v4 s1234: final=1009.2  (177s)
+
+  [3/12] HalfCheetah-v4 | PPO_Full_Baseline | seed=42
+  [PPO_Full_Baseline_s42]    2048/300000 | Eval=    N/A Rec=-624.9 | VL=57.659 EV=-0.034 | KL=0.0095 clip=0.135 |  1782fps     1s
+  [PPO_Full_Baseline_s42]   10240/300000 | Eval=   -0.9 Rec=-611.5 | VL=57.015 EV=+0.084 | KL=0.0090 clip=0.137 |  1463fps     7s
+  [PPO_Full_Baseline_s42]   12288/300000 | Eval=   -0.9 Rec=-604.1 | VL=44.836 EV=+0.115 | KL=0.0074 clip=0.102 |  1530fps     8s
+  [PPO_Full_Baseline_s42]   20480/300000 | Eval=   -4.0 Rec=-590.3 | VL=33.698 EV=+0.137 | KL=0.0093 clip=0.141 |  1431fps    14s
+  [PPO_Full_Baseline_s42]   22528/300000 | Eval=   -4.0 Rec=-584.0 | VL=71.581 EV=+0.190 | KL=0.0099 clip=0.149 |  1444fps    16s
+  [PPO_Full_Baseline_s42]   30720/300000 | Eval=  187.3 Rec=-539.9 | VL=41.455 EV=+0.216 | KL=0.0082 clip=0.116 |  1470fps    21s
+  [PPO_Full_Baseline_s42]   32768/300000 | Eval=  187.3 Rec=-532.1 | VL=39.986 EV=+0.239 | KL=0.0084 clip=0.115 |  1476fps    22s
+  [PPO_Full_Baseline_s42]   40960/300000 | Eval=   33.9 Rec=-485.1 | VL=27.262 EV=+0.395 | KL=0.0084 clip=0.122 |  1472fps    28s
+  [PPO_Full_Baseline_s42]   43008/300000 | Eval=   33.9 Rec=-477.3 | VL=32.811 EV=+0.285 | KL=0.0088 clip=0.133 |  1486fps    29s
+  [PPO_Full_Baseline_s42]   51200/300000 | Eval=   66.1 Rec=-455.2 | VL=22.943 EV=+0.291 | KL=0.0117 clip=0.175 |  1468fps    35s
+  [PPO_Full_Baseline_s42]   53248/300000 | Eval=   66.1 Rec=-447.6 | VL=15.009 EV=+0.354 | KL=0.0096 clip=0.147 |  1482fps    36s
+  [PPO_Full_Baseline_s42]   61440/300000 | Eval=  139.3 Rec=-431.3 | VL=19.389 EV=+0.234 | KL=0.0108 clip=0.160 |  1496fps    41s
+  [PPO_Full_Baseline_s42]   63488/300000 | Eval=  139.3 Rec=-422.9 | VL=26.417 EV=+0.307 | KL=0.0094 clip=0.144 |  1507fps    42s
+  [PPO_Full_Baseline_s42]   71680/300000 | Eval=   -3.6 Rec=-387.4 | VL=16.912 EV=+0.434 | KL=0.0101 clip=0.152 |  1511fps    47s
+  [PPO_Full_Baseline_s42]   73728/300000 | Eval=   -3.6 Rec=-377.4 | VL=19.699 EV=+0.415 | KL=0.0104 clip=0.154 |  1518fps    49s
+  [PPO_Full_Baseline_s42]   81920/300000 | Eval=   21.7 Rec=-329.4 | VL=12.367 EV=+0.422 | KL=0.0120 clip=0.181 |  1499fps    55s
+  [PPO_Full_Baseline_s42]   83968/300000 | Eval=   21.7 Rec=-318.9 | VL=12.306 EV=+0.472 | KL=0.0101 clip=0.159 |  1506fps    56s
+  [PPO_Full_Baseline_s42]   92160/300000 | Eval=  103.8 Rec=-311.1 | VL=9.931 EV=+0.520 | KL=0.0116 clip=0.178 |  1472fps    63s
+  [PPO_Full_Baseline_s42]   94208/300000 | Eval=  103.8 Rec=-306.6 | VL=14.464 EV=+0.409 | KL=0.0094 clip=0.141 |  1475fps    64s
+  [PPO_Full_Baseline_s42]  102400/300000 | Eval=  246.9 Rec=-279.1 | VL=11.181 EV=+0.490 | KL=0.0097 clip=0.144 |  1483fps    69s
+  [PPO_Full_Baseline_s42]  104448/300000 | Eval=  246.9 Rec=-270.1 | VL=12.752 EV=+0.483 | KL=0.0102 clip=0.156 |  1467fps    71s
+  [PPO_Full_Baseline_s42]  112640/300000 | Eval=  140.0 Rec=-225.2 | VL=13.607 EV=+0.526 | KL=0.0094 clip=0.141 |  1466fps    77s
+  [PPO_Full_Baseline_s42]  114688/300000 | Eval=  140.0 Rec=-217.2 | VL=9.267 EV=+0.501 | KL=0.0104 clip=0.158 |  1473fps    78s
+  [PPO_Full_Baseline_s42]  122880/300000 | Eval=  223.3 Rec=-195.9 | VL=11.429 EV=+0.495 | KL=0.0086 clip=0.128 |  1498fps    82s
+  [PPO_Full_Baseline_s42]  124928/300000 | Eval=  223.3 Rec=-190.6 | VL=14.564 EV=+0.509 | KL=0.0111 clip=0.172 |  1505fps    83s
+  [PPO_Full_Baseline_s42]  133120/300000 | Eval=  274.5 Rec=-141.4 | VL=12.763 EV=+0.455 | KL=0.0099 clip=0.146 |  1528fps    87s
+  [PPO_Full_Baseline_s42]  135168/300000 | Eval=  274.5 Rec=-136.6 | VL=8.895 EV=+0.645 | KL=0.0097 clip=0.147 |  1533fps    88s
+  [PPO_Full_Baseline_s42]  143360/300000 | Eval=  473.9 Rec=-129.8 | VL=17.038 EV=+0.548 | KL=0.0103 clip=0.156 |  1546fps    93s
+  [PPO_Full_Baseline_s42]  145408/300000 | Eval=  473.9 Rec=-128.5 | VL=10.911 EV=+0.664 | KL=0.0102 clip=0.155 |  1553fps    94s
+  [PPO_Full_Baseline_s42]  153600/300000 | Eval=  480.8 Rec=-114.6 | VL=17.664 EV=+0.440 | KL=0.0102 clip=0.148 |  1569fps    98s
+  [PPO_Full_Baseline_s42]  155648/300000 | Eval=  480.8 Rec= -97.7 | VL=19.717 EV=+0.522 | KL=0.0093 clip=0.135 |  1576fps    99s
+  [PPO_Full_Baseline_s42]  163840/300000 | Eval=  553.8 Rec= -73.3 | VL=12.942 EV=+0.736 | KL=0.0087 clip=0.125 |  1589fps   103s
+  [PPO_Full_Baseline_s42]  165888/300000 | Eval=  553.8 Rec= -59.2 | VL=15.998 EV=+0.491 | KL=0.0089 clip=0.128 |  1596fps   104s
+  [PPO_Full_Baseline_s42]  174080/300000 | Eval=  610.6 Rec= -22.6 | VL=20.539 EV=+0.441 | KL=0.0091 clip=0.135 |  1609fps   108s
+  [PPO_Full_Baseline_s42]  176128/300000 | Eval=  610.6 Rec= -12.8 | VL=23.146 EV=+0.449 | KL=0.0090 clip=0.136 |  1614fps   109s
+  [PPO_Full_Baseline_s42]  184320/300000 | Eval=  625.8 Rec=  38.0 | VL=20.494 EV=+0.378 | KL=0.0086 clip=0.124 |  1622fps   114s
+  [PPO_Full_Baseline_s42]  186368/300000 | Eval=  625.8 Rec=  55.3 | VL=20.540 EV=+0.396 | KL=0.0091 clip=0.136 |  1626fps   115s
+  [PPO_Full_Baseline_s42]  194560/300000 | Eval=  664.6 Rec= 106.4 | VL=16.161 EV=+0.774 | KL=0.0086 clip=0.123 |  1636fps   119s
+  [PPO_Full_Baseline_s42]  196608/300000 | Eval=  664.6 Rec= 108.7 | VL=22.968 EV=+0.396 | KL=0.0078 clip=0.111 |  1640fps   120s
+  [PPO_Full_Baseline_s42]  204800/300000 | Eval=  728.8 Rec= 176.9 | VL=25.429 EV=+0.423 | KL=0.0074 clip=0.101 |  1646fps   124s
+  [PPO_Full_Baseline_s42]  206848/300000 | Eval=  728.8 Rec= 175.5 | VL=21.763 EV=+0.393 | KL=0.0073 clip=0.104 |  1650fps   125s
+  [PPO_Full_Baseline_s42]  215040/300000 | Eval=  790.8 Rec= 211.3 | VL=26.869 EV=+0.465 | KL=0.0074 clip=0.103 |  1658fps   130s
+  [PPO_Full_Baseline_s42]  217088/300000 | Eval=  790.8 Rec= 214.2 | VL=25.091 EV=+0.452 | KL=0.0094 clip=0.137 |  1662fps   131s
+  [PPO_Full_Baseline_s42]  225280/300000 | Eval=  855.5 Rec= 229.3 | VL=36.477 EV=+0.438 | KL=0.0067 clip=0.093 |  1670fps   135s
+  [PPO_Full_Baseline_s42]  227328/300000 | Eval=  855.5 Rec= 236.3 | VL=28.270 EV=+0.488 | KL=0.0079 clip=0.115 |  1674fps   136s
+  [PPO_Full_Baseline_s42]  235520/300000 | Eval=  909.7 Rec= 234.4 | VL=35.573 EV=+0.511 | KL=0.0065 clip=0.089 |  1675fps   141s
+  [PPO_Full_Baseline_s42]  237568/300000 | Eval=  909.7 Rec= 244.3 | VL=26.657 EV=+0.412 | KL=0.0062 clip=0.082 |  1676fps   142s
+  [PPO_Full_Baseline_s42]  245760/300000 | Eval=  952.6 Rec= 243.5 | VL=33.867 EV=+0.376 | KL=0.0063 clip=0.081 |  1673fps   147s
+  [PPO_Full_Baseline_s42]  247808/300000 | Eval=  952.6 Rec= 250.8 | VL=30.853 EV=+0.431 | KL=0.0050 clip=0.062 |  1676fps   148s
+  [PPO_Full_Baseline_s42]  256000/300000 | Eval= 1005.6 Rec= 296.0 | VL=34.005 EV=+0.442 | KL=0.0048 clip=0.058 |  1681fps   152s
+  [PPO_Full_Baseline_s42]  258048/300000 | Eval= 1005.6 Rec= 297.6 | VL=38.438 EV=+0.500 | KL=0.0054 clip=0.064 |  1685fps   153s
+  [PPO_Full_Baseline_s42]  266240/300000 | Eval=  928.6 Rec= 327.2 | VL=27.371 EV=+0.506 | KL=0.0053 clip=0.067 |  1682fps   158s
+  [PPO_Full_Baseline_s42]  268288/300000 | Eval=  928.6 Rec= 333.2 | VL=40.173 EV=+0.489 | KL=0.0033 clip=0.028 |  1685fps   159s
+  [PPO_Full_Baseline_s42]  276480/300000 | Eval=  935.9 Rec= 326.1 | VL=30.009 EV=+0.422 | KL=0.0040 clip=0.046 |  1685fps   164s
+  [PPO_Full_Baseline_s42]  278528/300000 | Eval=  935.9 Rec= 338.4 | VL=35.944 EV=+0.444 | KL=0.0039 clip=0.044 |  1687fps   165s
+  [PPO_Full_Baseline_s42]  286720/300000 | Eval=  982.8 Rec= 368.2 | VL=26.211 EV=+0.490 | KL=0.0024 clip=0.019 |  1690fps   170s
+  [PPO_Full_Baseline_s42]  288768/300000 | Eval=  982.8 Rec= 382.5 | VL=44.231 EV=+0.467 | KL=0.0020 clip=0.013 |  1693fps   171s
+  [PPO_Full_Baseline_s42]  296960/300000 | Eval=  922.3 Rec= 406.9 | VL=43.422 EV=+0.466 | KL=0.0002 clip=0.000 |  1686fps   176s
+  [PPO_Full_Baseline_s42]  299008/300000 | Eval=  922.3 Rec= 398.3 | VL=36.774 EV=+0.536 | KL=0.0000 clip=0.000 |  1686fps   177s
+  Done [PPO_Full_Baseline_s42] | time=178.2s | final=955.0 | best=1005.6
+  -> PPO_Full_Baseline HalfCheetah-v4 s42: final=955.0  (178s)
+
+  [4/12] HalfCheetah-v4 | PPO_Full_Baseline | seed=123
+  [PPO_Full_Baseline_s123]    2048/300000 | Eval=    N/A Rec=-682.5 | VL=75.205 EV=-0.035 | KL=0.0086 clip=0.128 |  2221fps     1s
+  [PPO_Full_Baseline_s123]   10240/300000 | Eval=   -2.0 Rec=-635.0 | VL=50.818 EV=+0.002 | KL=0.0077 clip=0.114 |  1797fps     6s
+  [PPO_Full_Baseline_s123]   12288/300000 | Eval=   -2.0 Rec=-631.0 | VL=56.878 EV=-0.003 | KL=0.0081 clip=0.120 |  1838fps     7s
+  [PPO_Full_Baseline_s123]   20480/300000 | Eval=   -2.7 Rec=-594.7 | VL=44.319 EV=+0.225 | KL=0.0086 clip=0.129 |  1773fps    12s
+  [PPO_Full_Baseline_s123]   22528/300000 | Eval=   -2.7 Rec=-582.6 | VL=37.450 EV=+0.215 | KL=0.0082 clip=0.118 |  1768fps    13s
+  [PPO_Full_Baseline_s123]   30720/300000 | Eval=   -9.1 Rec=-535.7 | VL=24.514 EV=+0.359 | KL=0.0098 clip=0.148 |  1770fps    17s
+  [PPO_Full_Baseline_s123]   32768/300000 | Eval=   -9.1 Rec=-516.9 | VL=22.307 EV=+0.347 | KL=0.0082 clip=0.119 |  1792fps    18s
+  [PPO_Full_Baseline_s123]   40960/300000 | Eval=  -21.0 Rec=-485.7 | VL=33.422 EV=+0.242 | KL=0.0100 clip=0.150 |  1773fps    23s
+  [PPO_Full_Baseline_s123]   43008/300000 | Eval=  -21.0 Rec=-483.8 | VL=43.847 EV=+0.245 | KL=0.0094 clip=0.142 |  1784fps    24s
+  [PPO_Full_Baseline_s123]   51200/300000 | Eval=    7.8 Rec=-442.6 | VL=15.360 EV=+0.437 | KL=0.0115 clip=0.177 |  1764fps    29s
+  [PPO_Full_Baseline_s123]   53248/300000 | Eval=    7.8 Rec=-434.7 | VL=12.943 EV=+0.556 | KL=0.0100 clip=0.146 |  1778fps    30s
+  [PPO_Full_Baseline_s123]   61440/300000 | Eval=  -54.2 Rec=-409.3 | VL=8.921 EV=+0.446 | KL=0.0092 clip=0.140 |  1787fps    34s
+  [PPO_Full_Baseline_s123]   63488/300000 | Eval=  -54.2 Rec=-404.6 | VL=30.587 EV=+0.024 | KL=0.0124 clip=0.192 |  1800fps    35s
+  [PPO_Full_Baseline_s123]   71680/300000 | Eval=  -29.2 Rec=-396.3 | VL=15.870 EV=+0.468 | KL=0.0100 clip=0.154 |  1793fps    40s
+  [PPO_Full_Baseline_s123]   73728/300000 | Eval=  -29.2 Rec=-401.3 | VL=19.636 EV=+0.233 | KL=0.0090 clip=0.132 |  1802fps    41s
+  [PPO_Full_Baseline_s123]   81920/300000 | Eval=  -78.8 Rec=-387.1 | VL=5.476 EV=+0.401 | KL=0.0102 clip=0.151 |  1794fps    46s
+  [PPO_Full_Baseline_s123]   83968/300000 | Eval=  -78.8 Rec=-368.0 | VL=18.196 EV=+0.401 | KL=0.0107 clip=0.166 |  1801fps    47s
+  [PPO_Full_Baseline_s123]   92160/300000 | Eval=  -81.9 Rec=-343.2 | VL=15.630 EV=+0.306 | KL=0.0102 clip=0.156 |  1798fps    51s
+  [PPO_Full_Baseline_s123]   94208/300000 | Eval=  -81.9 Rec=-341.0 | VL=12.862 EV=+0.179 | KL=0.0096 clip=0.145 |  1806fps    52s
+  [PPO_Full_Baseline_s123]  102400/300000 | Eval=  -44.9 Rec=-310.3 | VL=5.972 EV=+0.534 | KL=0.0103 clip=0.149 |  1796fps    57s
+  [PPO_Full_Baseline_s123]  104448/300000 | Eval=  -44.9 Rec=-305.3 | VL=4.932 EV=+0.481 | KL=0.0104 clip=0.160 |  1803fps    58s
+  [PPO_Full_Baseline_s123]  112640/300000 | Eval=  -75.1 Rec=-283.6 | VL=11.478 EV=+0.509 | KL=0.0108 clip=0.164 |  1802fps    63s
+  [PPO_Full_Baseline_s123]  114688/300000 | Eval=  -75.1 Rec=-275.9 | VL=12.895 EV=+0.482 | KL=0.0091 clip=0.136 |  1808fps    63s
+  [PPO_Full_Baseline_s123]  122880/300000 | Eval=  -18.1 Rec=-284.2 | VL=15.076 EV=+0.444 | KL=0.0102 clip=0.153 |  1805fps    68s
+  [PPO_Full_Baseline_s123]  124928/300000 | Eval=  -18.1 Rec=-281.5 | VL=7.940 EV=+0.566 | KL=0.0089 clip=0.131 |  1811fps    69s
+  [PPO_Full_Baseline_s123]  133120/300000 | Eval=  -72.3 Rec=-281.8 | VL=12.978 EV=+0.415 | KL=0.0096 clip=0.135 |  1810fps    74s
+  [PPO_Full_Baseline_s123]  135168/300000 | Eval=  -72.3 Rec=-279.3 | VL=10.622 EV=+0.454 | KL=0.0094 clip=0.141 |  1813fps    75s
+  [PPO_Full_Baseline_s123]  143360/300000 | Eval=    9.4 Rec=-242.1 | VL=7.748 EV=+0.488 | KL=0.0092 clip=0.137 |  1804fps    79s
+  [PPO_Full_Baseline_s123]  145408/300000 | Eval=    9.4 Rec=-245.5 | VL=7.168 EV=+0.469 | KL=0.0110 clip=0.164 |  1803fps    81s
+  [PPO_Full_Baseline_s123]  153600/300000 | Eval=  -38.8 Rec=-215.9 | VL=10.072 EV=+0.476 | KL=0.0097 clip=0.146 |  1782fps    86s
+  [PPO_Full_Baseline_s123]  155648/300000 | Eval=  -38.8 Rec=-201.9 | VL=11.663 EV=+0.553 | KL=0.0092 clip=0.138 |  1781fps    87s
+  [PPO_Full_Baseline_s123]  163840/300000 | Eval=   37.9 Rec=-189.1 | VL=9.511 EV=+0.462 | KL=0.0106 clip=0.158 |  1757fps    93s
+  [PPO_Full_Baseline_s123]  165888/300000 | Eval=   37.9 Rec=-180.7 | VL=8.549 EV=+0.571 | KL=0.0098 clip=0.149 |  1759fps    94s
+  [PPO_Full_Baseline_s123]  174080/300000 | Eval=   84.0 Rec=-156.2 | VL=11.306 EV=+0.446 | KL=0.0085 clip=0.122 |  1750fps    99s
+  [PPO_Full_Baseline_s123]  176128/300000 | Eval=   84.0 Rec=-155.1 | VL=9.096 EV=+0.413 | KL=0.0102 clip=0.157 |  1751fps   101s
+  [PPO_Full_Baseline_s123]  184320/300000 | Eval=   46.6 Rec=-144.2 | VL=7.718 EV=+0.413 | KL=0.0069 clip=0.097 |  1739fps   106s
+  [PPO_Full_Baseline_s123]  186368/300000 | Eval=   46.6 Rec=-135.3 | VL=7.799 EV=+0.451 | KL=0.0088 clip=0.129 |  1738fps   107s
+  [PPO_Full_Baseline_s123]  194560/300000 | Eval=   79.0 Rec=-117.3 | VL=6.618 EV=+0.554 | KL=0.0081 clip=0.116 |  1734fps   112s
+  [PPO_Full_Baseline_s123]  196608/300000 | Eval=   79.0 Rec=-113.3 | VL=9.411 EV=+0.580 | KL=0.0085 clip=0.129 |  1736fps   113s
+  [PPO_Full_Baseline_s123]  204800/300000 | Eval=   43.9 Rec= -84.9 | VL=9.260 EV=+0.333 | KL=0.0087 clip=0.127 |  1734fps   118s
+  [PPO_Full_Baseline_s123]  206848/300000 | Eval=   43.9 Rec= -91.3 | VL=15.821 EV=+0.567 | KL=0.0084 clip=0.122 |  1735fps   119s
+  [PPO_Full_Baseline_s123]  215040/300000 | Eval=   53.2 Rec=-110.7 | VL=17.502 EV=+0.540 | KL=0.0082 clip=0.117 |  1727fps   124s
+  [PPO_Full_Baseline_s123]  217088/300000 | Eval=   53.2 Rec=-110.9 | VL=10.533 EV=+0.435 | KL=0.0077 clip=0.115 |  1730fps   125s
+  [PPO_Full_Baseline_s123]  225280/300000 | Eval=  148.0 Rec=-119.4 | VL=9.551 EV=+0.538 | KL=0.0073 clip=0.102 |  1733fps   130s
+  [PPO_Full_Baseline_s123]  227328/300000 | Eval=  148.0 Rec=-116.2 | VL=13.237 EV=+0.464 | KL=0.0082 clip=0.120 |  1735fps   131s
+  [PPO_Full_Baseline_s123]  235520/300000 | Eval=  222.4 Rec= -87.7 | VL=7.528 EV=+0.309 | KL=0.0076 clip=0.110 |  1732fps   136s
+  [PPO_Full_Baseline_s123]  237568/300000 | Eval=  222.4 Rec= -82.1 | VL=8.243 EV=+0.374 | KL=0.0082 clip=0.117 |  1735fps   137s
+  [PPO_Full_Baseline_s123]  245760/300000 | Eval=  233.0 Rec= -59.3 | VL=12.738 EV=+0.466 | KL=0.0074 clip=0.107 |  1737fps   141s
+  [PPO_Full_Baseline_s123]  247808/300000 | Eval=  233.0 Rec= -48.8 | VL=10.153 EV=+0.411 | KL=0.0054 clip=0.068 |  1740fps   142s
+  [PPO_Full_Baseline_s123]  256000/300000 | Eval=  262.6 Rec= -39.0 | VL=12.137 EV=+0.528 | KL=0.0057 clip=0.072 |  1738fps   147s
+  [PPO_Full_Baseline_s123]  258048/300000 | Eval=  262.6 Rec= -41.8 | VL=11.843 EV=+0.514 | KL=0.0060 clip=0.074 |  1742fps   148s
+  [PPO_Full_Baseline_s123]  266240/300000 | Eval=  270.4 Rec= -23.2 | VL=16.703 EV=+0.570 | KL=0.0045 clip=0.052 |  1743fps   153s
+  [PPO_Full_Baseline_s123]  268288/300000 | Eval=  270.4 Rec= -28.5 | VL=14.378 EV=+0.481 | KL=0.0048 clip=0.060 |  1747fps   154s
+  [PPO_Full_Baseline_s123]  276480/300000 | Eval=  292.9 Rec=  -6.0 | VL=16.881 EV=+0.576 | KL=0.0045 clip=0.053 |  1749fps   158s
+  [PPO_Full_Baseline_s123]  278528/300000 | Eval=  292.9 Rec=   9.6 | VL=13.687 EV=+0.535 | KL=0.0027 clip=0.023 |  1752fps   159s
+  [PPO_Full_Baseline_s123]  286720/300000 | Eval=  417.7 Rec=  38.8 | VL=11.469 EV=+0.514 | KL=0.0023 clip=0.019 |  1753fps   163s
+  [PPO_Full_Baseline_s123]  288768/300000 | Eval=  417.7 Rec=  55.0 | VL=20.402 EV=+0.519 | KL=0.0020 clip=0.014 |  1756fps   164s
+  [PPO_Full_Baseline_s123]  296960/300000 | Eval=  458.1 Rec=  72.7 | VL=14.789 EV=+0.487 | KL=0.0002 clip=0.000 |  1758fps   169s
+  [PPO_Full_Baseline_s123]  299008/300000 | Eval=  458.1 Rec=  67.2 | VL=12.546 EV=+0.413 | KL=0.0000 clip=0.000 |  1759fps   170s
+  Done [PPO_Full_Baseline_s123] | time=170.8s | final=340.3 | best=458.1
+  -> PPO_Full_Baseline HalfCheetah-v4 s123: final=340.3  (171s)
+
+  [5/12] HalfCheetah-v4 | PPO_Full_Baseline | seed=456
+  [PPO_Full_Baseline_s456]    2048/300000 | Eval=    N/A Rec=-612.1 | VL=64.977 EV=-0.029 | KL=0.0100 clip=0.147 |  2361fps     1s
+  [PPO_Full_Baseline_s456]   10240/300000 | Eval=   -1.8 Rec=-588.3 | VL=56.090 EV=+0.080 | KL=0.0078 clip=0.109 |  1581fps     6s
+  [PPO_Full_Baseline_s456]   12288/300000 | Eval=   -1.8 Rec=-597.9 | VL=64.566 EV=+0.040 | KL=0.0098 clip=0.149 |  1528fps     8s
+  [PPO_Full_Baseline_s456]   20480/300000 | Eval=   20.3 Rec=-579.9 | VL=41.476 EV=+0.287 | KL=0.0082 clip=0.125 |  1578fps    13s
+  [PPO_Full_Baseline_s456]   22528/300000 | Eval=   20.3 Rec=-577.5 | VL=46.053 EV=+0.062 | KL=0.0086 clip=0.128 |  1562fps    14s
+  [PPO_Full_Baseline_s456]   30720/300000 | Eval=   42.6 Rec=-552.7 | VL=28.241 EV=+0.234 | KL=0.0087 clip=0.127 |  1576fps    19s
+  [PPO_Full_Baseline_s456]   32768/300000 | Eval=   42.6 Rec=-547.2 | VL=58.818 EV=+0.306 | KL=0.0098 clip=0.153 |  1604fps    20s
+  [PPO_Full_Baseline_s456]   40960/300000 | Eval=   22.9 Rec=-503.1 | VL=21.064 EV=+0.236 | KL=0.0104 clip=0.154 |  1615fps    25s
+  [PPO_Full_Baseline_s456]   43008/300000 | Eval=   22.9 Rec=-487.3 | VL=20.809 EV=+0.316 | KL=0.0095 clip=0.143 |  1633fps    26s
+  [PPO_Full_Baseline_s456]   51200/300000 | Eval=  -28.0 Rec=-449.2 | VL=22.448 EV=+0.292 | KL=0.0110 clip=0.166 |  1638fps    31s
+  [PPO_Full_Baseline_s456]   53248/300000 | Eval=  -28.0 Rec=-434.2 | VL=15.852 EV=+0.293 | KL=0.0108 clip=0.167 |  1650fps    32s
+  [PPO_Full_Baseline_s456]   61440/300000 | Eval=  -75.9 Rec=-424.6 | VL=15.680 EV=+0.297 | KL=0.0097 clip=0.144 |  1634fps    38s
+  [PPO_Full_Baseline_s456]   63488/300000 | Eval=  -75.9 Rec=-418.0 | VL=9.852 EV=+0.276 | KL=0.0087 clip=0.120 |  1647fps    39s
+  [PPO_Full_Baseline_s456]   71680/300000 | Eval=  -60.1 Rec=-382.7 | VL=8.681 EV=+0.354 | KL=0.0114 clip=0.174 |  1643fps    44s
+  [PPO_Full_Baseline_s456]   73728/300000 | Eval=  -60.1 Rec=-375.9 | VL=19.479 EV=+0.799 | KL=0.0096 clip=0.144 |  1649fps    45s
+  [PPO_Full_Baseline_s456]   81920/300000 | Eval=  -57.7 Rec=-344.6 | VL=13.153 EV=+0.451 | KL=0.0117 clip=0.184 |  1566fps    52s
+  [PPO_Full_Baseline_s456]   83968/300000 | Eval=  -57.7 Rec=-344.1 | VL=17.164 EV=+0.253 | KL=0.0100 clip=0.150 |  1567fps    54s
+  [PPO_Full_Baseline_s456]   92160/300000 | Eval=   11.6 Rec=-331.4 | VL=9.111 EV=+0.451 | KL=0.0097 clip=0.147 |  1568fps    59s
+  [PPO_Full_Baseline_s456]   94208/300000 | Eval=   11.6 Rec=-321.2 | VL=13.852 EV=+0.473 | KL=0.0101 clip=0.151 |  1574fps    60s
+  [PPO_Full_Baseline_s456]  102400/300000 | Eval=  -12.8 Rec=-284.3 | VL=7.119 EV=+0.662 | KL=0.0097 clip=0.142 |  1577fps    65s
+  [PPO_Full_Baseline_s456]  104448/300000 | Eval=  -12.8 Rec=-275.5 | VL=8.546 EV=+0.511 | KL=0.0120 clip=0.182 |  1585fps    66s
+  [PPO_Full_Baseline_s456]  112640/300000 | Eval=   59.5 Rec=-250.6 | VL=16.433 EV=+0.297 | KL=0.0101 clip=0.153 |  1561fps    72s
+  [PPO_Full_Baseline_s456]  114688/300000 | Eval=   59.5 Rec=-243.1 | VL=9.425 EV=+0.624 | KL=0.0111 clip=0.172 |  1567fps    73s
+  [PPO_Full_Baseline_s456]  122880/300000 | Eval=   18.2 Rec=-233.0 | VL=7.551 EV=+0.587 | KL=0.0107 clip=0.164 |  1558fps    79s
+  [PPO_Full_Baseline_s456]  124928/300000 | Eval=   18.2 Rec=-222.2 | VL=12.434 EV=+0.480 | KL=0.0104 clip=0.153 |  1564fps    80s
+  [PPO_Full_Baseline_s456]  133120/300000 | Eval=    4.4 Rec=-220.4 | VL=11.573 EV=+0.504 | KL=0.0111 clip=0.170 |  1560fps    85s
+  [PPO_Full_Baseline_s456]  135168/300000 | Eval=    4.4 Rec=-224.1 | VL=11.369 EV=+0.418 | KL=0.0101 clip=0.153 |  1565fps    86s
+  [PPO_Full_Baseline_s456]  143360/300000 | Eval=   45.2 Rec=-215.1 | VL=14.382 EV=+0.366 | KL=0.0089 clip=0.132 |  1575fps    91s
+  [PPO_Full_Baseline_s456]  145408/300000 | Eval=   45.2 Rec=-227.6 | VL=8.188 EV=+0.482 | KL=0.0100 clip=0.149 |  1581fps    92s
+  [PPO_Full_Baseline_s456]  153600/300000 | Eval=   68.0 Rec=-196.8 | VL=9.031 EV=+0.580 | KL=0.0092 clip=0.134 |  1569fps    98s
+  [PPO_Full_Baseline_s456]  155648/300000 | Eval=   68.0 Rec=-186.8 | VL=11.664 EV=+0.603 | KL=0.0085 clip=0.128 |  1570fps    99s
+  [PPO_Full_Baseline_s456]  163840/300000 | Eval=  173.2 Rec=-149.8 | VL=11.391 EV=+0.404 | KL=0.0108 clip=0.162 |  1569fps   104s
+  [PPO_Full_Baseline_s456]  165888/300000 | Eval=  173.2 Rec=-130.4 | VL=13.640 EV=+0.469 | KL=0.0095 clip=0.140 |  1569fps   106s
+  [PPO_Full_Baseline_s456]  174080/300000 | Eval=  276.7 Rec=-102.2 | VL=14.991 EV=+0.324 | KL=0.0086 clip=0.131 |  1568fps   111s
+  [PPO_Full_Baseline_s456]  176128/300000 | Eval=  276.7 Rec= -97.7 | VL=13.070 EV=+0.570 | KL=0.0083 clip=0.124 |  1568fps   112s
+  [PPO_Full_Baseline_s456]  184320/300000 | Eval=  330.2 Rec= -55.8 | VL=18.476 EV=+0.382 | KL=0.0083 clip=0.118 |  1562fps   118s
+  [PPO_Full_Baseline_s456]  186368/300000 | Eval=  330.2 Rec= -43.2 | VL=13.273 EV=+0.399 | KL=0.0095 clip=0.146 |  1563fps   119s
+  [PPO_Full_Baseline_s456]  194560/300000 | Eval=  560.4 Rec=   0.8 | VL=17.811 EV=+0.427 | KL=0.0087 clip=0.135 |  1565fps   124s
+  [PPO_Full_Baseline_s456]  196608/300000 | Eval=  560.4 Rec=   1.5 | VL=19.083 EV=+0.376 | KL=0.0079 clip=0.117 |  1567fps   125s
+  [PPO_Full_Baseline_s456]  204800/300000 | Eval=  621.8 Rec=  -3.0 | VL=24.172 EV=+0.448 | KL=0.0076 clip=0.110 |  1563fps   131s
+  [PPO_Full_Baseline_s456]  206848/300000 | Eval=  621.8 Rec=  -9.2 | VL=21.729 EV=+0.419 | KL=0.0076 clip=0.106 |  1567fps   132s
+  [PPO_Full_Baseline_s456]  215040/300000 | Eval=  758.1 Rec=   5.8 | VL=21.647 EV=+0.470 | KL=0.0069 clip=0.090 |  1575fps   136s
+  [PPO_Full_Baseline_s456]  217088/300000 | Eval=  758.1 Rec=  15.5 | VL=19.518 EV=+0.437 | KL=0.0065 clip=0.090 |  1579fps   137s
+  [PPO_Full_Baseline_s456]  225280/300000 | Eval=  764.9 Rec=  74.2 | VL=19.799 EV=+0.397 | KL=0.0074 clip=0.105 |  1583fps   142s
+  [PPO_Full_Baseline_s456]  227328/300000 | Eval=  764.9 Rec=  85.7 | VL=20.547 EV=+0.715 | KL=0.0061 clip=0.078 |  1586fps   143s
+  [PPO_Full_Baseline_s456]  235520/300000 | Eval=  688.5 Rec=  92.6 | VL=18.730 EV=+0.716 | KL=0.0060 clip=0.080 |  1594fps   148s
+  [PPO_Full_Baseline_s456]  237568/300000 | Eval=  688.5 Rec= 104.8 | VL=20.789 EV=+0.360 | KL=0.0059 clip=0.075 |  1597fps   149s
+  [PPO_Full_Baseline_s456]  245760/300000 | Eval=  760.8 Rec= 137.5 | VL=25.191 EV=+0.452 | KL=0.0057 clip=0.070 |  1600fps   154s
+  [PPO_Full_Baseline_s456]  247808/300000 | Eval=  760.8 Rec= 150.7 | VL=29.762 EV=+0.467 | KL=0.0065 clip=0.089 |  1600fps   155s
+  [PPO_Full_Baseline_s456]  256000/300000 | Eval=  827.5 Rec= 196.3 | VL=24.578 EV=+0.416 | KL=0.0064 clip=0.088 |  1604fps   160s
+  [PPO_Full_Baseline_s456]  258048/300000 | Eval=  827.5 Rec= 199.2 | VL=25.901 EV=+0.494 | KL=0.0052 clip=0.066 |  1607fps   161s
+  [PPO_Full_Baseline_s456]  266240/300000 | Eval=  760.5 Rec= 183.6 | VL=32.878 EV=+0.459 | KL=0.0056 clip=0.074 |  1611fps   165s
+  [PPO_Full_Baseline_s456]  268288/300000 | Eval=  760.5 Rec= 183.1 | VL=33.402 EV=+0.500 | KL=0.0046 clip=0.051 |  1614fps   166s
+  [PPO_Full_Baseline_s456]  276480/300000 | Eval=  831.8 Rec= 209.6 | VL=36.838 EV=+0.473 | KL=0.0036 clip=0.036 |  1614fps   171s
+  [PPO_Full_Baseline_s456]  278528/300000 | Eval=  831.8 Rec= 234.8 | VL=40.051 EV=+0.458 | KL=0.0040 clip=0.046 |  1617fps   172s
+  [PPO_Full_Baseline_s456]  286720/300000 | Eval=  744.1 Rec= 289.7 | VL=37.707 EV=+0.456 | KL=0.0023 clip=0.018 |  1622fps   177s
+  [PPO_Full_Baseline_s456]  288768/300000 | Eval=  744.1 Rec= 307.5 | VL=42.041 EV=+0.463 | KL=0.0015 clip=0.008 |  1624fps   178s
+  [PPO_Full_Baseline_s456]  296960/300000 | Eval=  827.9 Rec= 324.7 | VL=34.221 EV=+0.463 | KL=0.0002 clip=0.000 |  1627fps   182s
+  [PPO_Full_Baseline_s456]  299008/300000 | Eval=  827.9 Rec= 316.0 | VL=36.669 EV=+0.452 | KL=0.0000 clip=0.000 |  1628fps   184s
+  Done [PPO_Full_Baseline_s456] | time=184.6s | final=798.4 | best=831.8
+  -> PPO_Full_Baseline HalfCheetah-v4 s456: final=798.4  (185s)
+
+  [6/12] HalfCheetah-v4 | PPO_Full_Baseline | seed=789
+  [PPO_Full_Baseline_s789]    2048/300000 | Eval=    N/A Rec=-635.1 | VL=65.659 EV=-0.026 | KL=0.0080 clip=0.113 |  2042fps     1s
+  [PPO_Full_Baseline_s789]   10240/300000 | Eval=   -6.0 Rec=-610.8 | VL=52.959 EV=-0.055 | KL=0.0078 clip=0.112 |  1594fps     6s
+  [PPO_Full_Baseline_s789]   12288/300000 | Eval=   -6.0 Rec=-606.3 | VL=52.821 EV=+0.050 | KL=0.0098 clip=0.152 |  1636fps     8s
+  [PPO_Full_Baseline_s789]   20480/300000 | Eval=   -2.6 Rec=-589.6 | VL=45.893 EV=+0.173 | KL=0.0083 clip=0.122 |  1497fps    14s
+  [PPO_Full_Baseline_s789]   22528/300000 | Eval=   -2.6 Rec=-577.8 | VL=50.019 EV=+0.232 | KL=0.0089 clip=0.129 |  1528fps    15s
+  [PPO_Full_Baseline_s789]   30720/300000 | Eval=   -7.6 Rec=-537.6 | VL=36.300 EV=+0.104 | KL=0.0082 clip=0.124 |  1564fps    20s
+  [PPO_Full_Baseline_s789]   32768/300000 | Eval=   -7.6 Rec=-541.3 | VL=60.591 EV=+0.163 | KL=0.0098 clip=0.151 |  1592fps    21s
+  [PPO_Full_Baseline_s789]   40960/300000 | Eval=   -4.1 Rec=-515.9 | VL=34.688 EV=+0.260 | KL=0.0107 clip=0.159 |  1625fps    25s
+  [PPO_Full_Baseline_s789]   43008/300000 | Eval=   -4.1 Rec=-505.7 | VL=20.952 EV=+0.410 | KL=0.0094 clip=0.142 |  1643fps    26s
+  [PPO_Full_Baseline_s789]   51200/300000 | Eval=  117.6 Rec=-491.4 | VL=22.275 EV=+0.433 | KL=0.0102 clip=0.157 |  1631fps    31s
+  [PPO_Full_Baseline_s789]   53248/300000 | Eval=  117.6 Rec=-468.0 | VL=20.243 EV=+0.447 | KL=0.0088 clip=0.132 |  1646fps    32s
+  [PPO_Full_Baseline_s789]   61440/300000 | Eval=   57.7 Rec=-427.8 | VL=17.208 EV=+0.563 | KL=0.0106 clip=0.151 |  1656fps    37s
+  [PPO_Full_Baseline_s789]   63488/300000 | Eval=   57.7 Rec=-425.4 | VL=13.735 EV=+0.657 | KL=0.0097 clip=0.147 |  1663fps    38s
+  [PPO_Full_Baseline_s789]   71680/300000 | Eval=   -3.9 Rec=-399.8 | VL=15.360 EV=+0.283 | KL=0.0108 clip=0.167 |  1671fps    43s
+  [PPO_Full_Baseline_s789]   73728/300000 | Eval=   -3.9 Rec=-398.2 | VL=12.044 EV=+0.587 | KL=0.0105 clip=0.161 |  1684fps    44s
+  [PPO_Full_Baseline_s789]   81920/300000 | Eval=   21.7 Rec=-375.9 | VL=15.808 EV=+0.472 | KL=0.0096 clip=0.149 |  1673fps    49s
+  [PPO_Full_Baseline_s789]   83968/300000 | Eval=   21.7 Rec=-373.0 | VL=12.685 EV=+0.591 | KL=0.0104 clip=0.160 |  1680fps    50s
+  [PPO_Full_Baseline_s789]   92160/300000 | Eval=   -2.1 Rec=-347.5 | VL=14.334 EV=+0.419 | KL=0.0098 clip=0.148 |  1685fps    55s
+  [PPO_Full_Baseline_s789]   94208/300000 | Eval=   -2.1 Rec=-338.1 | VL=14.625 EV=+0.570 | KL=0.0109 clip=0.165 |  1695fps    56s
+  [PPO_Full_Baseline_s789]  102400/300000 | Eval=   -0.0 Rec=-333.2 | VL=8.950 EV=+0.410 | KL=0.0093 clip=0.142 |  1697fps    60s
+  [PPO_Full_Baseline_s789]  104448/300000 | Eval=   -0.0 Rec=-327.2 | VL=9.364 EV=+0.611 | KL=0.0097 clip=0.141 |  1704fps    61s
+  [PPO_Full_Baseline_s789]  112640/300000 | Eval=   -2.7 Rec=-320.1 | VL=9.725 EV=+0.650 | KL=0.0099 clip=0.148 |  1694fps    66s
+  [PPO_Full_Baseline_s789]  114688/300000 | Eval=   -2.7 Rec=-320.1 | VL=10.239 EV=+0.583 | KL=0.0098 clip=0.143 |  1699fps    67s
+  [PPO_Full_Baseline_s789]  122880/300000 | Eval=   -6.1 Rec=-299.9 | VL=8.494 EV=+0.637 | KL=0.0086 clip=0.130 |  1702fps    72s
+  [PPO_Full_Baseline_s789]  124928/300000 | Eval=   -6.1 Rec=-295.2 | VL=6.760 EV=+0.710 | KL=0.0104 clip=0.158 |  1705fps    73s
+  [PPO_Full_Baseline_s789]  133120/300000 | Eval=    9.1 Rec=-269.5 | VL=5.659 EV=+0.563 | KL=0.0088 clip=0.132 |  1689fps    79s
+  [PPO_Full_Baseline_s789]  135168/300000 | Eval=    9.1 Rec=-272.3 | VL=8.941 EV=+0.495 | KL=0.0101 clip=0.154 |  1694fps    80s
+  [PPO_Full_Baseline_s789]  143360/300000 | Eval=   17.8 Rec=-244.8 | VL=7.736 EV=+0.653 | KL=0.0112 clip=0.172 |  1688fps    85s
+  [PPO_Full_Baseline_s789]  145408/300000 | Eval=   17.8 Rec=-241.1 | VL=10.925 EV=+0.573 | KL=0.0096 clip=0.151 |  1691fps    86s
+  [PPO_Full_Baseline_s789]  153600/300000 | Eval=   20.2 Rec=-225.7 | VL=11.646 EV=+0.464 | KL=0.0089 clip=0.126 |  1681fps    91s
+  [PPO_Full_Baseline_s789]  155648/300000 | Eval=   20.2 Rec=-207.6 | VL=7.712 EV=+0.671 | KL=0.0095 clip=0.144 |  1686fps    92s
+  [PPO_Full_Baseline_s789]  163840/300000 | Eval=   83.6 Rec=-202.7 | VL=4.719 EV=+0.653 | KL=0.0091 clip=0.133 |  1687fps    97s
+  [PPO_Full_Baseline_s789]  165888/300000 | Eval=   83.6 Rec=-202.2 | VL=5.783 EV=+0.535 | KL=0.0092 clip=0.137 |  1692fps    98s
+  [PPO_Full_Baseline_s789]  174080/300000 | Eval=   90.1 Rec=-177.0 | VL=9.810 EV=+0.546 | KL=0.0084 clip=0.122 |  1687fps   103s
+  [PPO_Full_Baseline_s789]  176128/300000 | Eval=   90.1 Rec=-185.6 | VL=14.358 EV=+0.452 | KL=0.0094 clip=0.140 |  1688fps   104s
+  [PPO_Full_Baseline_s789]  184320/300000 | Eval=   82.8 Rec=-167.2 | VL=7.485 EV=+0.535 | KL=0.0099 clip=0.154 |  1680fps   110s
+  [PPO_Full_Baseline_s789]  186368/300000 | Eval=   82.8 Rec=-160.2 | VL=5.778 EV=+0.323 | KL=0.0085 clip=0.119 |  1681fps   111s
+  [PPO_Full_Baseline_s789]  194560/300000 | Eval=  161.0 Rec=-146.0 | VL=8.999 EV=+0.467 | KL=0.0080 clip=0.116 |  1676fps   116s
+  [PPO_Full_Baseline_s789]  196608/300000 | Eval=  161.0 Rec=-137.1 | VL=7.105 EV=+0.252 | KL=0.0084 clip=0.124 |  1678fps   117s
+  [PPO_Full_Baseline_s789]  204800/300000 | Eval=  168.0 Rec=-116.3 | VL=9.633 EV=+0.412 | KL=0.0097 clip=0.151 |  1677fps   122s
+  [PPO_Full_Baseline_s789]  206848/300000 | Eval=  168.0 Rec=-118.6 | VL=10.571 EV=+0.637 | KL=0.0087 clip=0.127 |  1677fps   123s
+  [PPO_Full_Baseline_s789]  215040/300000 | Eval=  153.7 Rec=-113.1 | VL=7.760 EV=+0.545 | KL=0.0074 clip=0.105 |  1678fps   128s
+  [PPO_Full_Baseline_s789]  217088/300000 | Eval=  153.7 Rec=-105.0 | VL=9.371 EV=+0.583 | KL=0.0083 clip=0.118 |  1683fps   129s
+  [PPO_Full_Baseline_s789]  225280/300000 | Eval=  226.1 Rec= -99.0 | VL=7.953 EV=+0.211 | KL=0.0076 clip=0.107 |  1688fps   133s
+  [PPO_Full_Baseline_s789]  227328/300000 | Eval=  226.1 Rec= -84.5 | VL=7.815 EV=+0.303 | KL=0.0068 clip=0.095 |  1692fps   134s
+  [PPO_Full_Baseline_s789]  235520/300000 | Eval=  291.4 Rec= -55.2 | VL=6.561 EV=+0.485 | KL=0.0063 clip=0.086 |  1691fps   139s
+  [PPO_Full_Baseline_s789]  237568/300000 | Eval=  291.4 Rec= -59.3 | VL=7.363 EV=+0.516 | KL=0.0082 clip=0.115 |  1695fps   140s
+  [PPO_Full_Baseline_s789]  245760/300000 | Eval=  306.5 Rec= -21.5 | VL=6.722 EV=+0.376 | KL=0.0073 clip=0.104 |  1693fps   145s
+  [PPO_Full_Baseline_s789]  247808/300000 | Eval=  306.5 Rec= -23.8 | VL=8.169 EV=+0.324 | KL=0.0061 clip=0.083 |  1696fps   146s
+  [PPO_Full_Baseline_s789]  256000/300000 | Eval=  328.2 Rec= -16.1 | VL=7.546 EV=+0.381 | KL=0.0068 clip=0.094 |  1695fps   151s
+  [PPO_Full_Baseline_s789]  258048/300000 | Eval=  328.2 Rec=  -4.3 | VL=6.622 EV=+0.307 | KL=0.0067 clip=0.092 |  1697fps   152s
+  [PPO_Full_Baseline_s789]  266240/300000 | Eval=  486.8 Rec=   6.0 | VL=9.414 EV=+0.312 | KL=0.0059 clip=0.077 |  1700fps   157s
+  [PPO_Full_Baseline_s789]  268288/300000 | Eval=  486.8 Rec=  13.1 | VL=9.929 EV=+0.396 | KL=0.0053 clip=0.068 |  1703fps   157s
+  [PPO_Full_Baseline_s789]  276480/300000 | Eval=  474.6 Rec=  35.7 | VL=8.691 EV=+0.453 | KL=0.0052 clip=0.069 |  1705fps   162s
+  [PPO_Full_Baseline_s789]  278528/300000 | Eval=  474.6 Rec=  27.4 | VL=10.791 EV=+0.612 | KL=0.0032 clip=0.030 |  1708fps   163s
+  [PPO_Full_Baseline_s789]  286720/300000 | Eval=  634.0 Rec=  40.9 | VL=9.820 EV=+0.230 | KL=0.0026 clip=0.022 |  1708fps   168s
+  [PPO_Full_Baseline_s789]  288768/300000 | Eval=  634.0 Rec=  51.8 | VL=10.780 EV=+0.207 | KL=0.0018 clip=0.010 |  1711fps   169s
+  [PPO_Full_Baseline_s789]  296960/300000 | Eval=  629.1 Rec=  76.5 | VL=14.604 EV=+0.671 | KL=0.0002 clip=0.000 |  1714fps   173s
+  [PPO_Full_Baseline_s789]  299008/300000 | Eval=  629.1 Rec=  93.5 | VL=15.000 EV=+0.535 | KL=0.0000 clip=0.000 |  1717fps   174s
+  Done [PPO_Full_Baseline_s789] | time=175.0s | final=510.5 | best=634.0
+  -> PPO_Full_Baseline HalfCheetah-v4 s789: final=510.5  (175s)
+
+  [7/12] HalfCheetah-v4 | PPO_Full_Baseline | seed=1234
+  [PPO_Full_Baseline_s1234]    2048/300000 | Eval=    N/A Rec=-609.6 | VL=71.722 EV=-0.004 | KL=0.0075 clip=0.104 |  2268fps     1s
+  [PPO_Full_Baseline_s1234]   10240/300000 | Eval=  -24.7 Rec=-604.5 | VL=71.333 EV=+0.084 | KL=0.0081 clip=0.112 |  1926fps     5s
+  [PPO_Full_Baseline_s1234]   12288/300000 | Eval=  -24.7 Rec=-604.2 | VL=54.866 EV=+0.095 | KL=0.0100 clip=0.148 |  1959fps     6s
+  [PPO_Full_Baseline_s1234]   20480/300000 | Eval=  366.9 Rec=-588.9 | VL=41.505 EV=+0.207 | KL=0.0097 clip=0.147 |  1831fps    11s
+  [PPO_Full_Baseline_s1234]   22528/300000 | Eval=  366.9 Rec=-575.3 | VL=38.063 EV=+0.238 | KL=0.0081 clip=0.120 |  1859fps    12s
+  [PPO_Full_Baseline_s1234]   30720/300000 | Eval=  126.0 Rec=-518.4 | VL=34.389 EV=+0.281 | KL=0.0085 clip=0.122 |  1847fps    17s
+  [PPO_Full_Baseline_s1234]   32768/300000 | Eval=  126.0 Rec=-501.4 | VL=26.201 EV=+0.315 | KL=0.0093 clip=0.137 |  1863fps    18s
+  [PPO_Full_Baseline_s1234]   40960/300000 | Eval=   45.3 Rec=-442.3 | VL=24.744 EV=+0.373 | KL=0.0098 clip=0.146 |  1851fps    22s
+  [PPO_Full_Baseline_s1234]   43008/300000 | Eval=   45.3 Rec=-438.0 | VL=19.855 EV=+0.496 | KL=0.0083 clip=0.119 |  1866fps    23s
+  [PPO_Full_Baseline_s1234]   51200/300000 | Eval=   90.0 Rec=-425.7 | VL=19.069 EV=+0.411 | KL=0.0086 clip=0.120 |  1860fps    28s
+  [PPO_Full_Baseline_s1234]   53248/300000 | Eval=   90.0 Rec=-424.2 | VL=15.884 EV=+0.473 | KL=0.0103 clip=0.158 |  1866fps    29s
+  [PPO_Full_Baseline_s1234]   61440/300000 | Eval=   45.1 Rec=-400.4 | VL=13.330 EV=+0.429 | KL=0.0100 clip=0.149 |  1849fps    33s
+  [PPO_Full_Baseline_s1234]   63488/300000 | Eval=   45.1 Rec=-400.2 | VL=18.364 EV=+0.391 | KL=0.0102 clip=0.151 |  1849fps    34s
+  [PPO_Full_Baseline_s1234]   71680/300000 | Eval=  100.4 Rec=-369.5 | VL=16.163 EV=+0.390 | KL=0.0103 clip=0.153 |  1825fps    39s
+  [PPO_Full_Baseline_s1234]   73728/300000 | Eval=  100.4 Rec=-369.2 | VL=14.787 EV=+0.429 | KL=0.0096 clip=0.150 |  1835fps    40s
+  [PPO_Full_Baseline_s1234]   81920/300000 | Eval=   85.5 Rec=-355.2 | VL=11.611 EV=+0.646 | KL=0.0094 clip=0.134 |  1836fps    45s
+  [PPO_Full_Baseline_s1234]   83968/300000 | Eval=   85.5 Rec=-348.3 | VL=24.622 EV=+0.284 | KL=0.0102 clip=0.151 |  1842fps    46s
+  [PPO_Full_Baseline_s1234]   92160/300000 | Eval=  128.6 Rec=-317.6 | VL=19.641 EV=+0.413 | KL=0.0092 clip=0.140 |  1844fps    50s
+  [PPO_Full_Baseline_s1234]   94208/300000 | Eval=  128.6 Rec=-296.4 | VL=6.604 EV=+0.564 | KL=0.0115 clip=0.177 |  1850fps    51s
+  [PPO_Full_Baseline_s1234]  102400/300000 | Eval=   65.4 Rec=-286.7 | VL=6.746 EV=+0.494 | KL=0.0106 clip=0.160 |  1823fps    56s
+  [PPO_Full_Baseline_s1234]  104448/300000 | Eval=   65.4 Rec=-274.5 | VL=8.957 EV=+0.561 | KL=0.0098 clip=0.143 |  1825fps    57s
+  [PPO_Full_Baseline_s1234]  112640/300000 | Eval=   48.6 Rec=-252.0 | VL=9.938 EV=+0.594 | KL=0.0098 clip=0.147 |  1811fps    62s
+  [PPO_Full_Baseline_s1234]  114688/300000 | Eval=   48.6 Rec=-255.0 | VL=7.613 EV=+0.556 | KL=0.0092 clip=0.135 |  1814fps    63s
+  [PPO_Full_Baseline_s1234]  122880/300000 | Eval=   83.7 Rec=-224.2 | VL=10.125 EV=+0.425 | KL=0.0098 clip=0.149 |  1801fps    68s
+  [PPO_Full_Baseline_s1234]  124928/300000 | Eval=   83.7 Rec=-216.3 | VL=10.272 EV=+0.388 | KL=0.0096 clip=0.143 |  1803fps    69s
+  [PPO_Full_Baseline_s1234]  133120/300000 | Eval=  109.5 Rec=-217.2 | VL=7.121 EV=+0.652 | KL=0.0090 clip=0.132 |  1796fps    74s
+  [PPO_Full_Baseline_s1234]  135168/300000 | Eval=  109.5 Rec=-222.6 | VL=12.505 EV=+0.346 | KL=0.0099 clip=0.149 |  1797fps    75s
+  [PPO_Full_Baseline_s1234]  143360/300000 | Eval=   88.4 Rec=-199.5 | VL=7.613 EV=+0.689 | KL=0.0121 clip=0.189 |  1790fps    80s
+  [PPO_Full_Baseline_s1234]  145408/300000 | Eval=   88.4 Rec=-192.0 | VL=13.092 EV=+0.554 | KL=0.0085 clip=0.125 |  1794fps    81s
+  [PPO_Full_Baseline_s1234]  153600/300000 | Eval=   79.3 Rec=-150.5 | VL=8.775 EV=+0.691 | KL=0.0078 clip=0.108 |  1790fps    86s
+  [PPO_Full_Baseline_s1234]  155648/300000 | Eval=   79.3 Rec=-134.2 | VL=7.388 EV=+0.710 | KL=0.0095 clip=0.139 |  1793fps    87s
+  [PPO_Full_Baseline_s1234]  163840/300000 | Eval=   94.7 Rec=-118.0 | VL=11.250 EV=+0.467 | KL=0.0101 clip=0.155 |  1783fps    92s
+  [PPO_Full_Baseline_s1234]  165888/300000 | Eval=   94.7 Rec=-114.2 | VL=12.510 EV=+0.541 | KL=0.0093 clip=0.137 |  1787fps    93s
+  [PPO_Full_Baseline_s1234]  174080/300000 | Eval=   71.8 Rec=-130.3 | VL=8.129 EV=+0.728 | KL=0.0084 clip=0.122 |  1769fps    98s
+  [PPO_Full_Baseline_s1234]  176128/300000 | Eval=   71.8 Rec=-138.1 | VL=7.882 EV=+0.572 | KL=0.0080 clip=0.117 |  1774fps    99s
+  [PPO_Full_Baseline_s1234]  184320/300000 | Eval=   97.0 Rec=-129.2 | VL=9.750 EV=+0.616 | KL=0.0084 clip=0.124 |  1773fps   104s
+  [PPO_Full_Baseline_s1234]  186368/300000 | Eval=   97.0 Rec=-141.3 | VL=10.024 EV=+0.594 | KL=0.0084 clip=0.128 |  1777fps   105s
+  [PPO_Full_Baseline_s1234]  194560/300000 | Eval=  128.2 Rec=-125.2 | VL=8.554 EV=+0.709 | KL=0.0080 clip=0.119 |  1769fps   110s
+  [PPO_Full_Baseline_s1234]  196608/300000 | Eval=  128.2 Rec=-121.3 | VL=11.205 EV=+0.544 | KL=0.0089 clip=0.133 |  1772fps   111s
+  [PPO_Full_Baseline_s1234]  204800/300000 | Eval=  157.6 Rec=-118.7 | VL=8.253 EV=+0.506 | KL=0.0070 clip=0.096 |  1768fps   116s
+  [PPO_Full_Baseline_s1234]  206848/300000 | Eval=  157.6 Rec=-111.3 | VL=10.570 EV=+0.250 | KL=0.0089 clip=0.135 |  1770fps   117s
+  [PPO_Full_Baseline_s1234]  215040/300000 | Eval=  260.0 Rec= -98.8 | VL=14.708 EV=+0.455 | KL=0.0079 clip=0.114 |  1762fps   122s
+  [PPO_Full_Baseline_s1234]  217088/300000 | Eval=  260.0 Rec= -88.6 | VL=10.510 EV=+0.538 | KL=0.0081 clip=0.114 |  1765fps   123s
+  [PPO_Full_Baseline_s1234]  225280/300000 | Eval=  240.4 Rec= -80.3 | VL=13.454 EV=+0.245 | KL=0.0068 clip=0.094 |  1759fps   128s
+  [PPO_Full_Baseline_s1234]  227328/300000 | Eval=  240.4 Rec= -76.0 | VL=15.253 EV=+0.458 | KL=0.0062 clip=0.083 |  1758fps   129s
+  [PPO_Full_Baseline_s1234]  235520/300000 | Eval=  292.9 Rec= -41.8 | VL=8.091 EV=+0.612 | KL=0.0064 clip=0.086 |  1737fps   136s
+  [PPO_Full_Baseline_s1234]  237568/300000 | Eval=  292.9 Rec= -37.0 | VL=10.448 EV=+0.638 | KL=0.0071 clip=0.094 |  1738fps   137s
+  [PPO_Full_Baseline_s1234]  245760/300000 | Eval=  279.8 Rec= -15.1 | VL=9.749 EV=+0.327 | KL=0.0067 clip=0.091 |  1738fps   141s
+  [PPO_Full_Baseline_s1234]  247808/300000 | Eval=  279.8 Rec=  -8.0 | VL=14.709 EV=+0.407 | KL=0.0075 clip=0.107 |  1735fps   143s
+  [PPO_Full_Baseline_s1234]  256000/300000 | Eval=  534.1 Rec=  -1.1 | VL=14.380 EV=+0.483 | KL=0.0055 clip=0.070 |  1725fps   148s
+  [PPO_Full_Baseline_s1234]  258048/300000 | Eval=  534.1 Rec=   0.9 | VL=19.560 EV=+0.472 | KL=0.0050 clip=0.062 |  1728fps   149s
+  [PPO_Full_Baseline_s1234]  266240/300000 | Eval=  555.1 Rec=  31.4 | VL=16.474 EV=+0.438 | KL=0.0052 clip=0.067 |  1725fps   154s
+  [PPO_Full_Baseline_s1234]  268288/300000 | Eval=  555.1 Rec=  35.8 | VL=17.687 EV=+0.439 | KL=0.0039 clip=0.041 |  1729fps   155s
+  [PPO_Full_Baseline_s1234]  276480/300000 | Eval=  611.2 Rec=  63.0 | VL=12.406 EV=+0.611 | KL=0.0036 clip=0.037 |  1732fps   160s
+  [PPO_Full_Baseline_s1234]  278528/300000 | Eval=  611.2 Rec=  68.5 | VL=17.549 EV=+0.518 | KL=0.0047 clip=0.060 |  1735fps   161s
+  [PPO_Full_Baseline_s1234]  286720/300000 | Eval=  644.7 Rec=  71.7 | VL=11.766 EV=+0.465 | KL=0.0017 clip=0.007 |  1737fps   165s
+  [PPO_Full_Baseline_s1234]  288768/300000 | Eval=  644.7 Rec=  67.1 | VL=15.292 EV=+0.536 | KL=0.0012 clip=0.004 |  1740fps   166s
+  [PPO_Full_Baseline_s1234]  296960/300000 | Eval=  661.1 Rec=  66.9 | VL=10.061 EV=+0.403 | KL=0.0001 clip=0.000 |  1741fps   170s
+  [PPO_Full_Baseline_s1234]  299008/300000 | Eval=  661.1 Rec=  72.6 | VL=13.580 EV=+0.542 | KL=0.0000 clip=0.000 |  1744fps   171s
+  Done [PPO_Full_Baseline_s1234] | time=172.3s | final=601.3 | best=661.1
+  -> PPO_Full_Baseline HalfCheetah-v4 s1234: final=601.3  (172s)
+
+  [8/12] HalfCheetah-v4 | HCGAE_Imp12 | seed=42
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]    2048/300000 [░░░░░░░░░░░░░░░░░░░░]   0.7% | Eval=    N/A Rec=-624.9 | VL=1100.651 EV=-0.003 | ᾱ=0.388(±0.222) αmax=0.70 | c_mc=1.00 | bias=+57.469 var=13.436 SNR=1.550 | ΔV=24.775 err_μ=57.469 err_ema=3.823 | δ:μ=-0.616 σ=1.320 r1=-0.21 | KL=0.0078 clip=0.11 |  2365fps     1s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   10240/300000 [░░░░░░░░░░░░░░░░░░░░]   3.4% | Eval=   23.3 Rec=-689.5 | VL=148.998 EV=-0.164 | ᾱ=0.280(±0.234) αmax=0.70 | c_mc=1.00 | bias=+9.839 var=9.764 SNR=0.217 | ΔV=7.141 err_μ=13.923 err_ema=7.864 | δ:μ=-0.098 σ=5.648 r1=-0.45 | KL=0.0070 clip=0.09 |  1858fps     6s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   12288/300000 [░░░░░░░░░░░░░░░░░░░░]   4.1% | Eval=   23.3 Rec=-683.6 | VL=103.890 EV=+0.054 | ᾱ=0.306(±0.250) αmax=0.70 | c_mc=1.00 | bias=-9.634 var=6.883 SNR=0.270 | ΔV=6.585 err_μ=13.632 err_ema=8.153 | δ:μ=+0.089 σ=3.661 r1=-0.49 | KL=0.0081 clip=0.11 |  1934fps     6s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   20480/300000 [█░░░░░░░░░░░░░░░░░░░]   6.8% | Eval=   -2.9 Rec=-651.1 | VL=113.144 EV=-0.042 | ᾱ=0.295(±0.248) αmax=0.69 | c_mc=1.00 | bias=+9.327 var=15.770 SNR=0.168 | ΔV=7.000 err_μ=13.982 err_ema=9.050 | δ:μ=-0.081 σ=8.554 r1=-0.45 | KL=0.0084 clip=0.12 |  1863fps    11s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   22528/300000 [█░░░░░░░░░░░░░░░░░░░]   7.5% | Eval=   -2.9 Rec=-652.5 | VL=145.345 EV=+0.082 | ᾱ=0.307(±0.268) αmax=0.69 | c_mc=1.00 | bias=+4.773 var=10.275 SNR=0.025 | ΔV=7.750 err_μ=15.062 err_ema=9.350 | δ:μ=-0.039 σ=5.538 r1=-0.40 | KL=0.0086 clip=0.13 |  1902fps    12s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   30720/300000 [██░░░░░░░░░░░░░░░░░░]  10.2% | Eval=   43.3 Rec=-565.5 | VL=105.496 EV=+0.022 | ᾱ=0.293(±0.246) αmax=0.68 | c_mc=1.00 | bias=+5.727 var=9.324 SNR=0.104 | ΔV=6.326 err_μ=13.089 err_ema=9.712 | δ:μ=-0.048 σ=5.478 r1=-0.48 | KL=0.0098 clip=0.14 |  1876fps    16s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   32768/300000 [██░░░░░░░░░░░░░░░░░░]  10.9% | Eval=   43.3 Rec=-545.9 | VL=71.037 EV=+0.142 | ᾱ=0.290(±0.239) αmax=0.68 | c_mc=1.00 | bias=+0.232 var=10.497 SNR=0.008 | ΔV=4.571 err_μ=9.355 err_ema=9.694 | δ:μ=+0.016 σ=6.094 r1=-0.43 | KL=0.0089 clip=0.13 |  1904fps    17s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   40960/300000 [██░░░░░░░░░░░░░░░░░░]  13.7% | Eval=  166.9 Rec=-471.8 | VL=17.163 EV=-0.099 | ᾱ=0.276(±0.237) αmax=0.64 | c_mc=0.94 | bias=-3.848 var=3.498 SNR=0.158 | ΔV=2.800 err_μ=6.047 err_ema=9.602 | δ:μ=+0.040 σ=3.216 r1=-0.42 | KL=0.0112 clip=0.17 |  1863fps    22s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   43008/300000 [██░░░░░░░░░░░░░░░░░░]  14.3% | Eval=  166.9 Rec=-457.5 | VL=140.113 EV=-2.915 | ᾱ=0.291(±0.258) αmax=0.65 | c_mc=0.96 | bias=+28.471 var=23.025 SNR=0.448 | ΔV=16.143 err_μ=32.704 err_ema=10.757 | δ:μ=-0.285 σ=9.909 r1=-0.45 | KL=0.0112 clip=0.16 |  1875fps    23s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   51200/300000 [███░░░░░░░░░░░░░░░░░]  17.1% | Eval=  268.0 Rec=-444.2 | VL=36.537 EV=-0.025 | ᾱ=0.276(±0.222) αmax=0.66 | c_mc=1.00 | bias=-1.889 var=5.207 SNR=0.018 | ΔV=3.349 err_μ=7.268 err_ema=10.334 | δ:μ=+0.006 σ=3.809 r1=-0.42 | KL=0.0113 clip=0.18 |  1859fps    28s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   53248/300000 [███░░░░░░░░░░░░░░░░░]  17.7% | Eval=  268.0 Rec=-442.1 | VL=72.800 EV=+0.032 | ᾱ=0.277(±0.219) αmax=0.65 | c_mc=1.00 | bias=-0.306 var=9.763 SNR=0.030 | ΔV=4.477 err_μ=10.117 err_ema=10.323 | δ:μ=-0.014 σ=5.425 r1=-0.45 | KL=0.0105 clip=0.16 |  1863fps    29s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   61440/300000 [████░░░░░░░░░░░░░░░░]  20.5% | Eval=  177.0 Rec=-424.0 | VL=50.730 EV=-0.070 | ᾱ=0.284(±0.243) αmax=0.64 | c_mc=1.00 | bias=+0.234 var=7.851 SNR=0.016 | ΔV=4.235 err_μ=8.752 err_ema=10.021 | δ:μ=-0.007 σ=5.442 r1=-0.44 | KL=0.0119 clip=0.18 |  1830fps    34s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   63488/300000 [████░░░░░░░░░░░░░░░░]  21.2% | Eval=  177.0 Rec=-409.6 | VL=49.159 EV=+0.060 | ᾱ=0.278(±0.220) αmax=0.64 | c_mc=1.00 | bias=-1.885 var=4.560 SNR=0.044 | ΔV=3.672 err_μ=8.518 err_ema=9.946 | δ:μ=+0.010 σ=3.359 r1=-0.44 | KL=0.0116 clip=0.18 |  1831fps    35s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   71680/300000 [████░░░░░░░░░░░░░░░░]  23.9% | Eval=   82.4 Rec=-350.0 | VL=23.579 EV=+0.139 | ᾱ=0.272(±0.221) αmax=0.62 | c_mc=1.00 | bias=-1.048 var=4.631 SNR=0.032 | ΔV=2.825 err_μ=6.379 err_ema=9.779 | δ:μ=+0.020 σ=3.433 r1=-0.41 | KL=0.0146 clip=0.22 |  1816fps    39s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   73728/300000 [████░░░░░░░░░░░░░░░░]  24.6% | Eval=   82.4 Rec=-333.1 | VL=45.063 EV=+0.251 | ᾱ=0.257(±0.216) αmax=0.61 | c_mc=1.00 | bias=-0.558 var=7.617 SNR=0.014 | ΔV=3.441 err_μ=7.660 err_ema=9.673 | δ:μ=+0.004 σ=5.359 r1=-0.46 | KL=0.0134 clip=0.21 |  1824fps    40s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   81920/300000 [█████░░░░░░░░░░░░░░░]  27.3% | Eval=   66.9 Rec=-297.8 | VL=20.004 EV=+0.231 | ᾱ=0.247(±0.199) αmax=0.55 | c_mc=0.91 | bias=-2.302 var=4.093 SNR=0.134 | ΔV=2.339 err_μ=6.132 err_ema=9.079 | δ:μ=+0.031 σ=3.141 r1=-0.45 | KL=0.0137 clip=0.21 |  1793fps    46s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   83968/300000 [█████░░░░░░░░░░░░░░░]  28.0% | Eval=   66.9 Rec=-292.1 | VL=40.905 EV=+0.192 | ᾱ=0.242(±0.194) αmax=0.54 | c_mc=0.90 | bias=+3.027 var=5.854 SNR=0.117 | ΔV=3.278 err_μ=8.677 err_ema=9.059 | δ:μ=-0.027 σ=3.763 r1=-0.45 | KL=0.0144 clip=0.21 |  1805fps    47s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   92160/300000 [██████░░░░░░░░░░░░░░]  30.7% | Eval=  201.7 Rec=-268.0 | VL=16.858 EV=+0.101 | ᾱ=0.225(±0.191) αmax=0.53 | c_mc=0.92 | bias=-0.873 var=5.013 SNR=0.041 | ΔV=2.010 err_μ=5.255 err_ema=8.763 | δ:μ=+0.011 σ=3.064 r1=-0.41 | KL=0.0141 clip=0.22 |  1819fps    51s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]   94208/300000 [██████░░░░░░░░░░░░░░]  31.4% | Eval=  201.7 Rec=-264.3 | VL=23.575 EV=+0.428 | ᾱ=0.232(±0.181) αmax=0.53 | c_mc=0.92 | bias=-1.319 var=5.656 SNR=0.042 | ΔV=2.405 err_μ=6.830 err_ema=8.667 | δ:μ=+0.016 σ=3.445 r1=-0.40 | KL=0.0138 clip=0.21 |  1829fps    51s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  102400/300000 [██████░░░░░░░░░░░░░░]  34.1% | Eval=  302.3 Rec=-246.9 | VL=95.600 EV=+0.132 | ᾱ=0.219(±0.169) αmax=0.54 | c_mc=1.00 | bias=-6.563 var=13.256 SNR=0.202 | ΔV=4.202 err_μ=11.213 err_ema=8.483 | δ:μ=+0.081 σ=5.028 r1=-0.46 | KL=0.0158 clip=0.23 |  1834fps    56s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  104448/300000 [██████░░░░░░░░░░░░░░]  34.8% | Eval=  302.3 Rec=-241.1 | VL=75.510 EV=+0.094 | ᾱ=0.229(±0.192) αmax=0.54 | c_mc=1.00 | bias=-1.701 var=7.908 SNR=0.076 | ΔV=3.826 err_μ=9.916 err_ema=8.555 | δ:μ=+0.013 σ=3.955 r1=-0.41 | KL=0.0162 clip=0.24 |  1840fps    57s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  112640/300000 [███████░░░░░░░░░░░░░]  37.5% | Eval=  441.6 Rec=-225.4 | VL=31.849 EV=-0.006 | ᾱ=0.234(±0.194) αmax=0.51 | c_mc=1.00 | bias=-1.422 var=5.345 SNR=0.067 | ΔV=2.582 err_μ=6.990 err_ema=8.445 | δ:μ=+0.022 σ=3.379 r1=-0.46 | KL=0.0174 clip=0.26 |  1839fps    61s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  114688/300000 [███████░░░░░░░░░░░░░]  38.2% | Eval=  441.6 Rec=-216.9 | VL=31.234 EV=-0.067 | ᾱ=0.221(±0.179) αmax=0.51 | c_mc=1.00 | bias=-5.341 var=6.213 SNR=0.200 | ΔV=2.814 err_μ=7.819 err_ema=8.414 | δ:μ=+0.047 σ=3.516 r1=-0.45 | KL=0.0182 clip=0.27 |  1847fps    62s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  122880/300000 [████████░░░░░░░░░░░░]  41.0% | Eval=  283.7 Rec=-182.7 | VL=97.760 EV=+0.242 | ᾱ=0.220(±0.183) αmax=0.48 | c_mc=1.00 | bias=+2.388 var=16.942 SNR=0.039 | ΔV=4.467 err_μ=13.005 err_ema=9.041 | δ:μ=-0.015 σ=6.744 r1=-0.44 | KL=0.0177 clip=0.25 |  1853fps    66s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  124928/300000 [████████░░░░░░░░░░░░]  41.6% | Eval=  283.7 Rec=-177.8 | VL=94.280 EV=+0.161 | ᾱ=0.217(±0.176) αmax=0.48 | c_mc=1.00 | bias=+5.266 var=17.513 SNR=0.127 | ΔV=4.369 err_μ=13.212 err_ema=9.250 | δ:μ=-0.050 σ=6.320 r1=-0.46 | KL=0.0185 clip=0.26 |  1861fps    67s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  133120/300000 [████████░░░░░░░░░░░░]  44.4% | Eval=  248.3 Rec=-141.3 | VL=25.986 EV=-0.083 | ᾱ=0.198(±0.161) αmax=0.45 | c_mc=0.99 | bias=+2.073 var=6.008 SNR=0.071 | ΔV=2.114 err_μ=6.771 err_ema=9.150 | δ:μ=-0.011 σ=3.034 r1=-0.50 | KL=0.0204 clip=0.29 |  1866fps    71s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  135168/300000 [█████████░░░░░░░░░░░]  45.1% | Eval=  248.3 Rec=-140.0 | VL=29.889 EV=+0.040 | ᾱ=0.191(±0.160) αmax=0.45 | c_mc=1.00 | bias=+1.062 var=6.270 SNR=0.026 | ΔV=2.047 err_μ=6.396 err_ema=9.013 | δ:μ=-0.005 σ=3.806 r1=-0.45 | KL=0.0195 clip=0.27 |  1871fps    72s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  143360/300000 [█████████░░░░░░░░░░░]  47.8% | Eval=  186.0 Rec= -94.3 | VL=23.764 EV=-0.749 | ᾱ=0.161(±0.137) αmax=0.41 | c_mc=0.96 | bias=+8.071 var=9.880 SNR=0.314 | ΔV=2.545 err_μ=8.674 err_ema=8.984 | δ:μ=-0.087 σ=4.506 r1=-0.47 | KL=0.0197 clip=0.28 |  1875fps    76s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  145408/300000 [█████████░░░░░░░░░░░]  48.5% | Eval=  186.0 Rec= -79.6 | VL=37.951 EV=-0.053 | ᾱ=0.174(±0.140) αmax=0.41 | c_mc=1.00 | bias=+0.119 var=10.932 SNR=0.011 | ΔV=2.133 err_μ=7.300 err_ema=8.900 | δ:μ=+0.009 σ=4.553 r1=-0.46 | KL=0.0188 clip=0.27 |  1882fps    77s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  153600/300000 [██████████░░░░░░░░░░]  51.2% | Eval=  368.5 Rec= -25.2 | VL=20.156 EV=-0.226 | ᾱ=0.176(±0.143) αmax=0.39 | c_mc=0.99 | bias=-2.338 var=8.379 SNR=0.085 | ΔV=1.724 err_μ=6.301 err_ema=8.680 | δ:μ=+0.019 σ=3.346 r1=-0.45 | KL=0.0205 clip=0.29 |  1889fps    81s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  155648/300000 [██████████░░░░░░░░░░]  51.9% | Eval=  368.5 Rec=  -7.7 | VL=11.704 EV=+0.031 | ᾱ=0.170(±0.140) αmax=0.38 | c_mc=1.00 | bias=+0.299 var=4.118 SNR=0.011 | ΔV=1.159 err_μ=4.243 err_ema=8.458 | δ:μ=+0.004 σ=2.263 r1=-0.44 | KL=0.0219 clip=0.30 |  1894fps    82s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  163840/300000 [██████████░░░░░░░░░░]  54.6% | Eval=  416.4 Rec=  31.2 | VL=60.569 EV=+0.098 | ᾱ=0.162(±0.134) αmax=0.36 | c_mc=1.00 | bias=-5.174 var=16.610 SNR=0.167 | ΔV=2.642 err_μ=10.099 err_ema=8.519 | δ:μ=+0.062 σ=4.894 r1=-0.47 | KL=0.0216 clip=0.31 |  1898fps    86s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  165888/300000 [███████████░░░░░░░░░]  55.3% | Eval=  416.4 Rec=  34.9 | VL=76.278 EV=+0.348 | ᾱ=0.137(±0.117) αmax=0.35 | c_mc=0.99 | bias=+4.886 var=16.483 SNR=0.135 | ΔV=2.660 err_μ=10.071 err_ema=8.597 | δ:μ=-0.050 σ=4.739 r1=-0.48 | KL=0.0219 clip=0.29 |  1903fps    87s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  174080/300000 [███████████░░░░░░░░░]  58.0% | Eval=  184.1 Rec=  65.6 | VL=104.002 EV=+0.170 | ᾱ=0.140(±0.118) αmax=0.33 | c_mc=1.00 | bias=-7.598 var=24.771 SNR=0.189 | ΔV=3.186 err_μ=13.840 err_ema=9.247 | δ:μ=+0.080 σ=6.000 r1=-0.43 | KL=0.0227 clip=0.30 |  1908fps    91s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  176128/300000 [███████████░░░░░░░░░]  58.7% | Eval=  184.1 Rec=  57.0 | VL=71.684 EV=+0.487 | ᾱ=0.135(±0.117) αmax=0.32 | c_mc=1.00 | bias=+10.483 var=30.785 SNR=0.228 | ΔV=3.127 err_μ=13.227 err_ema=9.446 | δ:μ=-0.103 σ=6.378 r1=-0.43 | KL=0.0234 clip=0.31 |  1913fps    92s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  184320/300000 [████████████░░░░░░░░]  61.4% | Eval=  399.9 Rec=  76.7 | VL=38.928 EV=+0.295 | ᾱ=0.123(±0.099) αmax=0.28 | c_mc=0.93 | bias=-4.149 var=13.907 SNR=0.125 | ΔV=1.645 err_μ=8.382 err_ema=9.669 | δ:μ=+0.039 σ=4.233 r1=-0.40 | KL=0.0270 clip=0.35 |  1911fps    96s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  186368/300000 [████████████░░░░░░░░]  62.1% | Eval=  399.9 Rec=  96.8 | VL=33.710 EV=-0.131 | ᾱ=0.114(±0.091) αmax=0.27 | c_mc=0.91 | bias=-1.369 var=15.018 SNR=0.058 | ΔV=1.391 err_μ=7.206 err_ema=9.545 | δ:μ=+0.020 σ=3.990 r1=-0.43 | KL=0.0275 clip=0.35 |  1916fps    97s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  194560/300000 [████████████░░░░░░░░]  64.9% | Eval=  459.1 Rec= 119.6 | VL=107.675 EV=+0.342 | ᾱ=0.100(±0.087) αmax=0.24 | c_mc=0.85 | bias=-0.919 var=56.011 SNR=0.019 | ΔV=2.312 err_μ=12.972 err_ema=9.964 | δ:μ=+0.013 σ=7.223 r1=-0.38 | KL=0.0251 clip=0.33 |  1920fps   101s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  196608/300000 [█████████████░░░░░░░]  65.5% | Eval=  459.1 Rec= 147.7 | VL=58.316 EV=+0.048 | ᾱ=0.096(±0.082) αmax=0.23 | c_mc=0.83 | bias=-4.718 var=27.469 SNR=0.139 | ΔV=1.974 err_μ=11.403 err_ema=10.036 | δ:μ=+0.059 σ=4.877 r1=-0.44 | KL=0.0234 clip=0.31 |  1920fps   102s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  204800/300000 [█████████████░░░░░░░]  68.3% | Eval=  734.6 Rec= 183.3 | VL=74.857 EV=+0.452 | ᾱ=0.098(±0.081) αmax=0.21 | c_mc=0.84 | bias=-0.867 var=39.331 SNR=0.036 | ΔV=1.896 err_μ=12.395 err_ema=10.574 | δ:μ=+0.021 σ=6.814 r1=-0.40 | KL=0.0268 clip=0.34 |  1926fps   106s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  206848/300000 [█████████████░░░░░░░]  68.9% | Eval=  734.6 Rec= 179.0 | VL=76.965 EV=+0.415 | ᾱ=0.088(±0.076) αmax=0.21 | c_mc=0.81 | bias=-0.247 var=39.299 SNR=0.019 | ΔV=1.961 err_μ=13.009 err_ema=10.696 | δ:μ=+0.003 σ=5.748 r1=-0.47 | KL=0.0253 clip=0.32 |  1930fps   107s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  215040/300000 [██████████████░░░░░░]  71.7% | Eval=  817.3 Rec= 201.3 | VL=85.158 EV=+0.620 | ᾱ=0.080(±0.067) αmax=0.19 | c_mc=0.77 | bias=+15.244 var=52.724 SNR=0.313 | ΔV=2.286 err_μ=17.297 err_ema=11.139 | δ:μ=-0.160 σ=7.723 r1=-0.47 | KL=0.0271 clip=0.34 |  1936fps   111s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  217088/300000 [██████████████░░░░░░]  72.4% | Eval=  817.3 Rec= 203.2 | VL=43.565 EV=+0.551 | ᾱ=0.081(±0.067) αmax=0.18 | c_mc=0.73 | bias=-7.673 var=31.534 SNR=0.202 | ΔV=1.485 err_μ=11.576 err_ema=11.161 | δ:μ=+0.079 σ=5.226 r1=-0.45 | KL=0.0269 clip=0.32 |  1939fps   112s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  225280/300000 [███████████████░░░░░]  75.1% | Eval=  728.3 Rec= 220.5 | VL=29.089 EV=+0.373 | ᾱ=0.076(±0.062) αmax=0.16 | c_mc=0.69 | bias=-9.350 var=32.326 SNR=0.256 | ΔV=1.380 err_μ=11.836 err_ema=11.871 | δ:μ=+0.100 σ=5.307 r1=-0.41 | KL=0.0306 clip=0.37 |  1942fps   116s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  227328/300000 [███████████████░░░░░]  75.8% | Eval=  728.3 Rec= 235.4 | VL=14.148 EV=-0.241 | ᾱ=0.069(±0.054) αmax=0.16 | c_mc=0.68 | bias=-1.036 var=14.106 SNR=0.041 | ΔV=0.659 err_μ=6.116 err_ema=11.584 | δ:μ=+0.011 σ=2.841 r1=-0.29 | KL=0.0328 clip=0.39 |  1941fps   117s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  235520/300000 [███████████████░░░░░]  78.5% | Eval=  761.2 Rec= 287.7 | VL=143.211 EV=+0.477 | ᾱ=0.059(±0.052) αmax=0.15 | c_mc=0.73 | bias=+10.124 var=59.495 SNR=0.240 | ΔV=2.024 err_μ=17.599 err_ema=11.924 | δ:μ=-0.132 σ=6.604 r1=-0.42 | KL=0.0263 clip=0.34 |  1931fps   122s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  237568/300000 [███████████████░░░░░]  79.2% | Eval=  761.2 Rec= 305.3 | VL=33.178 EV=+0.268 | ᾱ=0.059(±0.049) αmax=0.14 | c_mc=0.71 | bias=-7.082 var=32.589 SNR=0.181 | ΔV=1.020 err_μ=10.056 err_ema=11.831 | δ:μ=+0.068 σ=5.087 r1=-0.41 | KL=0.0321 clip=0.37 |  1934fps   123s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  245760/300000 [████████████████░░░░]  81.9% | Eval=  798.4 Rec= 351.4 | VL=44.168 EV=+0.345 | ᾱ=0.051(±0.043) αmax=0.13 | c_mc=0.65 | bias=-8.312 var=37.100 SNR=0.186 | ΔV=1.171 err_μ=12.384 err_ema=12.361 | δ:μ=+0.079 σ=6.009 r1=-0.41 | KL=0.0324 clip=0.38 |  1930fps   127s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  247808/300000 [████████████████░░░░]  82.6% | Eval=  798.4 Rec= 365.7 | VL=14.370 EV=+0.371 | ᾱ=0.056(±0.046) αmax=0.13 | c_mc=0.65 | bias=+2.530 var=18.285 SNR=0.096 | ΔV=0.583 err_μ=6.443 err_ema=12.065 | δ:μ=-0.024 σ=4.449 r1=-0.51 | KL=0.0305 clip=0.37 |  1930fps   128s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  256000/300000 [█████████████████░░░]  85.3% | Eval=  784.6 Rec= 384.6 | VL=53.365 EV=+0.369 | ᾱ=0.051(±0.043) αmax=0.12 | c_mc=0.65 | bias=-6.372 var=35.378 SNR=0.170 | ΔV=1.064 err_μ=12.374 err_ema=12.704 | δ:μ=+0.067 σ=5.245 r1=-0.45 | KL=0.0327 clip=0.40 |  1924fps   133s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  258048/300000 [█████████████████░░░]  86.0% | Eval=  784.6 Rec= 386.7 | VL=89.317 EV=+0.585 | ᾱ=0.050(±0.043) αmax=0.12 | c_mc=0.65 | bias=-3.366 var=58.362 SNR=0.098 | ΔV=1.270 err_μ=14.432 err_ema=12.790 | δ:μ=+0.053 σ=5.842 r1=-0.47 | KL=0.0360 clip=0.40 |  1926fps   134s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  266240/300000 [█████████████████░░░]  88.7% | Eval=  898.6 Rec= 416.7 | VL=151.950 EV=+0.446 | ᾱ=0.046(±0.042) αmax=0.11 | c_mc=0.68 | bias=+16.527 var=67.795 SNR=0.349 | ΔV=2.019 err_μ=22.910 err_ema=12.700 | δ:μ=-0.194 σ=6.986 r1=-0.44 | KL=0.0336 clip=0.40 |  1924fps   138s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  268288/300000 [█████████████████░░░]  89.4% | Eval=  898.6 Rec= 422.8 | VL=67.401 EV=+0.548 | ᾱ=0.049(±0.040) αmax=0.11 | c_mc=0.66 | bias=-9.142 var=59.898 SNR=0.155 | ΔV=1.095 err_μ=14.009 err_ema=12.766 | δ:μ=+0.079 σ=7.024 r1=-0.41 | KL=0.0348 clip=0.40 |  1926fps   139s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  276480/300000 [██████████████████░░]  92.2% | Eval= 1039.0 Rec= 481.7 | VL=99.876 EV=+0.549 | ᾱ=0.046(±0.040) αmax=0.11 | c_mc=0.63 | bias=+2.003 var=57.746 SNR=0.064 | ΔV=1.177 err_μ=14.523 err_ema=13.522 | δ:μ=-0.023 σ=5.380 r1=-0.42 | KL=0.0349 clip=0.40 |  1925fps   144s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  278528/300000 [██████████████████░░]  92.8% | Eval= 1039.0 Rec= 473.3 | VL=122.180 EV=+0.531 | ᾱ=0.044(±0.037) αmax=0.10 | c_mc=0.61 | bias=+11.579 var=105.318 SNR=0.154 | ΔV=1.604 err_μ=22.222 err_ema=13.957 | δ:μ=-0.097 σ=7.208 r1=-0.38 | KL=0.0361 clip=0.41 |  1923fps   145s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  286720/300000 [███████████████████░]  95.6% | Eval= 1041.1 Rec= 527.9 | VL=35.560 EV=+0.468 | ᾱ=0.043(±0.037) αmax=0.10 | c_mc=0.59 | bias=-4.355 var=33.897 SNR=0.100 | ΔV=0.742 err_μ=10.374 err_ema=13.798 | δ:μ=+0.040 σ=5.151 r1=-0.42 | KL=0.0376 clip=0.41 |  1920fps   149s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  288768/300000 [███████████████████░]  96.3% | Eval= 1041.1 Rec= 530.5 | VL=72.148 EV=+0.486 | ᾱ=0.042(±0.034) αmax=0.10 | c_mc=0.58 | bias=+4.625 var=52.022 SNR=0.112 | ΔV=0.966 err_μ=13.113 err_ema=13.764 | δ:μ=-0.047 σ=5.135 r1=-0.44 | KL=0.0386 clip=0.42 |  1920fps   150s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  296960/300000 [███████████████████░]  99.0% | Eval= 1137.3 Rec= 559.9 | VL=32.739 EV=+0.266 | ᾱ=0.047(±0.036) αmax=0.10 | c_mc=0.57 | bias=-10.605 var=38.591 SNR=0.268 | ΔV=0.945 err_μ=14.172 err_ema=14.214 | δ:μ=+0.103 σ=5.249 r1=-0.43 | KL=0.0369 clip=0.40 |  1905fps   156s
+  [HCGAE_Imp12_s42   |①✓②✓③✗④✗]  299008/300000 [███████████████████░]  99.7% | Eval= 1137.3 Rec= 578.7 | VL=65.352 EV=+0.605 | ᾱ=0.041(±0.033) αmax=0.10 | c_mc=0.59 | bias=+2.401 var=47.970 SNR=0.052 | ΔV=1.059 err_μ=14.721 err_ema=14.239 | δ:μ=-0.024 σ=5.826 r1=-0.39 | KL=0.0354 clip=0.40 |  1906fps   157s
+  ✓ [HCGAE_Imp12_s42] 完成 | 耗时=157.9s | 最终=980.1 | 最高=1137.3
+  -> HCGAE_Imp12 HalfCheetah-v4 s42: final=980.1  (158s)
+
+  [9/12] HalfCheetah-v4 | HCGAE_Imp12 | seed=123
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]    2048/300000 [░░░░░░░░░░░░░░░░░░░░]   0.7% | Eval=    N/A Rec=-682.5 | VL=1577.476 EV=-0.007 | ᾱ=0.400(±0.232) αmax=0.70 | c_mc=1.00 | bias=+64.512 var=17.405 SNR=1.476 | ΔV=28.993 err_μ=64.513 err_ema=4.176 | δ:μ=-0.688 σ=1.559 r1=-0.24 | KL=0.0071 clip=0.10 |  2126fps     1s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   10240/300000 [░░░░░░░░░░░░░░░░░░░░]   3.4% | Eval=  -20.0 Rec=-628.8 | VL=127.243 EV=+0.132 | ᾱ=0.315(±0.268) αmax=0.70 | c_mc=1.00 | bias=-10.107 var=9.005 SNR=0.253 | ΔV=8.059 err_μ=15.499 err_ema=7.014 | δ:μ=+0.114 σ=6.028 r1=-0.45 | KL=0.0083 clip=0.12 |  1737fps     6s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   12288/300000 [░░░░░░░░░░░░░░░░░░░░]   4.1% | Eval=  -20.0 Rec=-622.9 | VL=70.130 EV=-0.770 | ᾱ=0.299(±0.245) αmax=0.69 | c_mc=0.99 | bias=+5.677 var=11.871 SNR=0.093 | ΔV=6.117 err_μ=12.528 err_ema=7.290 | δ:μ=-0.056 σ=7.654 r1=-0.43 | KL=0.0094 clip=0.14 |  1735fps     7s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   20480/300000 [█░░░░░░░░░░░░░░░░░░░]   6.8% | Eval=   -2.4 Rec=-587.6 | VL=134.900 EV=+0.070 | ᾱ=0.289(±0.239) αmax=0.69 | c_mc=1.00 | bias=+8.674 var=12.904 SNR=0.182 | ΔV=6.838 err_μ=14.039 err_ema=8.257 | δ:μ=-0.101 σ=5.202 r1=-0.45 | KL=0.0080 clip=0.11 |  1562fps    13s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   22528/300000 [█░░░░░░░░░░░░░░░░░░░]   7.5% | Eval=   -2.4 Rec=-576.0 | VL=125.016 EV=+0.102 | ᾱ=0.312(±0.255) αmax=0.69 | c_mc=1.00 | bias=-3.208 var=10.314 SNR=0.051 | ΔV=6.610 err_μ=13.580 err_ema=8.523 | δ:μ=+0.023 σ=5.223 r1=-0.44 | KL=0.0090 clip=0.13 |  1563fps    14s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   30720/300000 [██░░░░░░░░░░░░░░░░░░]  10.2% | Eval=  149.1 Rec=-529.1 | VL=218.608 EV=-10.393 | ᾱ=0.308(±0.286) αmax=0.67 | c_mc=0.97 | bias=+43.292 var=24.486 SNR=0.610 | ΔV=25.727 err_μ=45.313 err_ema=10.657 | δ:μ=-0.432 σ=8.987 r1=-0.45 | KL=0.0094 clip=0.14 |  1547fps    20s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   32768/300000 [██░░░░░░░░░░░░░░░░░░]  10.9% | Eval=  149.1 Rec=-515.4 | VL=74.519 EV=+0.070 | ᾱ=0.279(±0.235) αmax=0.68 | c_mc=1.00 | bias=-5.161 var=6.212 SNR=0.203 | ΔV=4.952 err_μ=9.972 err_ema=10.623 | δ:μ=+0.073 σ=4.276 r1=-0.37 | KL=0.0111 clip=0.16 |  1568fps    21s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   40960/300000 [██░░░░░░░░░░░░░░░░░░]  13.7% | Eval=  126.9 Rec=-498.5 | VL=213.499 EV=-0.012 | ᾱ=0.284(±0.244) αmax=0.67 | c_mc=1.00 | bias=+4.781 var=12.783 SNR=0.047 | ΔV=8.568 err_μ=17.698 err_ema=10.749 | δ:μ=-0.062 σ=3.975 r1=-0.48 | KL=0.0112 clip=0.17 |  1551fps    26s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   43008/300000 [██░░░░░░░░░░░░░░░░░░]  14.3% | Eval=  126.9 Rec=-479.6 | VL=68.910 EV=-0.461 | ᾱ=0.307(±0.248) αmax=0.67 | c_mc=1.00 | bias=-11.904 var=15.596 SNR=0.237 | ΔV=7.199 err_μ=15.455 err_ema=10.985 | δ:μ=+0.130 σ=6.969 r1=-0.44 | KL=0.0110 clip=0.17 |  1565fps    27s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   51200/300000 [███░░░░░░░░░░░░░░░░░]  17.1% | Eval=  230.5 Rec=-448.8 | VL=30.239 EV=-0.076 | ᾱ=0.289(±0.236) αmax=0.66 | c_mc=1.00 | bias=+0.255 var=5.691 SNR=0.014 | ΔV=3.094 err_μ=6.724 err_ema=10.959 | δ:μ=-0.002 σ=4.633 r1=-0.48 | KL=0.0120 clip=0.18 |  1562fps    33s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   53248/300000 [███░░░░░░░░░░░░░░░░░]  17.7% | Eval=  230.5 Rec=-439.2 | VL=51.374 EV=+0.109 | ᾱ=0.296(±0.243) αmax=0.65 | c_mc=1.00 | bias=-6.392 var=7.912 SNR=0.143 | ΔV=4.815 err_μ=10.517 err_ema=10.937 | δ:μ=+0.064 σ=4.434 r1=-0.46 | KL=0.0114 clip=0.17 |  1562fps    34s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   61440/300000 [████░░░░░░░░░░░░░░░░]  20.5% | Eval=  200.9 Rec=-398.4 | VL=89.252 EV=+0.183 | ᾱ=0.272(±0.206) αmax=0.64 | c_mc=1.00 | bias=+7.856 var=9.037 SNR=0.221 | ΔV=5.240 err_μ=12.387 err_ema=11.213 | δ:μ=-0.073 σ=5.196 r1=-0.47 | KL=0.0128 clip=0.20 |  1541fps    40s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   63488/300000 [████░░░░░░░░░░░░░░░░]  21.2% | Eval=  200.9 Rec=-392.3 | VL=133.449 EV=+0.018 | ᾱ=0.290(±0.237) αmax=0.64 | c_mc=1.00 | bias=-3.321 var=21.117 SNR=0.059 | ΔV=6.496 err_μ=14.465 err_ema=11.376 | δ:μ=+0.030 σ=7.805 r1=-0.43 | KL=0.0137 clip=0.22 |  1543fps    41s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   71680/300000 [████░░░░░░░░░░░░░░░░]  23.9% | Eval=   72.8 Rec=-364.2 | VL=59.801 EV=+0.069 | ᾱ=0.266(±0.233) αmax=0.62 | c_mc=1.00 | bias=-3.266 var=8.096 SNR=0.090 | ΔV=4.294 err_μ=9.335 err_ema=11.351 | δ:μ=+0.043 σ=4.433 r1=-0.42 | KL=0.0127 clip=0.19 |  1534fps    47s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   73728/300000 [████░░░░░░░░░░░░░░░░]  24.6% | Eval=   72.8 Rec=-368.9 | VL=57.994 EV=-0.016 | ᾱ=0.249(±0.203) αmax=0.61 | c_mc=1.00 | bias=+5.014 var=9.502 SNR=0.172 | ΔV=4.070 err_μ=9.584 err_ema=11.262 | δ:μ=-0.056 σ=5.090 r1=-0.46 | KL=0.0144 clip=0.23 |  1534fps    48s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   81920/300000 [█████░░░░░░░░░░░░░░░]  27.3% | Eval=   -8.2 Rec=-338.7 | VL=84.124 EV=-0.141 | ᾱ=0.251(±0.221) αmax=0.60 | c_mc=1.00 | bias=+10.750 var=13.801 SNR=0.225 | ΔV=5.990 err_μ=13.387 err_ema=11.267 | δ:μ=-0.106 σ=5.784 r1=-0.47 | KL=0.0138 clip=0.21 |  1518fps    54s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   83968/300000 [█████░░░░░░░░░░░░░░░]  28.0% | Eval=   -8.2 Rec=-338.2 | VL=36.933 EV=+0.203 | ᾱ=0.257(±0.208) αmax=0.59 | c_mc=1.00 | bias=-5.346 var=8.459 SNR=0.171 | ΔV=3.578 err_μ=8.623 err_ema=11.135 | δ:μ=+0.060 σ=4.581 r1=-0.41 | KL=0.0142 clip=0.22 |  1525fps    55s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   92160/300000 [██████░░░░░░░░░░░░░░]  30.7% | Eval=   16.1 Rec=-299.3 | VL=56.965 EV=+0.162 | ᾱ=0.251(±0.204) αmax=0.57 | c_mc=1.00 | bias=-7.488 var=9.674 SNR=0.233 | ΔV=4.238 err_μ=10.481 err_ema=10.963 | δ:μ=+0.080 σ=4.639 r1=-0.46 | KL=0.0145 clip=0.22 |  1515fps    61s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]   94208/300000 [██████░░░░░░░░░░░░░░]  31.4% | Eval=   16.1 Rec=-287.6 | VL=65.242 EV=+0.020 | ᾱ=0.251(±0.209) αmax=0.56 | c_mc=0.99 | bias=+9.359 var=9.150 SNR=0.297 | ΔV=4.885 err_μ=12.186 err_ema=11.024 | δ:μ=-0.096 σ=4.852 r1=-0.46 | KL=0.0147 clip=0.22 |  1519fps    62s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  102400/300000 [██████░░░░░░░░░░░░░░]  34.1% | Eval=   24.8 Rec=-236.2 | VL=51.369 EV=+0.159 | ᾱ=0.243(±0.201) αmax=0.53 | c_mc=0.97 | bias=-5.149 var=10.995 SNR=0.130 | ΔV=3.814 err_μ=10.149 err_ema=11.024 | δ:μ=+0.047 σ=4.996 r1=-0.46 | KL=0.0162 clip=0.24 |  1495fps    68s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  104448/300000 [██████░░░░░░░░░░░░░░]  34.8% | Eval=   24.8 Rec=-226.9 | VL=85.620 EV=-0.075 | ᾱ=0.216(±0.181) αmax=0.52 | c_mc=0.96 | bias=+8.411 var=15.028 SNR=0.226 | ΔV=4.668 err_μ=12.665 err_ema=11.107 | δ:μ=-0.098 σ=5.289 r1=-0.48 | KL=0.0144 clip=0.21 |  1500fps    70s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  112640/300000 [███████░░░░░░░░░░░░░]  37.5% | Eval=   17.3 Rec=-213.1 | VL=47.311 EV=+0.033 | ᾱ=0.210(±0.175) αmax=0.49 | c_mc=0.95 | bias=-5.559 var=13.164 SNR=0.146 | ΔV=3.209 err_μ=9.119 err_ema=11.173 | δ:μ=+0.052 σ=4.937 r1=-0.42 | KL=0.0138 clip=0.20 |  1473fps    76s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  114688/300000 [███████░░░░░░░░░░░░░]  38.2% | Eval=   17.3 Rec=-205.4 | VL=35.691 EV=+0.184 | ᾱ=0.226(±0.185) αmax=0.49 | c_mc=0.95 | bias=+2.298 var=9.106 SNR=0.074 | ΔV=2.860 err_μ=8.196 err_ema=11.024 | δ:μ=-0.015 σ=4.445 r1=-0.48 | KL=0.0161 clip=0.24 |  1477fps    78s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  122880/300000 [████████░░░░░░░░░░░░]  41.0% | Eval=   57.0 Rec=-200.6 | VL=43.288 EV=-0.215 | ᾱ=0.195(±0.161) αmax=0.44 | c_mc=0.89 | bias=+2.950 var=17.022 SNR=0.072 | ΔV=2.907 err_μ=9.167 err_ema=10.704 | δ:μ=-0.032 σ=5.100 r1=-0.41 | KL=0.0171 clip=0.25 |  1476fps    83s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  124928/300000 [████████░░░░░░░░░░░░]  41.6% | Eval=   57.0 Rec=-196.9 | VL=66.521 EV=+0.046 | ᾱ=0.205(±0.168) αmax=0.45 | c_mc=0.93 | bias=-2.079 var=11.391 SNR=0.071 | ΔV=3.460 err_μ=10.740 err_ema=10.706 | δ:μ=+0.012 σ=3.940 r1=-0.44 | KL=0.0164 clip=0.24 |  1481fps    84s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  133120/300000 [████████░░░░░░░░░░░░]  44.4% | Eval=   98.9 Rec=-164.1 | VL=37.826 EV=+0.103 | ᾱ=0.197(±0.155) αmax=0.43 | c_mc=0.92 | bias=-11.827 var=11.412 SNR=0.426 | ΔV=3.747 err_μ=12.654 err_ema=10.813 | δ:μ=+0.123 σ=4.751 r1=-0.48 | KL=0.0181 clip=0.26 |  1483fps    90s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  135168/300000 [█████████░░░░░░░░░░░]  45.1% | Eval=   98.9 Rec=-156.4 | VL=80.694 EV=+0.123 | ᾱ=0.179(±0.151) αmax=0.42 | c_mc=0.92 | bias=+7.760 var=17.119 SNR=0.212 | ΔV=3.778 err_μ=12.209 err_ema=10.883 | δ:μ=-0.082 σ=4.854 r1=-0.45 | KL=0.0186 clip=0.26 |  1488fps    91s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  143360/300000 [█████████░░░░░░░░░░░]  47.8% | Eval=  115.5 Rec=-113.9 | VL=42.520 EV=+0.118 | ᾱ=0.174(±0.143) αmax=0.40 | c_mc=0.92 | bias=+3.897 var=15.390 SNR=0.123 | ΔV=2.465 err_μ=8.761 err_ema=10.626 | δ:μ=-0.043 σ=5.161 r1=-0.43 | KL=0.0168 clip=0.25 |  1487fps    96s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  145408/300000 [█████████░░░░░░░░░░░]  48.5% | Eval=  115.5 Rec= -96.7 | VL=34.473 EV=+0.042 | ᾱ=0.182(±0.146) αmax=0.39 | c_mc=0.92 | bias=-8.237 var=9.517 SNR=0.307 | ΔV=2.881 err_μ=10.605 err_ema=10.625 | δ:μ=+0.078 σ=4.416 r1=-0.44 | KL=0.0166 clip=0.25 |  1491fps    98s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  153600/300000 [██████████░░░░░░░░░░]  51.2% | Eval=  139.7 Rec= -75.9 | VL=39.323 EV=-0.054 | ᾱ=0.153(±0.121) αmax=0.35 | c_mc=0.87 | bias=+0.411 var=14.702 SNR=0.004 | ΔV=2.005 err_μ=8.143 err_ema=10.605 | δ:μ=-0.003 σ=4.089 r1=-0.42 | KL=0.0197 clip=0.28 |  1497fps   103s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  155648/300000 [██████████░░░░░░░░░░]  51.9% | Eval=  139.7 Rec= -63.0 | VL=23.534 EV=-0.037 | ᾱ=0.152(±0.126) αmax=0.35 | c_mc=0.89 | bias=-1.465 var=9.922 SNR=0.039 | ΔV=1.623 err_μ=6.485 err_ema=10.399 | δ:μ=+0.010 σ=3.806 r1=-0.45 | KL=0.0194 clip=0.28 |  1498fps   104s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  163840/300000 [██████████░░░░░░░░░░]  54.6% | Eval=  186.8 Rec= -30.2 | VL=60.836 EV=+0.054 | ᾱ=0.152(±0.124) αmax=0.33 | c_mc=0.91 | bias=+3.743 var=17.674 SNR=0.110 | ΔV=2.493 err_μ=10.545 err_ema=10.326 | δ:μ=-0.047 σ=4.263 r1=-0.41 | KL=0.0182 clip=0.27 |  1502fps   109s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  165888/300000 [███████████░░░░░░░░░]  55.3% | Eval=  186.8 Rec= -25.5 | VL=29.645 EV=-0.087 | ᾱ=0.149(±0.122) αmax=0.33 | c_mc=0.92 | bias=-1.366 var=12.710 SNR=0.073 | ΔV=1.739 err_μ=7.425 err_ema=10.181 | δ:μ=+0.020 σ=4.440 r1=-0.41 | KL=0.0185 clip=0.27 |  1505fps   110s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  174080/300000 [███████████░░░░░░░░░]  58.0% | Eval=  250.8 Rec=  24.9 | VL=130.931 EV=+0.153 | ᾱ=0.122(±0.098) αmax=0.31 | c_mc=0.93 | bias=+8.082 var=31.626 SNR=0.165 | ΔV=2.821 err_μ=12.460 err_ema=10.231 | δ:μ=-0.075 σ=5.131 r1=-0.42 | KL=0.0201 clip=0.28 |  1512fps   115s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  176128/300000 [███████████░░░░░░░░░]  58.7% | Eval=  250.8 Rec=  30.1 | VL=42.861 EV=-0.056 | ᾱ=0.134(±0.110) αmax=0.30 | c_mc=0.93 | bias=-4.210 var=20.479 SNR=0.104 | ΔV=1.958 err_μ=9.128 err_ema=10.176 | δ:μ=+0.036 σ=5.426 r1=-0.42 | KL=0.0193 clip=0.27 |  1517fps   116s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  184320/300000 [████████████░░░░░░░░]  61.4% | Eval=  264.0 Rec=  55.1 | VL=77.259 EV=+0.100 | ᾱ=0.126(±0.105) αmax=0.28 | c_mc=0.93 | bias=+0.592 var=18.031 SNR=0.029 | ΔV=2.248 err_μ=11.213 err_ema=10.301 | δ:μ=-0.014 σ=4.234 r1=-0.45 | KL=0.0212 clip=0.29 |  1529fps   121s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  186368/300000 [████████████░░░░░░░░]  62.1% | Eval=  264.0 Rec=  58.8 | VL=104.905 EV=+0.129 | ᾱ=0.119(±0.093) αmax=0.27 | c_mc=0.93 | bias=+1.012 var=27.479 SNR=0.024 | ΔV=2.329 err_μ=12.674 err_ema=10.420 | δ:μ=-0.017 σ=5.170 r1=-0.41 | KL=0.0208 clip=0.29 |  1533fps   121s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  194560/300000 [████████████░░░░░░░░]  64.9% | Eval=  277.3 Rec=  95.0 | VL=58.664 EV=+0.022 | ᾱ=0.119(±0.093) αmax=0.25 | c_mc=0.94 | bias=-6.628 var=23.870 SNR=0.209 | ΔV=2.041 err_μ=11.644 err_ema=10.601 | δ:μ=+0.075 σ=5.378 r1=-0.42 | KL=0.0240 clip=0.31 |  1540fps   126s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  196608/300000 [█████████████░░░░░░░]  65.5% | Eval=  277.3 Rec= 108.0 | VL=48.133 EV=+0.088 | ᾱ=0.108(±0.088) αmax=0.25 | c_mc=0.94 | bias=-1.349 var=21.376 SNR=0.064 | ΔV=1.479 err_μ=8.406 err_ema=10.491 | δ:μ=+0.027 σ=5.053 r1=-0.48 | KL=0.0216 clip=0.31 |  1544fps   127s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  204800/300000 [█████████████░░░░░░░]  68.3% | Eval=  304.3 Rec= 120.0 | VL=53.953 EV=+0.664 | ᾱ=0.101(±0.083) αmax=0.23 | c_mc=0.95 | bias=+0.946 var=27.828 SNR=0.010 | ΔV=1.764 err_μ=10.923 err_ema=10.416 | δ:μ=-0.008 σ=5.597 r1=-0.40 | KL=0.0241 clip=0.32 |  1550fps   132s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  206848/300000 [█████████████░░░░░░░]  68.9% | Eval=  304.3 Rec= 126.7 | VL=66.332 EV=+0.084 | ᾱ=0.091(±0.072) αmax=0.22 | c_mc=0.89 | bias=+0.195 var=20.677 SNR=0.010 | ΔV=1.477 err_μ=9.590 err_ema=10.375 | δ:μ=-0.005 σ=4.624 r1=-0.46 | KL=0.0215 clip=0.30 |  1554fps   133s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  215040/300000 [██████████████░░░░░░]  71.7% | Eval=  323.8 Rec= 134.2 | VL=63.663 EV=+0.099 | ᾱ=0.095(±0.074) αmax=0.20 | c_mc=0.90 | bias=-5.106 var=22.390 SNR=0.177 | ΔV=1.633 err_μ=11.733 err_ema=10.561 | δ:μ=+0.058 σ=4.939 r1=-0.47 | KL=0.0233 clip=0.31 |  1558fps   138s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  217088/300000 [██████████████░░░░░░]  72.4% | Eval=  323.8 Rec= 125.6 | VL=82.698 EV=+0.116 | ᾱ=0.084(±0.070) αmax=0.20 | c_mc=0.90 | bias=+4.583 var=33.351 SNR=0.097 | ΔV=1.629 err_μ=11.651 err_ema=10.615 | δ:μ=-0.043 σ=5.129 r1=-0.40 | KL=0.0235 clip=0.31 |  1562fps   139s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  225280/300000 [███████████████░░░░░]  75.1% | Eval=  384.3 Rec= 139.2 | VL=40.265 EV=+0.003 | ᾱ=0.083(±0.067) αmax=0.18 | c_mc=0.92 | bias=-6.246 var=19.574 SNR=0.221 | ΔV=1.264 err_μ=9.989 err_ema=10.475 | δ:μ=+0.072 σ=4.572 r1=-0.45 | KL=0.0249 clip=0.32 |  1566fps   144s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  227328/300000 [███████████████░░░░░]  75.8% | Eval=  384.3 Rec= 147.0 | VL=35.856 EV=+0.070 | ᾱ=0.082(±0.067) αmax=0.18 | c_mc=0.93 | bias=-4.133 var=17.719 SNR=0.139 | ΔV=1.086 err_μ=8.605 err_ema=10.381 | δ:μ=+0.037 σ=4.326 r1=-0.46 | KL=0.0250 clip=0.33 |  1570fps   145s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  235520/300000 [███████████████░░░░░]  78.5% | Eval=  366.9 Rec= 178.8 | VL=49.961 EV=+0.045 | ᾱ=0.075(±0.063) αmax=0.16 | c_mc=0.94 | bias=-0.150 var=17.019 SNR=0.005 | ΔV=1.080 err_μ=9.096 err_ema=10.000 | δ:μ=-0.002 σ=4.049 r1=-0.45 | KL=0.0257 clip=0.33 |  1574fps   150s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  237568/300000 [███████████████░░░░░]  79.2% | Eval=  366.9 Rec= 191.0 | VL=87.577 EV=+0.143 | ᾱ=0.066(±0.056) αmax=0.16 | c_mc=0.94 | bias=+5.444 var=26.893 SNR=0.135 | ΔV=1.312 err_μ=11.286 err_ema=10.065 | δ:μ=-0.045 σ=4.519 r1=-0.42 | KL=0.0248 clip=0.33 |  1578fps   151s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  245760/300000 [████████████████░░░░]  81.9% | Eval=  489.9 Rec= 230.8 | VL=45.702 EV=+0.018 | ᾱ=0.065(±0.053) αmax=0.14 | c_mc=0.93 | bias=-4.495 var=24.945 SNR=0.141 | ΔV=0.959 err_μ=9.272 err_ema=9.972 | δ:μ=+0.050 σ=4.671 r1=-0.44 | KL=0.0267 clip=0.34 |  1583fps   155s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  247808/300000 [████████████████░░░░]  82.6% | Eval=  489.9 Rec= 232.4 | VL=80.760 EV=+0.531 | ᾱ=0.064(±0.053) αmax=0.14 | c_mc=0.94 | bias=-1.018 var=27.458 SNR=0.025 | ΔV=1.165 err_μ=11.718 err_ema=10.059 | δ:μ=+0.008 σ=4.874 r1=-0.40 | KL=0.0261 clip=0.34 |  1586fps   156s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  256000/300000 [█████████████████░░░]  85.3% | Eval=  482.9 Rec= 223.3 | VL=24.765 EV=-0.053 | ᾱ=0.057(±0.046) αmax=0.13 | c_mc=0.80 | bias=-3.255 var=24.326 SNR=0.118 | ΔV=0.679 err_μ=7.668 err_ema=10.184 | δ:μ=+0.039 σ=4.871 r1=-0.43 | KL=0.0289 clip=0.36 |  1588fps   161s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  258048/300000 [█████████████████░░░]  86.0% | Eval=  482.9 Rec= 234.2 | VL=52.461 EV=+0.067 | ᾱ=0.054(±0.046) αmax=0.12 | c_mc=0.82 | bias=+0.150 var=24.377 SNR=0.002 | ΔV=0.867 err_μ=9.638 err_ema=10.157 | δ:μ=+0.001 σ=4.025 r1=-0.44 | KL=0.0270 clip=0.36 |  1589fps   162s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  266240/300000 [█████████████████░░░]  88.7% | Eval=  512.7 Rec= 236.9 | VL=38.426 EV=-0.111 | ᾱ=0.052(±0.043) αmax=0.12 | c_mc=0.81 | bias=-4.818 var=28.983 SNR=0.152 | ΔV=0.824 err_μ=10.045 err_ema=10.058 | δ:μ=+0.057 σ=4.322 r1=-0.38 | KL=0.0321 clip=0.37 |  1592fps   167s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  268288/300000 [█████████████████░░░]  89.4% | Eval=  512.7 Rec= 254.2 | VL=24.920 EV=-0.044 | ᾱ=0.051(±0.043) αmax=0.11 | c_mc=0.84 | bias=-7.675 var=14.330 SNR=0.324 | ΔV=0.754 err_μ=9.125 err_ema=10.012 | δ:μ=+0.074 σ=3.847 r1=-0.42 | KL=0.0293 clip=0.36 |  1596fps   168s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  276480/300000 [██████████████████░░]  92.2% | Eval=  464.4 Rec= 299.4 | VL=36.156 EV=+0.071 | ᾱ=0.048(±0.040) αmax=0.11 | c_mc=0.85 | bias=-2.281 var=17.906 SNR=0.085 | ΔV=0.649 err_μ=8.473 err_ema=10.210 | δ:μ=+0.019 σ=3.608 r1=-0.46 | KL=0.0315 clip=0.37 |  1604fps   172s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  278528/300000 [██████████████████░░]  92.8% | Eval=  464.4 Rec= 301.2 | VL=68.867 EV=+0.098 | ᾱ=0.048(±0.039) αmax=0.11 | c_mc=0.86 | bias=+3.073 var=31.333 SNR=0.096 | ΔV=0.864 err_μ=11.690 err_ema=10.284 | δ:μ=-0.039 σ=4.323 r1=-0.45 | KL=0.0313 clip=0.38 |  1605fps   173s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  286720/300000 [███████████████████░]  95.6% | Eval=  399.8 Rec= 313.0 | VL=109.037 EV=+0.742 | ᾱ=0.048(±0.042) αmax=0.10 | c_mc=0.87 | bias=+14.287 var=34.060 SNR=0.413 | ΔV=1.541 err_μ=20.078 err_ema=10.822 | δ:μ=-0.165 σ=5.121 r1=-0.44 | KL=0.0332 clip=0.38 |  1601fps   179s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  288768/300000 [███████████████████░]  96.3% | Eval=  399.8 Rec= 314.3 | VL=45.522 EV=-0.062 | ᾱ=0.044(±0.036) αmax=0.10 | c_mc=0.81 | bias=-4.602 var=36.405 SNR=0.132 | ΔV=0.703 err_μ=9.872 err_ema=10.775 | δ:μ=+0.058 σ=5.628 r1=-0.43 | KL=0.0339 clip=0.40 |  1604fps   180s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  296960/300000 [███████████████████░]  99.0% | Eval=  359.7 Rec= 343.7 | VL=49.510 EV=+0.103 | ᾱ=0.046(±0.038) αmax=0.10 | c_mc=0.87 | bias=-1.694 var=30.487 SNR=0.043 | ΔV=0.687 err_μ=9.592 err_ema=10.688 | δ:μ=+0.010 σ=4.194 r1=-0.42 | KL=0.0315 clip=0.37 |  1604fps   185s
+  [HCGAE_Imp12_s123  |①✓②✓③✗④✗]  299008/300000 [███████████████████░]  99.7% | Eval=  359.7 Rec= 354.3 | VL=23.844 EV=-0.058 | ᾱ=0.044(±0.037) αmax=0.10 | c_mc=0.87 | bias=-0.951 var=18.376 SNR=0.041 | ΔV=0.479 err_μ=6.662 err_ema=10.486 | δ:μ=+0.014 σ=4.293 r1=-0.48 | KL=0.0319 clip=0.37 |  1605fps   186s
+  ✓ [HCGAE_Imp12_s123] 完成 | 耗时=187.1s | 最终=443.9 | 最高=512.7
+  -> HCGAE_Imp12 HalfCheetah-v4 s123: final=443.9  (187s)
+
+  [10/12] HalfCheetah-v4 | HCGAE_Imp12 | seed=456
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]    2048/300000 [░░░░░░░░░░░░░░░░░░░░]   0.7% | Eval=    N/A Rec=-612.1 | VL=1330.336 EV=-0.003 | ᾱ=0.324(±0.231) αmax=0.70 | c_mc=1.00 | bias=+58.138 var=7.449 SNR=2.252 | ΔV=22.651 err_μ=58.139 err_ema=3.857 | δ:μ=-0.615 σ=1.365 r1=-0.12 | KL=0.0078 clip=0.11 |  2296fps     1s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   10240/300000 [░░░░░░░░░░░░░░░░░░░░]   3.4% | Eval=   -2.3 Rec=-624.8 | VL=360.594 EV=-8.097 | ᾱ=0.307(±0.283) αmax=0.70 | c_mc=1.00 | bias=+49.002 var=42.057 SNR=0.521 | ΔV=29.488 err_μ=52.534 err_ema=8.546 | δ:μ=-0.483 σ=23.602 r1=-0.37 | KL=0.0090 clip=0.13 |  1864fps     5s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   12288/300000 [░░░░░░░░░░░░░░░░░░░░]   4.1% | Eval=   -2.3 Rec=-637.3 | VL=67.751 EV=-0.012 | ᾱ=0.300(±0.258) αmax=0.70 | c_mc=1.00 | bias=+0.391 var=6.926 SNR=0.046 | ΔV=4.711 err_μ=9.228 err_ema=8.580 | δ:μ=-0.018 σ=4.324 r1=-0.42 | KL=0.0076 clip=0.11 |  1926fps     6s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   20480/300000 [█░░░░░░░░░░░░░░░░░░░]   6.8% | Eval=   -8.4 Rec=-634.3 | VL=121.397 EV=-4.648 | ᾱ=0.279(±0.237) αmax=0.69 | c_mc=1.00 | bias=+17.291 var=104.349 SNR=0.109 | ΔV=13.351 err_μ=25.244 err_ema=10.084 | δ:μ=-0.177 σ=38.945 r1=-0.42 | KL=0.0101 clip=0.15 |  1897fps    11s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   22528/300000 [█░░░░░░░░░░░░░░░░░░░]   7.5% | Eval=   -8.4 Rec=-633.0 | VL=34.994 EV=-0.050 | ᾱ=0.307(±0.258) αmax=0.69 | c_mc=1.00 | bias=-6.753 var=4.665 SNR=0.217 | ΔV=4.341 err_μ=8.585 err_ema=10.009 | δ:μ=+0.063 σ=4.215 r1=-0.41 | KL=0.0095 clip=0.14 |  1928fps    12s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   30720/300000 [██░░░░░░░░░░░░░░░░░░]  10.2% | Eval=  -42.9 Rec=-596.0 | VL=128.230 EV=+0.152 | ᾱ=0.300(±0.247) αmax=0.68 | c_mc=1.00 | bias=+11.208 var=12.019 SNR=0.265 | ΔV=7.570 err_μ=15.845 err_ema=10.259 | δ:μ=-0.113 σ=5.520 r1=-0.38 | KL=0.0093 clip=0.14 |  1906fps    16s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   32768/300000 [██░░░░░░░░░░░░░░░░░░]  10.9% | Eval=  -42.9 Rec=-573.7 | VL=68.450 EV=+0.050 | ᾱ=0.303(±0.249) αmax=0.68 | c_mc=1.00 | bias=-3.708 var=13.986 SNR=0.062 | ΔV=5.130 err_μ=10.795 err_ema=10.286 | δ:μ=+0.032 σ=7.757 r1=-0.46 | KL=0.0097 clip=0.15 |  1929fps    17s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   40960/300000 [██░░░░░░░░░░░░░░░░░░]  13.7% | Eval=    8.4 Rec=-505.1 | VL=55.886 EV=+0.098 | ᾱ=0.308(±0.251) αmax=0.67 | c_mc=1.00 | bias=-3.148 var=8.630 SNR=0.090 | ΔV=4.670 err_μ=9.696 err_ema=10.315 | δ:μ=+0.040 σ=6.215 r1=-0.40 | KL=0.0100 clip=0.15 |  1881fps    22s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   43008/300000 [██░░░░░░░░░░░░░░░░░░]  14.3% | Eval=    8.4 Rec=-494.4 | VL=116.461 EV=+0.074 | ᾱ=0.281(±0.241) αmax=0.67 | c_mc=1.00 | bias=+3.428 var=11.666 SNR=0.043 | ΔV=5.857 err_μ=11.840 err_ema=10.391 | δ:μ=-0.031 σ=5.206 r1=-0.45 | KL=0.0100 clip=0.15 |  1891fps    23s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   51200/300000 [███░░░░░░░░░░░░░░░░░]  17.1% | Eval=  -73.2 Rec=-437.7 | VL=121.377 EV=+0.025 | ᾱ=0.289(±0.242) αmax=0.66 | c_mc=1.00 | bias=+5.216 var=13.240 SNR=0.100 | ΔV=6.341 err_μ=13.460 err_ema=10.846 | δ:μ=-0.054 σ=5.728 r1=-0.43 | KL=0.0103 clip=0.15 |  1855fps    28s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   53248/300000 [███░░░░░░░░░░░░░░░░░]  17.7% | Eval=  -73.2 Rec=-440.9 | VL=64.963 EV=-0.000 | ᾱ=0.271(±0.213) αmax=0.65 | c_mc=1.00 | bias=+0.823 var=6.987 SNR=0.023 | ΔV=4.086 err_μ=8.848 err_ema=10.746 | δ:μ=-0.007 σ=4.643 r1=-0.45 | KL=0.0135 clip=0.20 |  1864fps    29s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   61440/300000 [████░░░░░░░░░░░░░░░░]  20.5% | Eval=  -16.9 Rec=-397.3 | VL=42.459 EV=-0.072 | ᾱ=0.291(±0.243) αmax=0.64 | c_mc=1.00 | bias=-1.973 var=8.331 SNR=0.078 | ΔV=3.819 err_μ=8.226 err_ema=10.483 | δ:μ=+0.034 σ=4.717 r1=-0.40 | KL=0.0127 clip=0.19 |  1812fps    34s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   63488/300000 [████░░░░░░░░░░░░░░░░]  21.2% | Eval=  -16.9 Rec=-383.2 | VL=107.419 EV=+0.046 | ᾱ=0.287(±0.233) αmax=0.64 | c_mc=1.00 | bias=+4.622 var=9.585 SNR=0.113 | ΔV=5.827 err_μ=12.795 err_ema=10.599 | δ:μ=-0.058 σ=4.448 r1=-0.44 | KL=0.0124 clip=0.19 |  1825fps    35s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   71680/300000 [████░░░░░░░░░░░░░░░░]  23.9% | Eval=  -22.4 Rec=-336.7 | VL=46.048 EV=+0.061 | ᾱ=0.291(±0.235) αmax=0.62 | c_mc=1.00 | bias=-4.073 var=8.081 SNR=0.106 | ΔV=4.033 err_μ=9.154 err_ema=10.529 | δ:μ=+0.038 σ=4.727 r1=-0.45 | KL=0.0120 clip=0.18 |  1808fps    40s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   73728/300000 [████░░░░░░░░░░░░░░░░]  24.6% | Eval=  -22.4 Rec=-314.6 | VL=57.371 EV=+0.191 | ᾱ=0.273(±0.224) αmax=0.61 | c_mc=1.00 | bias=+1.262 var=7.948 SNR=0.037 | ΔV=3.969 err_μ=9.242 err_ema=10.465 | δ:μ=-0.027 σ=4.415 r1=-0.42 | KL=0.0131 clip=0.20 |  1790fps    41s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   81920/300000 [█████░░░░░░░░░░░░░░░]  27.3% | Eval=  -31.0 Rec=-277.6 | VL=51.888 EV=-0.025 | ᾱ=0.271(±0.220) αmax=0.59 | c_mc=0.98 | bias=-3.974 var=10.249 SNR=0.103 | ΔV=4.095 err_μ=9.806 err_ema=10.404 | δ:μ=+0.032 σ=5.212 r1=-0.44 | KL=0.0113 clip=0.17 |  1751fps    47s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   83968/300000 [█████░░░░░░░░░░░░░░░]  28.0% | Eval=  -31.0 Rec=-261.7 | VL=34.092 EV=-0.067 | ᾱ=0.265(±0.218) αmax=0.58 | c_mc=0.98 | bias=-4.333 var=6.781 SNR=0.155 | ΔV=3.353 err_μ=8.057 err_ema=10.286 | δ:μ=+0.040 σ=4.536 r1=-0.44 | KL=0.0119 clip=0.18 |  1760fps    48s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   92160/300000 [██████░░░░░░░░░░░░░░]  30.7% | Eval=  -21.7 Rec=-257.3 | VL=46.676 EV=+0.537 | ᾱ=0.244(±0.197) αmax=0.54 | c_mc=0.94 | bias=-0.575 var=9.763 SNR=0.025 | ΔV=3.496 err_μ=9.131 err_ema=10.407 | δ:μ=+0.010 σ=4.811 r1=-0.45 | KL=0.0138 clip=0.22 |  1720fps    54s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]   94208/300000 [██████░░░░░░░░░░░░░░]  31.4% | Eval=  -21.7 Rec=-244.4 | VL=91.859 EV=+0.148 | ᾱ=0.224(±0.186) αmax=0.51 | c_mc=0.89 | bias=-0.457 var=13.101 SNR=0.038 | ΔV=4.451 err_μ=12.238 err_ema=10.498 | δ:μ=+0.016 σ=4.955 r1=-0.43 | KL=0.0150 clip=0.23 |  1723fps    55s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  102400/300000 [██████░░░░░░░░░░░░░░]  34.1% | Eval=   20.6 Rec=-212.0 | VL=77.486 EV=+0.137 | ᾱ=0.206(±0.164) αmax=0.50 | c_mc=0.90 | bias=+0.778 var=13.605 SNR=0.006 | ΔV=3.489 err_μ=9.753 err_ema=10.297 | δ:μ=-0.009 σ=4.511 r1=-0.45 | KL=0.0137 clip=0.20 |  1714fps    60s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  104448/300000 [██████░░░░░░░░░░░░░░]  34.8% | Eval=   20.6 Rec=-205.0 | VL=56.416 EV=-0.075 | ᾱ=0.231(±0.186) αmax=0.49 | c_mc=0.90 | bias=-1.945 var=13.288 SNR=0.081 | ΔV=3.728 err_μ=10.655 err_ema=10.315 | δ:μ=+0.027 σ=4.873 r1=-0.41 | KL=0.0139 clip=0.22 |  1716fps    61s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  112640/300000 [███████░░░░░░░░░░░░░]  37.5% | Eval=   78.6 Rec=-156.5 | VL=48.444 EV=+0.063 | ᾱ=0.222(±0.180) αmax=0.49 | c_mc=0.93 | bias=-6.635 var=10.354 SNR=0.227 | ΔV=3.608 err_μ=10.735 err_ema=10.285 | δ:μ=+0.071 σ=4.560 r1=-0.45 | KL=0.0154 clip=0.23 |  1705fps    66s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  114688/300000 [███████░░░░░░░░░░░░░]  38.2% | Eval=   78.6 Rec=-154.1 | VL=83.270 EV=+0.065 | ᾱ=0.216(±0.175) αmax=0.48 | c_mc=0.93 | bias=-0.111 var=14.903 SNR=0.023 | ΔV=3.867 err_μ=11.523 err_ema=10.347 | δ:μ=-0.004 σ=4.629 r1=-0.41 | KL=0.0158 clip=0.23 |  1713fps    67s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  122880/300000 [████████░░░░░░░░░░░░]  41.0% | Eval=  145.5 Rec=-145.4 | VL=89.814 EV=+0.127 | ᾱ=0.203(±0.164) αmax=0.45 | c_mc=0.92 | bias=+0.391 var=19.229 SNR=0.003 | ΔV=3.810 err_μ=12.066 err_ema=10.493 | δ:μ=-0.003 σ=5.390 r1=-0.43 | KL=0.0160 clip=0.24 |  1710fps    72s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  124928/300000 [████████░░░░░░░░░░░░]  41.6% | Eval=  145.5 Rec=-137.5 | VL=60.774 EV=+0.033 | ᾱ=0.210(±0.173) αmax=0.45 | c_mc=0.92 | bias=-10.617 var=13.946 SNR=0.312 | ΔV=4.392 err_μ=13.506 err_ema=10.644 | δ:μ=+0.108 σ=5.007 r1=-0.45 | KL=0.0154 clip=0.23 |  1717fps    73s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  133120/300000 [████████░░░░░░░░░░░░]  44.4% | Eval=  196.0 Rec= -89.8 | VL=41.738 EV=+0.035 | ᾱ=0.200(±0.159) αmax=0.44 | c_mc=0.97 | bias=+1.625 var=9.873 SNR=0.036 | ΔV=2.523 err_μ=8.229 err_ema=10.180 | δ:μ=-0.014 σ=4.133 r1=-0.46 | KL=0.0158 clip=0.24 |  1719fps    77s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  135168/300000 [█████████░░░░░░░░░░░]  45.1% | Eval=  196.0 Rec= -89.8 | VL=46.944 EV=+0.476 | ᾱ=0.202(±0.168) αmax=0.44 | c_mc=0.97 | bias=+5.486 var=11.959 SNR=0.175 | ΔV=3.726 err_μ=12.069 err_ema=10.274 | δ:μ=-0.065 σ=4.785 r1=-0.43 | KL=0.0185 clip=0.27 |  1725fps    78s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  143360/300000 [█████████░░░░░░░░░░░]  47.8% | Eval=  204.4 Rec= -39.2 | VL=62.891 EV=+0.418 | ᾱ=0.162(±0.136) αmax=0.38 | c_mc=0.87 | bias=+1.645 var=18.947 SNR=0.036 | ΔV=2.755 err_μ=10.036 err_ema=10.136 | δ:μ=-0.022 σ=4.778 r1=-0.45 | KL=0.0192 clip=0.27 |  1721fps    83s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  145408/300000 [█████████░░░░░░░░░░░]  48.5% | Eval=  204.4 Rec= -22.9 | VL=38.309 EV=+0.052 | ᾱ=0.170(±0.139) αmax=0.37 | c_mc=0.84 | bias=-10.093 var=13.480 SNR=0.357 | ΔV=3.115 err_μ=11.912 err_ema=10.225 | δ:μ=+0.112 σ=4.436 r1=-0.39 | KL=0.0197 clip=0.29 |  1726fps    84s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  153600/300000 [██████████░░░░░░░░░░]  51.2% | Eval=  247.0 Rec= -47.5 | VL=58.570 EV=+0.691 | ᾱ=0.130(±0.110) αmax=0.32 | c_mc=0.76 | bias=-1.849 var=22.045 SNR=0.050 | ΔV=2.314 err_μ=9.927 err_ema=10.126 | δ:μ=+0.024 σ=4.837 r1=-0.40 | KL=0.0165 clip=0.25 |  1730fps    89s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  155648/300000 [██████████░░░░░░░░░░]  51.9% | Eval=  247.0 Rec= -35.6 | VL=73.692 EV=+0.576 | ᾱ=0.124(±0.105) αmax=0.30 | c_mc=0.72 | bias=-4.770 var=25.260 SNR=0.152 | ΔV=2.691 err_μ=12.519 err_ema=10.245 | δ:μ=+0.062 σ=4.632 r1=-0.39 | KL=0.0181 clip=0.26 |  1734fps    90s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  163840/300000 [██████████░░░░░░░░░░]  54.6% | Eval=  317.4 Rec=  -2.7 | VL=32.955 EV=+0.026 | ᾱ=0.127(±0.101) αmax=0.28 | c_mc=0.71 | bias=+0.397 var=21.757 SNR=0.011 | ΔV=1.710 err_μ=8.795 err_ema=10.165 | δ:μ=+0.009 σ=5.015 r1=-0.45 | KL=0.0206 clip=0.28 |  1737fps    94s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  165888/300000 [███████████░░░░░░░░░]  55.3% | Eval=  317.4 Rec=  -1.6 | VL=38.458 EV=+0.049 | ᾱ=0.130(±0.107) αmax=0.28 | c_mc=0.73 | bias=-3.785 var=19.705 SNR=0.124 | ΔV=1.999 err_μ=9.981 err_ema=10.156 | δ:μ=+0.043 σ=4.441 r1=-0.43 | KL=0.0197 clip=0.28 |  1740fps    95s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  174080/300000 [███████████░░░░░░░░░]  58.0% | Eval=  366.7 Rec=  67.1 | VL=32.313 EV=+0.085 | ᾱ=0.119(±0.093) αmax=0.26 | c_mc=0.72 | bias=-9.694 var=22.076 SNR=0.272 | ΔV=2.083 err_μ=11.866 err_ema=10.352 | δ:μ=+0.091 σ=5.018 r1=-0.41 | KL=0.0213 clip=0.28 |  1741fps   100s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  176128/300000 [███████████░░░░░░░░░]  58.7% | Eval=  366.7 Rec=  86.1 | VL=21.191 EV=-0.119 | ᾱ=0.117(±0.093) αmax=0.26 | c_mc=0.74 | bias=-2.466 var=16.472 SNR=0.072 | ΔV=1.293 err_μ=7.122 err_ema=10.190 | δ:μ=+0.022 σ=4.361 r1=-0.43 | KL=0.0184 clip=0.26 |  1746fps   101s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  184320/300000 [████████████░░░░░░░░]  61.4% | Eval=  357.8 Rec= 104.5 | VL=30.042 EV=-0.201 | ᾱ=0.108(±0.091) αmax=0.25 | c_mc=0.75 | bias=+8.206 var=20.400 SNR=0.261 | ΔV=1.834 err_μ=10.236 err_ema=10.042 | δ:μ=-0.092 σ=4.336 r1=-0.46 | KL=0.0210 clip=0.29 |  1751fps   105s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  186368/300000 [████████████░░░░░░░░]  62.1% | Eval=  357.8 Rec=  91.4 | VL=51.839 EV=+0.487 | ᾱ=0.107(±0.090) αmax=0.25 | c_mc=0.79 | bias=+6.819 var=23.285 SNR=0.218 | ΔV=2.004 err_μ=11.395 err_ema=10.109 | δ:μ=-0.085 σ=4.100 r1=-0.42 | KL=0.0228 clip=0.31 |  1753fps   106s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  194560/300000 [████████████░░░░░░░░]  64.9% | Eval=  431.0 Rec= 123.0 | VL=23.685 EV=-0.041 | ᾱ=0.108(±0.084) αmax=0.23 | c_mc=0.77 | bias=-10.956 var=13.277 SNR=0.425 | ΔV=1.851 err_μ=11.770 err_ema=10.327 | δ:μ=+0.110 σ=4.028 r1=-0.44 | KL=0.0247 clip=0.33 |  1754fps   111s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  196608/300000 [█████████████░░░░░░░]  65.5% | Eval=  431.0 Rec= 102.1 | VL=47.007 EV=+0.792 | ᾱ=0.102(±0.082) αmax=0.23 | c_mc=0.79 | bias=+12.213 var=24.509 SNR=0.365 | ΔV=2.220 err_μ=14.007 err_ema=10.511 | δ:μ=-0.131 σ=5.654 r1=-0.32 | KL=0.0245 clip=0.32 |  1758fps   112s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  204800/300000 [█████████████░░░░░░░]  68.3% | Eval=  553.0 Rec= 144.4 | VL=45.722 EV=+0.128 | ᾱ=0.089(±0.071) αmax=0.20 | c_mc=0.76 | bias=+0.651 var=22.957 SNR=0.001 | ΔV=1.353 err_μ=9.725 err_ema=10.630 | δ:μ=+0.000 σ=4.459 r1=-0.45 | KL=0.0247 clip=0.33 |  1760fps   116s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  206848/300000 [█████████████░░░░░░░]  68.9% | Eval=  553.0 Rec= 149.3 | VL=68.977 EV=+0.707 | ᾱ=0.100(±0.077) αmax=0.20 | c_mc=0.77 | bias=+2.304 var=29.247 SNR=0.036 | ΔV=2.301 err_μ=16.096 err_ema=10.903 | δ:μ=-0.013 σ=4.920 r1=-0.39 | KL=0.0252 clip=0.33 |  1757fps   118s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  215040/300000 [██████████████░░░░░░]  71.7% | Eval=  704.8 Rec= 183.9 | VL=92.540 EV=+0.672 | ᾱ=0.078(±0.064) αmax=0.19 | c_mc=0.77 | bias=+3.328 var=45.782 SNR=0.078 | ΔV=1.846 err_μ=14.404 err_ema=10.931 | δ:μ=-0.042 σ=6.262 r1=-0.38 | KL=0.0255 clip=0.33 |  1750fps   123s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  217088/300000 [██████████████░░░░░░]  72.4% | Eval=  704.8 Rec= 218.8 | VL=55.096 EV=+0.117 | ᾱ=0.078(±0.064) αmax=0.18 | c_mc=0.72 | bias=-3.819 var=38.212 SNR=0.085 | ΔV=1.409 err_μ=11.439 err_ema=10.957 | δ:μ=+0.029 σ=5.361 r1=-0.41 | KL=0.0275 clip=0.35 |  1752fps   124s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  225280/300000 [███████████████░░░░░]  75.1% | Eval=  759.7 Rec= 233.4 | VL=101.208 EV=+0.740 | ᾱ=0.085(±0.062) αmax=0.17 | c_mc=0.78 | bias=+0.403 var=30.095 SNR=0.007 | ΔV=2.226 err_μ=19.597 err_ema=11.286 | δ:μ=+0.010 σ=4.765 r1=-0.47 | KL=0.0268 clip=0.35 |  1755fps   128s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  227328/300000 [███████████████░░░░░]  75.8% | Eval=  759.7 Rec= 262.1 | VL=73.002 EV=+0.155 | ᾱ=0.073(±0.059) αmax=0.16 | c_mc=0.73 | bias=+3.710 var=44.115 SNR=0.103 | ΔV=1.481 err_μ=13.189 err_ema=11.382 | δ:μ=-0.047 σ=5.648 r1=-0.41 | KL=0.0254 clip=0.34 |  1758fps   129s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  235520/300000 [███████████████░░░░░]  78.5% | Eval=  832.1 Rec= 324.9 | VL=55.306 EV=+0.304 | ᾱ=0.068(±0.056) αmax=0.15 | c_mc=0.79 | bias=-8.736 var=52.561 SNR=0.192 | ΔV=1.411 err_μ=12.911 err_ema=11.635 | δ:μ=+0.094 σ=6.212 r1=-0.40 | KL=0.0267 clip=0.34 |  1759fps   134s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  237568/300000 [███████████████░░░░░]  79.2% | Eval=  832.1 Rec= 333.3 | VL=82.649 EV=+0.335 | ᾱ=0.066(±0.056) αmax=0.15 | c_mc=0.78 | bias=+5.925 var=40.116 SNR=0.149 | ΔV=1.474 err_μ=13.719 err_ema=11.739 | δ:μ=-0.064 σ=5.276 r1=-0.37 | KL=0.0298 clip=0.37 |  1761fps   135s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  245760/300000 [████████████████░░░░]  81.9% | Eval=  826.5 Rec= 413.8 | VL=44.808 EV=+0.047 | ᾱ=0.064(±0.051) αmax=0.14 | c_mc=0.80 | bias=-6.117 var=37.786 SNR=0.140 | ΔV=1.070 err_μ=11.053 err_ema=12.035 | δ:μ=+0.056 σ=5.416 r1=-0.44 | KL=0.0277 clip=0.35 |  1756fps   140s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  247808/300000 [████████████████░░░░]  82.6% | Eval=  826.5 Rec= 412.9 | VL=197.415 EV=+0.212 | ᾱ=0.057(±0.048) αmax=0.14 | c_mc=0.81 | bias=+13.721 var=45.518 SNR=0.343 | ΔV=2.089 err_μ=21.800 err_ema=12.523 | δ:μ=-0.165 σ=4.506 r1=-0.42 | KL=0.0260 clip=0.34 |  1760fps   141s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  256000/300000 [█████████████████░░░]  85.3% | Eval=  705.4 Rec= 411.0 | VL=125.335 EV=-0.078 | ᾱ=0.053(±0.044) αmax=0.12 | c_mc=0.79 | bias=-3.907 var=122.312 SNR=0.040 | ΔV=1.453 err_μ=16.253 err_ema=13.399 | δ:μ=+0.037 σ=7.695 r1=-0.32 | KL=0.0284 clip=0.36 |  1765fps   145s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  258048/300000 [█████████████████░░░]  86.0% | Eval=  705.4 Rec= 417.8 | VL=108.749 EV=+0.164 | ᾱ=0.055(±0.044) αmax=0.12 | c_mc=0.82 | bias=-2.831 var=52.436 SNR=0.066 | ΔV=1.249 err_μ=14.575 err_ema=13.458 | δ:μ=+0.027 σ=6.423 r1=-0.42 | KL=0.0298 clip=0.37 |  1769fps   146s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  266240/300000 [█████████████████░░░]  88.7% | Eval=  867.0 Rec= 429.0 | VL=71.846 EV=+0.128 | ᾱ=0.051(±0.041) αmax=0.12 | c_mc=0.82 | bias=-6.373 var=38.317 SNR=0.193 | ΔV=1.008 err_μ=12.555 err_ema=13.516 | δ:μ=+0.091 σ=5.041 r1=-0.44 | KL=0.0304 clip=0.37 |  1772fps   150s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  268288/300000 [█████████████████░░░]  89.4% | Eval=  867.0 Rec= 452.9 | VL=78.200 EV=+0.091 | ᾱ=0.054(±0.043) αmax=0.11 | c_mc=0.83 | bias=-4.925 var=45.249 SNR=0.095 | ΔV=1.082 err_μ=13.234 err_ema=13.502 | δ:μ=+0.040 σ=5.686 r1=-0.39 | KL=0.0289 clip=0.36 |  1776fps   151s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  276480/300000 [██████████████████░░]  92.2% | Eval=  762.5 Rec= 426.9 | VL=52.644 EV=+0.056 | ᾱ=0.048(±0.040) αmax=0.11 | c_mc=0.72 | bias=-7.504 var=40.505 SNR=0.206 | ΔV=0.967 err_μ=12.539 err_ema=14.036 | δ:μ=+0.090 σ=5.912 r1=-0.46 | KL=0.0285 clip=0.35 |  1780fps   155s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  278528/300000 [██████████████████░░]  92.8% | Eval=  762.5 Rec= 436.6 | VL=87.818 EV=+0.205 | ᾱ=0.049(±0.040) αmax=0.11 | c_mc=0.74 | bias=-4.854 var=42.002 SNR=0.130 | ΔV=1.098 err_μ=14.655 err_ema=14.067 | δ:μ=+0.061 σ=5.042 r1=-0.43 | KL=0.0313 clip=0.38 |  1783fps   156s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  286720/300000 [███████████████████░]  95.6% | Eval=  873.4 Rec= 250.8 | VL=97.747 EV=+0.840 | ᾱ=0.045(±0.037) αmax=0.10 | c_mc=0.64 | bias=-5.815 var=66.482 SNR=0.115 | ΔV=1.201 err_μ=16.939 err_ema=15.320 | δ:μ=+0.063 σ=6.238 r1=-0.33 | KL=0.0329 clip=0.38 |  1787fps   160s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  288768/300000 [███████████████████░]  96.3% | Eval=  873.4 Rec= 202.6 | VL=67.800 EV=+0.904 | ᾱ=0.046(±0.036) αmax=0.10 | c_mc=0.60 | bias=+2.485 var=49.138 SNR=0.078 | ΔV=0.938 err_μ=13.249 err_ema=15.217 | δ:μ=-0.042 σ=5.998 r1=-0.46 | KL=0.0326 clip=0.37 |  1790fps   161s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  296960/300000 [███████████████████░]  99.0% | Eval=  772.0 Rec= 263.9 | VL=77.006 EV=+0.173 | ᾱ=0.045(±0.037) αmax=0.10 | c_mc=0.61 | bias=-0.855 var=42.150 SNR=0.033 | ΔV=1.064 err_μ=14.782 err_ema=15.256 | δ:μ=+0.014 σ=5.167 r1=-0.45 | KL=0.0309 clip=0.37 |  1783fps   166s
+  [HCGAE_Imp12_s456  |①✓②✓③✗④✗]  299008/300000 [███████████████████░]  99.7% | Eval=  772.0 Rec= 258.7 | VL=83.785 EV=+0.215 | ᾱ=0.046(±0.036) αmax=0.10 | c_mc=0.63 | bias=-0.639 var=58.680 SNR=0.038 | ΔV=1.073 err_μ=15.560 err_ema=15.271 | δ:μ=+0.020 σ=6.112 r1=-0.40 | KL=0.0313 clip=0.38 |  1786fps   167s
+  ✓ [HCGAE_Imp12_s456] 完成 | 耗时=168.2s | 最终=796.0 | 最高=873.4
+  -> HCGAE_Imp12 HalfCheetah-v4 s456: final=796.0  (168s)
+
+  [11/12] HalfCheetah-v4 | HCGAE_Imp12 | seed=789
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]    2048/300000 [░░░░░░░░░░░░░░░░░░░░]   0.7% | Eval=    N/A Rec=-635.1 | VL=1305.595 EV=-0.000 | ᾱ=0.374(±0.252) αmax=0.70 | c_mc=1.00 | bias=+59.113 var=9.711 SNR=1.829 | ΔV=26.238 err_μ=59.115 err_ema=3.906 | δ:μ=-0.628 σ=1.319 r1=-0.04 | KL=0.0083 clip=0.12 |  2045fps     1s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   10240/300000 [░░░░░░░░░░░░░░░░░░░░]   3.4% | Eval=   -4.5 Rec=-609.0 | VL=47.422 EV=+0.112 | ᾱ=0.290(±0.251) αmax=0.70 | c_mc=1.00 | bias=-4.258 var=6.746 SNR=0.124 | ΔV=4.130 err_μ=7.923 err_ema=6.427 | δ:μ=+0.046 σ=5.495 r1=-0.40 | KL=0.0081 clip=0.11 |  1771fps     6s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   12288/300000 [░░░░░░░░░░░░░░░░░░░░]   4.1% | Eval=   -4.5 Rec=-615.5 | VL=115.316 EV=-0.341 | ᾱ=0.290(±0.256) αmax=0.69 | c_mc=0.99 | bias=+10.782 var=8.416 SNR=0.209 | ΔV=7.730 err_μ=14.915 err_ema=6.852 | δ:μ=-0.098 σ=5.195 r1=-0.49 | KL=0.0101 clip=0.15 |  1837fps     7s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   20480/300000 [█░░░░░░░░░░░░░░░░░░░]   6.8% | Eval=   14.2 Rec=-577.1 | VL=35.824 EV=-0.118 | ᾱ=0.296(±0.239) αmax=0.67 | c_mc=0.97 | bias=+6.722 var=4.968 SNR=0.267 | ΔV=4.270 err_μ=8.935 err_ema=7.517 | δ:μ=-0.076 σ=4.169 r1=-0.49 | KL=0.0093 clip=0.14 |  1815fps    11s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   22528/300000 [█░░░░░░░░░░░░░░░░░░░]   7.5% | Eval=   14.2 Rec=-561.8 | VL=58.527 EV=+0.195 | ᾱ=0.291(±0.238) αmax=0.68 | c_mc=0.98 | bias=-6.202 var=7.706 SNR=0.165 | ΔV=4.698 err_μ=9.801 err_ema=7.632 | δ:μ=+0.067 σ=4.934 r1=-0.44 | KL=0.0096 clip=0.14 |  1847fps    12s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   30720/300000 [██░░░░░░░░░░░░░░░░░░]  10.2% | Eval=   -6.8 Rec=-526.0 | VL=121.489 EV=-25.097 | ᾱ=0.285(±0.278) αmax=0.67 | c_mc=0.97 | bias=+37.028 var=21.359 SNR=0.555 | ΔV=21.490 err_μ=38.379 err_ema=9.820 | δ:μ=-0.356 σ=11.311 r1=-0.36 | KL=0.0099 clip=0.15 |  1843fps    17s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   32768/300000 [██░░░░░░░░░░░░░░░░░░]  10.9% | Eval=   -6.8 Rec=-505.4 | VL=128.565 EV=+0.026 | ᾱ=0.302(±0.239) αmax=0.68 | c_mc=1.00 | bias=-7.925 var=11.073 SNR=0.238 | ΔV=6.774 err_μ=14.483 err_ema=10.054 | δ:μ=+0.093 σ=5.297 r1=-0.36 | KL=0.0096 clip=0.14 |  1869fps    18s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   40960/300000 [██░░░░░░░░░░░░░░░░░░]  13.7% | Eval=  242.3 Rec=-473.1 | VL=26.210 EV=+0.151 | ᾱ=0.304(±0.241) αmax=0.67 | c_mc=1.00 | bias=-2.712 var=4.395 SNR=0.099 | ΔV=3.170 err_μ=6.768 err_ema=9.973 | δ:μ=+0.042 σ=3.530 r1=-0.43 | KL=0.0103 clip=0.16 |  1887fps    22s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   43008/300000 [██░░░░░░░░░░░░░░░░░░]  14.3% | Eval=  242.3 Rec=-467.3 | VL=24.590 EV=-0.076 | ᾱ=0.284(±0.235) αmax=0.67 | c_mc=1.00 | bias=-0.396 var=4.330 SNR=0.006 | ΔV=2.815 err_μ=5.930 err_ema=9.771 | δ:μ=-0.001 σ=4.019 r1=-0.44 | KL=0.0103 clip=0.16 |  1904fps    23s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   51200/300000 [███░░░░░░░░░░░░░░░░░]  17.1% | Eval=  536.2 Rec=-432.4 | VL=30.227 EV=-0.090 | ᾱ=0.295(±0.235) αmax=0.66 | c_mc=1.00 | bias=-0.963 var=4.314 SNR=0.020 | ΔV=3.238 err_μ=7.045 err_ema=10.362 | δ:μ=-0.000 σ=3.710 r1=-0.45 | KL=0.0116 clip=0.18 |  1910fps    27s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   53248/300000 [███░░░░░░░░░░░░░░░░░]  17.7% | Eval=  536.2 Rec=-429.6 | VL=83.009 EV=+0.067 | ᾱ=0.289(±0.228) αmax=0.65 | c_mc=1.00 | bias=-0.127 var=8.447 SNR=0.055 | ΔV=5.442 err_μ=12.558 err_ema=10.472 | δ:μ=-0.004 σ=4.365 r1=-0.43 | KL=0.0109 clip=0.17 |  1924fps    28s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   61440/300000 [████░░░░░░░░░░░░░░░░]  20.5% | Eval=  329.5 Rec=-418.7 | VL=24.616 EV=+0.505 | ᾱ=0.281(±0.232) αmax=0.64 | c_mc=1.00 | bias=-3.776 var=4.840 SNR=0.153 | ΔV=3.123 err_μ=6.917 err_ema=10.056 | δ:μ=+0.047 σ=4.454 r1=-0.46 | KL=0.0119 clip=0.18 |  1910fps    32s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   63488/300000 [████░░░░░░░░░░░░░░░░]  21.2% | Eval=  329.5 Rec=-418.4 | VL=80.808 EV=-0.691 | ᾱ=0.249(±0.229) αmax=0.64 | c_mc=1.00 | bias=+6.837 var=8.481 SNR=0.151 | ΔV=6.185 err_μ=12.352 err_ema=10.171 | δ:μ=-0.065 σ=4.393 r1=-0.43 | KL=0.0121 clip=0.18 |  1924fps    33s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   71680/300000 [████░░░░░░░░░░░░░░░░]  23.9% | Eval=  379.7 Rec=-401.0 | VL=64.178 EV=-0.185 | ᾱ=0.244(±0.206) αmax=0.62 | c_mc=1.00 | bias=+1.104 var=7.585 SNR=0.017 | ΔV=4.200 err_μ=9.195 err_ema=10.321 | δ:μ=-0.006 σ=4.406 r1=-0.43 | KL=0.0135 clip=0.21 |  1867fps    38s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   73728/300000 [████░░░░░░░░░░░░░░░░]  24.6% | Eval=  379.7 Rec=-394.9 | VL=57.055 EV=-0.031 | ᾱ=0.280(±0.227) αmax=0.61 | c_mc=1.00 | bias=-2.178 var=8.359 SNR=0.068 | ΔV=4.349 err_μ=9.831 err_ema=10.296 | δ:μ=+0.036 σ=4.668 r1=-0.44 | KL=0.0142 clip=0.22 |  1867fps    39s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   81920/300000 [█████░░░░░░░░░░░░░░░]  27.3% | Eval=  171.0 Rec=-366.3 | VL=23.467 EV=+0.054 | ᾱ=0.256(±0.210) αmax=0.60 | c_mc=1.00 | bias=-5.661 var=5.277 SNR=0.244 | ΔV=3.313 err_μ=7.891 err_ema=9.911 | δ:μ=+0.065 σ=3.602 r1=-0.38 | KL=0.0137 clip=0.21 |  1847fps    44s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   83968/300000 [█████░░░░░░░░░░░░░░░]  28.0% | Eval=  171.0 Rec=-354.7 | VL=29.692 EV=+0.370 | ᾱ=0.265(±0.204) αmax=0.59 | c_mc=1.00 | bias=-3.397 var=3.549 SNR=0.156 | ΔV=2.874 err_μ=7.045 err_ema=9.767 | δ:μ=+0.030 σ=2.768 r1=-0.45 | KL=0.0143 clip=0.21 |  1854fps    45s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   92160/300000 [██████░░░░░░░░░░░░░░]  30.7% | Eval=  137.5 Rec=-329.5 | VL=29.509 EV=+0.107 | ᾱ=0.265(±0.215) αmax=0.57 | c_mc=1.00 | bias=-2.908 var=4.240 SNR=0.159 | ΔV=2.952 err_μ=7.282 err_ema=9.294 | δ:μ=+0.038 σ=3.338 r1=-0.41 | KL=0.0140 clip=0.21 |  1846fps    50s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]   94208/300000 [██████░░░░░░░░░░░░░░]  31.4% | Eval=  137.5 Rec=-321.3 | VL=43.971 EV=-0.038 | ᾱ=0.238(±0.200) αmax=0.57 | c_mc=1.00 | bias=-0.671 var=7.572 SNR=0.033 | ΔV=3.137 err_μ=7.684 err_ema=9.213 | δ:μ=+0.006 σ=4.599 r1=-0.44 | KL=0.0157 clip=0.23 |  1854fps    51s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  102400/300000 [██████░░░░░░░░░░░░░░]  34.1% | Eval=  154.4 Rec=-290.0 | VL=19.925 EV=-0.060 | ᾱ=0.238(±0.191) αmax=0.54 | c_mc=1.00 | bias=+2.940 var=4.341 SNR=0.134 | ΔV=2.386 err_μ=6.382 err_ema=8.772 | δ:μ=-0.023 σ=3.199 r1=-0.53 | KL=0.0166 clip=0.25 |  1855fps    55s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  104448/300000 [██████░░░░░░░░░░░░░░]  34.8% | Eval=  154.4 Rec=-280.8 | VL=44.010 EV=+0.182 | ᾱ=0.232(±0.179) αmax=0.54 | c_mc=1.00 | bias=-5.052 var=7.635 SNR=0.222 | ΔV=3.227 err_μ=8.536 err_ema=8.760 | δ:μ=+0.064 σ=3.325 r1=-0.36 | KL=0.0174 clip=0.26 |  1862fps    56s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  112640/300000 [███████░░░░░░░░░░░░░]  37.5% | Eval=  184.0 Rec=-248.6 | VL=58.727 EV=+0.182 | ᾱ=0.224(±0.184) αmax=0.51 | c_mc=1.00 | bias=+0.091 var=7.869 SNR=0.007 | ΔV=3.635 err_μ=10.120 err_ema=8.735 | δ:μ=-0.003 σ=3.282 r1=-0.41 | KL=0.0154 clip=0.23 |  1865fps    60s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  114688/300000 [███████░░░░░░░░░░░░░]  38.2% | Eval=  184.0 Rec=-241.2 | VL=41.093 EV=-0.652 | ᾱ=0.206(±0.169) αmax=0.51 | c_mc=1.00 | bias=-2.993 var=10.222 SNR=0.093 | ΔV=2.992 err_μ=8.101 err_ema=8.703 | δ:μ=+0.036 σ=3.784 r1=-0.41 | KL=0.0182 clip=0.26 |  1873fps    61s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  122880/300000 [████████░░░░░░░░░░░░]  41.0% | Eval=  244.0 Rec=-225.8 | VL=27.043 EV=-0.273 | ᾱ=0.209(±0.170) αmax=0.48 | c_mc=1.00 | bias=+2.941 var=7.456 SNR=0.105 | ΔV=2.458 err_μ=7.052 err_ema=8.257 | δ:μ=-0.032 σ=3.588 r1=-0.47 | KL=0.0177 clip=0.26 |  1880fps    65s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  124928/300000 [████████░░░░░░░░░░░░]  41.6% | Eval=  244.0 Rec=-221.1 | VL=24.740 EV=-0.114 | ᾱ=0.207(±0.171) αmax=0.48 | c_mc=1.00 | bias=-5.479 var=4.887 SNR=0.259 | ΔV=2.471 err_μ=7.249 err_ema=8.207 | δ:μ=+0.057 σ=2.445 r1=-0.41 | KL=0.0189 clip=0.27 |  1887fps    66s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  133120/300000 [████████░░░░░░░░░░░░]  44.4% | Eval=  340.1 Rec=-189.6 | VL=52.818 EV=-0.022 | ᾱ=0.201(±0.162) αmax=0.45 | c_mc=1.00 | bias=-4.084 var=8.103 SNR=0.177 | ΔV=2.953 err_μ=9.257 err_ema=8.090 | δ:μ=+0.054 σ=3.194 r1=-0.42 | KL=0.0202 clip=0.28 |  1884fps    71s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  135168/300000 [█████████░░░░░░░░░░░]  45.1% | Eval=  340.1 Rec=-186.6 | VL=34.768 EV=-0.071 | ᾱ=0.182(±0.148) αmax=0.45 | c_mc=1.00 | bias=+2.660 var=10.849 SNR=0.061 | ΔV=2.492 err_μ=8.090 err_ema=8.090 | δ:μ=-0.021 σ=3.812 r1=-0.44 | KL=0.0187 clip=0.27 |  1889fps    72s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  143360/300000 [█████████░░░░░░░░░░░]  47.8% | Eval=  344.6 Rec=-141.8 | VL=60.932 EV=+0.090 | ᾱ=0.176(±0.148) αmax=0.42 | c_mc=1.00 | bias=-1.437 var=8.448 SNR=0.074 | ΔV=2.655 err_μ=8.995 err_ema=8.057 | δ:μ=+0.016 σ=3.276 r1=-0.45 | KL=0.0210 clip=0.30 |  1880fps    76s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  145408/300000 [█████████░░░░░░░░░░░]  48.5% | Eval=  344.6 Rec=-134.2 | VL=44.137 EV=-0.180 | ᾱ=0.184(±0.150) αmax=0.41 | c_mc=1.00 | bias=-1.150 var=10.266 SNR=0.029 | ΔV=2.567 err_μ=8.768 err_ema=8.092 | δ:μ=+0.008 σ=4.004 r1=-0.42 | KL=0.0193 clip=0.28 |  1883fps    77s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  153600/300000 [██████████░░░░░░░░░░]  51.2% | Eval=  353.5 Rec= -87.3 | VL=31.270 EV=-0.163 | ᾱ=0.168(±0.140) αmax=0.39 | c_mc=1.00 | bias=-1.219 var=7.333 SNR=0.071 | ΔV=1.890 err_μ=6.794 err_ema=7.975 | δ:μ=+0.015 σ=3.198 r1=-0.42 | KL=0.0214 clip=0.31 |  1878fps    82s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  155648/300000 [██████████░░░░░░░░░░]  51.9% | Eval=  353.5 Rec= -69.0 | VL=29.158 EV=+0.107 | ᾱ=0.171(±0.142) αmax=0.38 | c_mc=1.00 | bias=-3.830 var=7.359 SNR=0.145 | ΔV=2.025 err_μ=7.486 err_ema=7.950 | δ:μ=+0.031 σ=3.456 r1=-0.45 | KL=0.0204 clip=0.29 |  1883fps    83s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  163840/300000 [██████████░░░░░░░░░░]  54.6% | Eval=  413.7 Rec= -23.6 | VL=55.709 EV=+0.089 | ᾱ=0.141(±0.103) αmax=0.36 | c_mc=1.00 | bias=+5.881 var=12.442 SNR=0.235 | ΔV=2.159 err_μ=8.550 err_ema=7.698 | δ:μ=-0.070 σ=2.973 r1=-0.46 | KL=0.0234 clip=0.31 |  1882fps    87s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  165888/300000 [███████████░░░░░░░░░]  55.3% | Eval=  413.7 Rec= -11.0 | VL=26.960 EV=+0.300 | ᾱ=0.156(±0.125) αmax=0.35 | c_mc=1.00 | bias=-3.619 var=9.552 SNR=0.186 | ΔV=1.675 err_μ=6.781 err_ema=7.652 | δ:μ=+0.051 σ=3.795 r1=-0.47 | KL=0.0232 clip=0.32 |  1888fps    88s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  174080/300000 [███████████░░░░░░░░░]  58.0% | Eval=  428.3 Rec=  20.4 | VL=26.966 EV=-0.579 | ᾱ=0.139(±0.109) αmax=0.33 | c_mc=1.00 | bias=-4.261 var=13.339 SNR=0.175 | ΔV=1.624 err_μ=7.222 err_ema=7.956 | δ:μ=+0.057 σ=3.847 r1=-0.45 | KL=0.0249 clip=0.33 |  1891fps    92s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  176128/300000 [███████████░░░░░░░░░]  58.7% | Eval=  428.3 Rec=  23.8 | VL=33.221 EV=-0.009 | ᾱ=0.147(±0.121) αmax=0.32 | c_mc=1.00 | bias=+1.902 var=7.684 SNR=0.066 | ΔV=1.647 err_μ=7.292 err_ema=7.923 | δ:μ=-0.017 σ=2.784 r1=-0.42 | KL=0.0251 clip=0.33 |  1896fps    93s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  184320/300000 [████████████░░░░░░░░]  61.4% | Eval=  448.6 Rec=  60.1 | VL=24.527 EV=-0.015 | ᾱ=0.128(±0.106) αmax=0.29 | c_mc=1.00 | bias=-0.091 var=8.184 SNR=0.031 | ΔV=1.222 err_μ=5.819 err_ema=7.698 | δ:μ=+0.009 σ=2.960 r1=-0.42 | KL=0.0227 clip=0.31 |  1896fps    97s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  186368/300000 [████████████░░░░░░░░]  62.1% | Eval=  448.6 Rec=  54.8 | VL=120.558 EV=+0.122 | ᾱ=0.113(±0.085) αmax=0.29 | c_mc=1.00 | bias=+9.969 var=19.441 SNR=0.281 | ΔV=2.600 err_μ=12.604 err_ema=7.943 | δ:μ=-0.096 σ=3.536 r1=-0.41 | KL=0.0248 clip=0.33 |  1899fps    98s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  194560/300000 [████████████░░░░░░░░]  64.9% | Eval=  435.5 Rec=  80.8 | VL=53.874 EV=+0.172 | ᾱ=0.114(±0.091) αmax=0.27 | c_mc=1.00 | bias=+3.319 var=18.817 SNR=0.121 | ΔV=1.765 err_μ=9.377 err_ema=8.217 | δ:μ=-0.049 σ=4.048 r1=-0.31 | KL=0.0260 clip=0.33 |  1898fps   103s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  196608/300000 [█████████████░░░░░░░]  65.5% | Eval=  435.5 Rec=  88.0 | VL=23.901 EV=-0.465 | ᾱ=0.111(±0.084) αmax=0.26 | c_mc=1.00 | bias=-1.526 var=12.929 SNR=0.101 | ΔV=1.118 err_μ=6.303 err_ema=8.121 | δ:μ=+0.033 σ=3.277 r1=-0.44 | KL=0.0289 clip=0.36 |  1901fps   103s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  204800/300000 [█████████████░░░░░░░]  68.3% | Eval=  489.3 Rec= 128.4 | VL=30.738 EV=+0.037 | ᾱ=0.110(±0.088) αmax=0.24 | c_mc=1.00 | bias=-1.869 var=12.879 SNR=0.057 | ΔV=1.202 err_μ=7.123 err_ema=8.086 | δ:μ=+0.010 σ=3.697 r1=-0.41 | KL=0.0242 clip=0.32 |  1902fps   108s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  206848/300000 [█████████████░░░░░░░]  68.9% | Eval=  489.3 Rec= 146.5 | VL=49.497 EV=+0.090 | ᾱ=0.100(±0.086) αmax=0.23 | c_mc=1.00 | bias=+3.119 var=15.241 SNR=0.117 | ΔV=1.410 err_μ=8.366 err_ema=8.100 | δ:μ=-0.038 σ=3.314 r1=-0.38 | KL=0.0260 clip=0.33 |  1902fps   109s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  215040/300000 [██████████████░░░░░░]  71.7% | Eval=  468.7 Rec= 207.5 | VL=62.626 EV=+0.019 | ᾱ=0.090(±0.074) αmax=0.21 | c_mc=1.00 | bias=+8.777 var=15.275 SNR=0.313 | ΔV=1.641 err_μ=11.038 err_ema=8.147 | δ:μ=-0.082 σ=3.232 r1=-0.47 | KL=0.0276 clip=0.35 |  1884fps   114s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  217088/300000 [██████████████░░░░░░]  72.4% | Eval=  468.7 Rec= 222.3 | VL=48.683 EV=+0.042 | ᾱ=0.099(±0.077) αmax=0.21 | c_mc=1.00 | bias=-5.694 var=17.010 SNR=0.193 | ΔV=1.454 err_μ=10.395 err_ema=8.260 | δ:μ=+0.049 σ=3.944 r1=-0.40 | KL=0.0300 clip=0.35 |  1880fps   115s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  225280/300000 [███████████████░░░░░]  75.1% | Eval=  526.7 Rec= 250.7 | VL=33.835 EV=+0.151 | ᾱ=0.090(±0.070) αmax=0.19 | c_mc=1.00 | bias=-6.096 var=14.121 SNR=0.212 | ΔV=1.188 err_μ=9.061 err_ema=8.210 | δ:μ=+0.052 σ=3.499 r1=-0.37 | KL=0.0289 clip=0.35 |  1879fps   120s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  227328/300000 [███████████████░░░░░]  75.8% | Eval=  526.7 Rec= 261.8 | VL=26.540 EV=-0.309 | ᾱ=0.080(±0.064) αmax=0.18 | c_mc=0.99 | bias=+0.452 var=14.258 SNR=0.001 | ΔV=0.837 err_μ=6.502 err_ema=8.124 | δ:μ=+0.001 σ=3.115 r1=-0.38 | KL=0.0321 clip=0.39 |  1883fps   121s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  235520/300000 [███████████████░░░░░]  78.5% | Eval=  579.4 Rec= 297.1 | VL=17.302 EV=-0.239 | ᾱ=0.072(±0.060) αmax=0.17 | c_mc=1.00 | bias=-2.989 var=11.745 SNR=0.152 | ΔV=0.656 err_μ=5.564 err_ema=8.056 | δ:μ=+0.038 σ=3.167 r1=-0.45 | KL=0.0288 clip=0.36 |  1876fps   126s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  237568/300000 [███████████████░░░░░]  79.2% | Eval=  579.4 Rec= 304.9 | VL=32.998 EV=+0.069 | ᾱ=0.073(±0.061) αmax=0.16 | c_mc=1.00 | bias=+0.243 var=12.651 SNR=0.039 | ΔV=0.805 err_μ=6.889 err_ema=7.998 | δ:μ=-0.013 σ=2.810 r1=-0.44 | KL=0.0278 clip=0.35 |  1877fps   127s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  245760/300000 [████████████████░░░░]  81.9% | Eval=  624.4 Rec= 358.0 | VL=53.413 EV=+0.221 | ᾱ=0.066(±0.054) αmax=0.15 | c_mc=0.99 | bias=-4.797 var=18.125 SNR=0.123 | ΔV=1.069 err_μ=10.633 err_ema=8.210 | δ:μ=+0.033 σ=3.410 r1=-0.38 | KL=0.0303 clip=0.37 |  1872fps   131s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  247808/300000 [████████████████░░░░]  82.6% | Eval=  624.4 Rec= 362.4 | VL=116.923 EV=+0.430 | ᾱ=0.059(±0.047) αmax=0.14 | c_mc=0.97 | bias=+10.268 var=44.693 SNR=0.276 | ΔV=1.372 err_μ=13.739 err_ema=8.486 | δ:μ=-0.129 σ=5.425 r1=-0.39 | KL=0.0318 clip=0.37 |  1874fps   132s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  256000/300000 [█████████████████░░░]  85.3% | Eval=  614.9 Rec= 388.3 | VL=43.427 EV=+0.132 | ᾱ=0.056(±0.043) αmax=0.13 | c_mc=0.95 | bias=+3.792 var=18.172 SNR=0.135 | ΔV=0.740 err_μ=8.330 err_ema=8.469 | δ:μ=-0.039 σ=3.824 r1=-0.42 | KL=0.0287 clip=0.35 |  1866fps   137s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  258048/300000 [█████████████████░░░]  86.0% | Eval=  614.9 Rec= 397.5 | VL=33.291 EV=+0.106 | ᾱ=0.056(±0.045) αmax=0.13 | c_mc=0.94 | bias=-4.794 var=17.716 SNR=0.150 | ΔV=0.720 err_μ=8.121 err_ema=8.452 | δ:μ=+0.042 σ=3.387 r1=-0.41 | KL=0.0323 clip=0.38 |  1868fps   138s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  266240/300000 [█████████████████░░░]  88.7% | Eval=  665.5 Rec= 414.1 | VL=40.482 EV=+0.083 | ᾱ=0.059(±0.045) αmax=0.12 | c_mc=0.95 | bias=-8.962 var=19.006 SNR=0.321 | ΔV=0.957 err_μ=11.233 err_ema=8.721 | δ:μ=+0.090 σ=3.793 r1=-0.40 | KL=0.0319 clip=0.38 |  1871fps   142s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  268288/300000 [█████████████████░░░]  89.4% | Eval=  665.5 Rec= 427.1 | VL=49.802 EV=+0.253 | ᾱ=0.048(±0.039) αmax=0.12 | c_mc=0.95 | bias=+3.846 var=26.542 SNR=0.144 | ΔV=0.683 err_μ=8.318 err_ema=8.701 | δ:μ=-0.056 σ=3.540 r1=-0.38 | KL=0.0342 clip=0.40 |  1873fps   143s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  276480/300000 [██████████████████░░]  92.2% | Eval=  737.4 Rec= 457.0 | VL=73.104 EV=+0.325 | ᾱ=0.047(±0.039) αmax=0.11 | c_mc=0.88 | bias=-1.972 var=38.171 SNR=0.048 | ΔV=0.828 err_μ=10.432 err_ema=8.798 | δ:μ=+0.015 σ=4.508 r1=-0.34 | KL=0.0371 clip=0.40 |  1874fps   147s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  278528/300000 [██████████████████░░]  92.8% | Eval=  737.4 Rec= 462.6 | VL=30.355 EV=+0.070 | ᾱ=0.048(±0.038) αmax=0.11 | c_mc=0.86 | bias=-0.518 var=29.339 SNR=0.011 | ΔV=0.550 err_μ=7.259 err_ema=8.721 | δ:μ=+0.003 σ=4.394 r1=-0.39 | KL=0.0379 clip=0.41 |  1878fps   148s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  286720/300000 [███████████████████░]  95.6% | Eval=  763.8 Rec= 477.8 | VL=96.320 EV=+0.511 | ᾱ=0.040(±0.028) αmax=0.10 | c_mc=0.88 | bias=+4.546 var=38.630 SNR=0.169 | ΔV=0.885 err_μ=12.657 err_ema=9.095 | δ:μ=-0.072 σ=4.876 r1=-0.42 | KL=0.0376 clip=0.41 |  1879fps   153s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  288768/300000 [███████████████████░]  96.3% | Eval=  763.8 Rec= 485.8 | VL=45.254 EV=-0.626 | ᾱ=0.041(±0.032) αmax=0.10 | c_mc=0.84 | bias=+0.156 var=53.965 SNR=0.034 | ΔV=0.629 err_μ=8.703 err_ema=9.076 | δ:μ=+0.023 σ=4.862 r1=-0.36 | KL=0.0384 clip=0.42 |  1881fps   153s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  296960/300000 [███████████████████░]  99.0% | Eval=  828.2 Rec= 511.1 | VL=27.003 EV=+0.327 | ᾱ=0.041(±0.034) αmax=0.10 | c_mc=0.91 | bias=+2.910 var=16.032 SNR=0.140 | ΔV=0.454 err_μ=6.330 err_ema=8.893 | δ:μ=-0.044 σ=3.513 r1=-0.41 | KL=0.0394 clip=0.42 |  1880fps   158s
+  [HCGAE_Imp12_s789  |①✓②✓③✗④✗]  299008/300000 [███████████████████░]  99.7% | Eval=  828.2 Rec= 520.9 | VL=47.129 EV=+0.032 | ᾱ=0.044(±0.035) αmax=0.10 | c_mc=0.88 | bias=-2.331 var=22.284 SNR=0.102 | ΔV=0.642 err_μ=9.111 err_ema=8.904 | δ:μ=+0.040 σ=3.769 r1=-0.43 | KL=0.0392 clip=0.40 |  1883fps   159s
+  ✓ [HCGAE_Imp12_s789] 完成 | 耗时=159.9s | 最终=721.9 | 最高=828.2
+  -> HCGAE_Imp12 HalfCheetah-v4 s789: final=721.9  (160s)
+
+  [12/12] HalfCheetah-v4 | HCGAE_Imp12 | seed=1234
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]    2048/300000 [░░░░░░░░░░░░░░░░░░░░]   0.7% | Eval=    N/A Rec=-609.6 | VL=1514.184 EV=-0.000 | ᾱ=0.364(±0.257) αmax=0.70 | c_mc=1.00 | bias=+56.459 var=10.363 SNR=1.637 | ΔV=26.621 err_μ=56.826 err_ema=3.791 | δ:μ=-0.592 σ=1.199 r1=+0.07 | KL=0.0077 clip=0.11 |  2140fps     1s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   10240/300000 [░░░░░░░░░░░░░░░░░░░░]   3.4% | Eval=   -2.1 Rec=-662.4 | VL=40.623 EV=-0.138 | ᾱ=0.289(±0.208) αmax=0.70 | c_mc=1.00 | bias=-4.561 var=5.012 SNR=0.183 | ΔV=3.542 err_μ=7.627 err_ema=6.708 | δ:μ=+0.053 σ=5.008 r1=-0.42 | KL=0.0085 clip=0.12 |  2035fps     5s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   12288/300000 [░░░░░░░░░░░░░░░░░░░░]   4.1% | Eval=   -2.1 Rec=-640.1 | VL=149.971 EV=+0.185 | ᾱ=0.303(±0.262) αmax=0.70 | c_mc=1.00 | bias=-7.923 var=13.194 SNR=0.184 | ΔV=7.845 err_μ=15.297 err_ema=7.137 | δ:μ=+0.086 σ=7.433 r1=-0.41 | KL=0.0089 clip=0.13 |  2101fps     6s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   20480/300000 [█░░░░░░░░░░░░░░░░░░░]   6.8% | Eval=  339.3 Rec=-619.7 | VL=61.453 EV=-0.223 | ᾱ=0.301(±0.252) αmax=0.69 | c_mc=1.00 | bias=+7.646 var=9.880 SNR=0.170 | ΔV=5.617 err_μ=11.351 err_ema=8.305 | δ:μ=-0.077 σ=5.508 r1=-0.44 | KL=0.0097 clip=0.15 |  2030fps    10s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   22528/300000 [█░░░░░░░░░░░░░░░░░░░]   7.5% | Eval=  339.3 Rec=-613.5 | VL=47.526 EV=+0.008 | ᾱ=0.287(±0.233) αmax=0.69 | c_mc=1.00 | bias=-1.295 var=4.220 SNR=0.046 | ΔV=3.626 err_μ=7.587 err_ema=8.269 | δ:μ=+0.014 σ=2.688 r1=-0.41 | KL=0.0090 clip=0.14 |  2065fps    11s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   30720/300000 [██░░░░░░░░░░░░░░░░░░]  10.2% | Eval=  131.9 Rec=-568.8 | VL=47.678 EV=+0.176 | ᾱ=0.278(±0.222) αmax=0.68 | c_mc=1.00 | bias=-11.279 var=4.205 SNR=0.521 | ΔV=5.424 err_μ=11.829 err_ema=9.788 | δ:μ=+0.133 σ=3.864 r1=-0.47 | KL=0.0100 clip=0.15 |  2033fps    15s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   32768/300000 [██░░░░░░░░░░░░░░░░░░]  10.9% | Eval=  131.9 Rec=-563.3 | VL=36.814 EV=+0.420 | ᾱ=0.294(±0.240) αmax=0.68 | c_mc=1.00 | bias=-0.228 var=7.162 SNR=0.008 | ΔV=3.442 err_μ=7.072 err_ema=9.652 | δ:μ=+0.014 σ=5.699 r1=-0.43 | KL=0.0095 clip=0.14 |  2052fps    16s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   40960/300000 [██░░░░░░░░░░░░░░░░░░]  13.7% | Eval=  270.6 Rec=-529.4 | VL=27.437 EV=+0.082 | ᾱ=0.279(±0.227) αmax=0.67 | c_mc=1.00 | bias=-3.669 var=3.424 SNR=0.158 | ΔV=3.270 err_μ=6.949 err_ema=9.506 | δ:μ=+0.049 σ=2.626 r1=-0.39 | KL=0.0112 clip=0.18 |  2006fps    20s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   43008/300000 [██░░░░░░░░░░░░░░░░░░]  14.3% | Eval=  270.6 Rec=-523.7 | VL=161.467 EV=+0.013 | ᾱ=0.274(±0.226) αmax=0.67 | c_mc=1.00 | bias=+11.613 var=19.685 SNR=0.206 | ΔV=7.610 err_μ=16.069 err_ema=9.834 | δ:μ=-0.130 σ=6.941 r1=-0.44 | KL=0.0102 clip=0.15 |  1991fps    22s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   51200/300000 [███░░░░░░░░░░░░░░░░░]  17.1% | Eval=   59.1 Rec=-477.9 | VL=35.990 EV=+0.278 | ᾱ=0.295(±0.246) αmax=0.66 | c_mc=1.00 | bias=-6.481 var=5.543 SNR=0.222 | ΔV=4.319 err_μ=9.066 err_ema=10.110 | δ:μ=+0.082 σ=4.285 r1=-0.45 | KL=0.0113 clip=0.17 |  1978fps    26s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   53248/300000 [███░░░░░░░░░░░░░░░░░]  17.7% | Eval=   59.1 Rec=-465.0 | VL=34.231 EV=+0.296 | ᾱ=0.300(±0.240) αmax=0.65 | c_mc=1.00 | bias=-7.473 var=7.055 SNR=0.252 | ΔV=4.441 err_μ=9.889 err_ema=10.099 | δ:μ=+0.078 σ=4.578 r1=-0.38 | KL=0.0113 clip=0.17 |  1987fps    27s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   61440/300000 [████░░░░░░░░░░░░░░░░]  20.5% | Eval=   76.2 Rec=-389.3 | VL=110.101 EV=+0.035 | ᾱ=0.305(±0.242) αmax=0.64 | c_mc=1.00 | bias=-14.235 var=15.290 SNR=0.315 | ΔV=7.956 err_μ=17.685 err_ema=10.567 | δ:μ=+0.160 σ=5.634 r1=-0.46 | KL=0.0120 clip=0.18 |  1921fps    32s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   63488/300000 [████░░░░░░░░░░░░░░░░]  21.2% | Eval=   76.2 Rec=-380.4 | VL=90.136 EV=-0.080 | ᾱ=0.302(±0.239) αmax=0.63 | c_mc=1.00 | bias=+16.719 var=14.557 SNR=0.410 | ΔV=8.272 err_μ=18.519 err_ema=10.965 | δ:μ=-0.193 σ=5.936 r1=-0.43 | KL=0.0134 clip=0.19 |  1931fps    33s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   71680/300000 [████░░░░░░░░░░░░░░░░]  23.9% | Eval=  122.9 Rec=-329.3 | VL=94.699 EV=+0.023 | ᾱ=0.304(±0.238) αmax=0.61 | c_mc=0.99 | bias=-13.273 var=14.136 SNR=0.315 | ΔV=7.403 err_μ=16.701 err_ema=11.707 | δ:μ=+0.141 σ=5.471 r1=-0.42 | KL=0.0134 clip=0.21 |  1906fps    38s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   73728/300000 [████░░░░░░░░░░░░░░░░]  24.6% | Eval=  122.9 Rec=-328.3 | VL=42.750 EV=+0.113 | ᾱ=0.279(±0.223) αmax=0.61 | c_mc=0.99 | bias=+4.279 var=11.268 SNR=0.116 | ΔV=4.295 err_μ=10.057 err_ema=11.624 | δ:μ=-0.041 σ=5.081 r1=-0.44 | KL=0.0140 clip=0.21 |  1914fps    39s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   81920/300000 [█████░░░░░░░░░░░░░░░]  27.3% | Eval=  150.8 Rec=-332.4 | VL=124.582 EV=+0.117 | ᾱ=0.272(±0.223) αmax=0.59 | c_mc=0.99 | bias=+8.044 var=16.298 SNR=0.148 | ΔV=6.347 err_μ=15.265 err_ema=12.266 | δ:μ=-0.070 σ=5.681 r1=-0.40 | KL=0.0135 clip=0.20 |  1896fps    43s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   83968/300000 [█████░░░░░░░░░░░░░░░]  28.0% | Eval=  150.8 Rec=-322.3 | VL=70.604 EV=+0.169 | ᾱ=0.259(±0.217) αmax=0.58 | c_mc=0.98 | bias=-8.956 var=13.373 SNR=0.210 | ΔV=5.148 err_μ=12.391 err_ema=12.272 | δ:μ=+0.093 σ=5.660 r1=-0.42 | KL=0.0134 clip=0.20 |  1895fps    44s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   92160/300000 [██████░░░░░░░░░░░░░░]  30.7% | Eval=  276.5 Rec=-298.4 | VL=133.744 EV=+0.118 | ᾱ=0.262(±0.208) αmax=0.54 | c_mc=0.93 | bias=-9.806 var=18.216 SNR=0.233 | ΔV=6.700 err_μ=17.516 err_ema=12.485 | δ:μ=+0.105 σ=5.440 r1=-0.43 | KL=0.0138 clip=0.21 |  1835fps    50s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]   94208/300000 [██████░░░░░░░░░░░░░░]  31.4% | Eval=  276.5 Rec=-271.5 | VL=71.972 EV=+0.056 | ᾱ=0.241(±0.195) αmax=0.53 | c_mc=0.92 | bias=-9.509 var=15.469 SNR=0.275 | ΔV=4.974 err_μ=13.389 err_ema=12.530 | δ:μ=+0.106 σ=6.021 r1=-0.42 | KL=0.0144 clip=0.22 |  1843fps    51s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  102400/300000 [██████░░░░░░░░░░░░░░]  34.1% | Eval=  366.3 Rec=-226.2 | VL=72.855 EV=+0.331 | ᾱ=0.222(±0.185) αmax=0.50 | c_mc=0.89 | bias=-1.280 var=16.250 SNR=0.025 | ΔV=3.970 err_μ=11.128 err_ema=12.550 | δ:μ=+0.010 σ=5.211 r1=-0.42 | KL=0.0163 clip=0.24 |  1840fps    56s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  104448/300000 [██████░░░░░░░░░░░░░░]  34.8% | Eval=  366.3 Rec=-215.6 | VL=99.308 EV=+0.329 | ᾱ=0.204(±0.167) αmax=0.48 | c_mc=0.87 | bias=+4.808 var=18.299 SNR=0.131 | ΔV=4.312 err_μ=12.713 err_ema=12.559 | δ:μ=-0.063 σ=5.480 r1=-0.44 | KL=0.0138 clip=0.22 |  1847fps    57s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  112640/300000 [███████░░░░░░░░░░░░░]  37.5% | Eval=  415.7 Rec=-158.2 | VL=54.397 EV=-0.038 | ᾱ=0.193(±0.160) αmax=0.44 | c_mc=0.83 | bias=-0.868 var=27.257 SNR=0.000 | ΔV=3.119 err_μ=9.858 err_ema=12.538 | δ:μ=-0.009 σ=6.763 r1=-0.42 | KL=0.0143 clip=0.21 |  1842fps    61s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  114688/300000 [███████░░░░░░░░░░░░░]  38.2% | Eval=  415.7 Rec=-167.5 | VL=86.988 EV=+0.521 | ᾱ=0.210(±0.165) αmax=0.45 | c_mc=0.85 | bias=+3.165 var=16.488 SNR=0.054 | ΔV=4.310 err_μ=14.037 err_ema=12.613 | δ:μ=-0.023 σ=4.915 r1=-0.44 | KL=0.0160 clip=0.24 |  1844fps    62s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  122880/300000 [████████░░░░░░░░░░░░]  41.0% | Eval=  601.6 Rec= -93.5 | VL=55.257 EV=+0.040 | ᾱ=0.197(±0.162) αmax=0.43 | c_mc=0.87 | bias=-6.292 var=17.842 SNR=0.178 | ΔV=3.422 err_μ=11.183 err_ema=12.530 | δ:μ=+0.066 σ=5.531 r1=-0.43 | KL=0.0181 clip=0.27 |  1852fps    66s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  124928/300000 [████████░░░░░░░░░░░░]  41.6% | Eval=  601.6 Rec= -73.0 | VL=104.703 EV=+0.098 | ᾱ=0.186(±0.154) αmax=0.43 | c_mc=0.88 | bias=-0.234 var=20.253 SNR=0.014 | ΔV=3.938 err_μ=12.930 err_ema=12.550 | δ:μ=-0.003 σ=4.817 r1=-0.42 | KL=0.0175 clip=0.26 |  1861fps    67s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  133120/300000 [████████░░░░░░░░░░░░]  44.4% | Eval=  631.7 Rec= -36.9 | VL=95.434 EV=+0.085 | ᾱ=0.187(±0.148) αmax=0.40 | c_mc=0.86 | bias=+1.439 var=22.263 SNR=0.011 | ΔV=3.823 err_μ=13.758 err_ema=12.719 | δ:μ=-0.004 σ=5.117 r1=-0.43 | KL=0.0166 clip=0.25 |  1854fps    72s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  135168/300000 [█████████░░░░░░░░░░░]  45.1% | Eval=  631.7 Rec= -14.8 | VL=104.116 EV=+0.113 | ᾱ=0.187(±0.153) αmax=0.40 | c_mc=0.87 | bias=-7.599 var=23.692 SNR=0.199 | ΔV=4.384 err_μ=15.622 err_ema=12.864 | δ:μ=+0.085 σ=5.740 r1=-0.44 | KL=0.0164 clip=0.24 |  1851fps    73s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  143360/300000 [█████████░░░░░░░░░░░]  47.8% | Eval=  625.3 Rec=  -0.9 | VL=44.957 EV=-0.062 | ᾱ=0.152(±0.124) αmax=0.34 | c_mc=0.74 | bias=+0.450 var=22.611 SNR=0.009 | ΔV=2.390 err_μ=9.950 err_ema=12.888 | δ:μ=-0.001 σ=5.367 r1=-0.42 | KL=0.0183 clip=0.26 |  1831fps    78s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  145408/300000 [█████████░░░░░░░░░░░]  48.5% | Eval=  625.3 Rec=   9.2 | VL=90.079 EV=+0.174 | ᾱ=0.155(±0.129) αmax=0.34 | c_mc=0.77 | bias=+0.126 var=23.690 SNR=0.021 | ΔV=3.439 err_μ=13.859 err_ema=12.937 | δ:μ=+0.012 σ=4.768 r1=-0.39 | KL=0.0193 clip=0.29 |  1837fps    79s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  153600/300000 [██████████░░░░░░░░░░]  51.2% | Eval=  738.3 Rec=  52.3 | VL=65.783 EV=+0.074 | ᾱ=0.146(±0.115) αmax=0.30 | c_mc=0.71 | bias=-6.544 var=32.346 SNR=0.137 | ΔV=2.978 err_μ=13.879 err_ema=12.930 | δ:μ=+0.062 σ=5.397 r1=-0.42 | KL=0.0208 clip=0.29 |  1843fps    83s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  155648/300000 [██████████░░░░░░░░░░]  51.9% | Eval=  738.3 Rec=  65.6 | VL=68.970 EV=+0.105 | ᾱ=0.133(±0.108) αmax=0.31 | c_mc=0.73 | bias=-1.443 var=27.997 SNR=0.038 | ΔV=2.525 err_μ=11.941 err_ema=12.881 | δ:μ=+0.013 σ=5.478 r1=-0.43 | KL=0.0208 clip=0.30 |  1847fps    84s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  163840/300000 [██████████░░░░░░░░░░]  54.6% | Eval=  857.2 Rec= 149.3 | VL=85.167 EV=+0.079 | ᾱ=0.131(±0.109) αmax=0.30 | c_mc=0.80 | bias=+2.437 var=40.708 SNR=0.051 | ΔV=2.723 err_μ=12.559 err_ema=12.862 | δ:μ=-0.029 σ=5.978 r1=-0.42 | KL=0.0201 clip=0.28 |  1844fps    89s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  165888/300000 [███████████░░░░░░░░░]  55.3% | Eval=  857.2 Rec= 158.4 | VL=89.269 EV=+0.141 | ᾱ=0.135(±0.114) αmax=0.30 | c_mc=0.81 | bias=+3.055 var=33.359 SNR=0.057 | ΔV=2.843 err_μ=12.790 err_ema=12.858 | δ:μ=-0.027 σ=5.590 r1=-0.42 | KL=0.0202 clip=0.28 |  1850fps    90s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  174080/300000 [███████████░░░░░░░░░]  58.0% | Eval=  726.2 Rec= 238.9 | VL=54.404 EV=+0.103 | ᾱ=0.131(±0.109) αmax=0.29 | c_mc=0.84 | bias=-7.246 var=28.007 SNR=0.172 | ΔV=2.395 err_μ=11.638 err_ema=13.073 | δ:μ=+0.067 σ=5.528 r1=-0.43 | KL=0.0217 clip=0.31 |  1853fps    94s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  176128/300000 [███████████░░░░░░░░░]  58.7% | Eval=  726.2 Rec= 242.5 | VL=155.639 EV=+0.076 | ᾱ=0.118(±0.096) αmax=0.29 | c_mc=0.85 | bias=+7.316 var=41.898 SNR=0.129 | ΔV=3.200 err_μ=15.480 err_ema=13.194 | δ:μ=-0.078 σ=5.041 r1=-0.41 | KL=0.0230 clip=0.31 |  1857fps    95s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  184320/300000 [████████████░░░░░░░░]  61.4% | Eval=  851.7 Rec= 282.2 | VL=79.362 EV=+0.112 | ᾱ=0.116(±0.096) αmax=0.27 | c_mc=0.89 | bias=+1.515 var=26.177 SNR=0.015 | ΔV=2.119 err_μ=11.104 err_ema=13.251 | δ:μ=-0.012 σ=4.909 r1=-0.43 | KL=0.0237 clip=0.32 |  1860fps    99s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  186368/300000 [████████████░░░░░░░░]  62.1% | Eval=  851.7 Rec= 297.1 | VL=70.425 EV=-0.079 | ᾱ=0.123(±0.095) αmax=0.27 | c_mc=0.89 | bias=-0.064 var=29.977 SNR=0.022 | ΔV=2.085 err_μ=11.301 err_ema=13.154 | δ:μ=+0.016 σ=5.515 r1=-0.42 | KL=0.0233 clip=0.32 |  1865fps   100s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  194560/300000 [████████████░░░░░░░░]  64.9% | Eval=  853.2 Rec= 334.9 | VL=138.488 EV=+0.084 | ᾱ=0.117(±0.095) αmax=0.25 | c_mc=0.91 | bias=-8.273 var=57.832 SNR=0.163 | ΔV=2.998 err_μ=16.940 err_ema=13.516 | δ:μ=+0.087 σ=6.949 r1=-0.44 | KL=0.0258 clip=0.34 |  1871fps   104s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  196608/300000 [█████████████░░░░░░░]  65.5% | Eval=  853.2 Rec= 350.8 | VL=66.479 EV=-0.091 | ᾱ=0.107(±0.089) αmax=0.25 | c_mc=0.91 | bias=+0.067 var=35.442 SNR=0.005 | ΔV=1.815 err_μ=10.482 err_ema=13.365 | δ:μ=-0.006 σ=6.060 r1=-0.42 | KL=0.0241 clip=0.33 |  1875fps   105s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  204800/300000 [█████████████░░░░░░░]  68.3% | Eval=  953.5 Rec= 400.1 | VL=127.917 EV=+0.118 | ᾱ=0.105(±0.086) αmax=0.23 | c_mc=0.92 | bias=+1.723 var=42.016 SNR=0.028 | ΔV=2.430 err_μ=15.045 err_ema=13.529 | δ:μ=-0.010 σ=6.290 r1=-0.43 | KL=0.0232 clip=0.31 |  1882fps   109s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  206848/300000 [█████████████░░░░░░░]  68.9% | Eval=  953.5 Rec= 370.0 | VL=174.188 EV=+0.533 | ᾱ=0.110(±0.084) αmax=0.22 | c_mc=0.92 | bias=+21.881 var=62.214 SNR=0.414 | ΔV=4.061 err_μ=26.338 err_ema=14.169 | δ:μ=-0.229 σ=8.887 r1=-0.39 | KL=0.0276 clip=0.34 |  1886fps   110s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  215040/300000 [██████████████░░░░░░]  71.7% | Eval= 1076.1 Rec= 405.0 | VL=87.860 EV=+0.049 | ᾱ=0.088(±0.072) αmax=0.19 | c_mc=0.84 | bias=+5.251 var=44.485 SNR=0.099 | ΔV=1.846 err_μ=13.526 err_ema=14.705 | δ:μ=-0.046 σ=5.820 r1=-0.43 | KL=0.0239 clip=0.31 |  1888fps   114s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  217088/300000 [██████████████░░░░░░]  72.4% | Eval= 1076.1 Rec= 406.7 | VL=89.859 EV=+0.114 | ᾱ=0.088(±0.070) αmax=0.19 | c_mc=0.85 | bias=+5.678 var=42.195 SNR=0.131 | ΔV=1.850 err_μ=13.826 err_ema=14.661 | δ:μ=-0.058 σ=5.931 r1=-0.41 | KL=0.0252 clip=0.32 |  1891fps   115s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  225280/300000 [███████████████░░░░░]  75.1% | Eval= 1069.3 Rec= 325.2 | VL=104.798 EV=+0.784 | ᾱ=0.075(±0.060) αmax=0.16 | c_mc=0.74 | bias=+9.123 var=59.864 SNR=0.168 | ΔV=1.961 err_μ=17.222 err_ema=15.494 | δ:μ=-0.084 σ=6.546 r1=-0.40 | KL=0.0294 clip=0.36 |  1880fps   120s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  227328/300000 [███████████████░░░░░]  75.8% | Eval= 1069.3 Rec= 367.7 | VL=182.853 EV=+0.179 | ᾱ=0.074(±0.058) αmax=0.16 | c_mc=0.69 | bias=-10.529 var=79.304 SNR=0.173 | ΔV=2.585 err_μ=23.746 err_ema=15.906 | δ:μ=+0.104 σ=6.510 r1=-0.45 | KL=0.0249 clip=0.32 |  1883fps   121s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  235520/300000 [███████████████░░░░░]  78.5% | Eval= 1068.6 Rec= 305.5 | VL=78.200 EV=+0.167 | ᾱ=0.064(±0.052) αmax=0.14 | c_mc=0.58 | bias=-5.441 var=49.847 SNR=0.126 | ΔV=1.590 err_μ=16.211 err_ema=16.007 | δ:μ=+0.060 σ=6.168 r1=-0.45 | KL=0.0286 clip=0.36 |  1888fps   125s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  237568/300000 [███████████████░░░░░]  79.2% | Eval= 1068.6 Rec= 309.2 | VL=86.076 EV=+0.243 | ᾱ=0.062(±0.052) αmax=0.14 | c_mc=0.60 | bias=+7.781 var=55.275 SNR=0.150 | ΔV=1.607 err_μ=16.284 err_ema=16.021 | δ:μ=-0.076 σ=6.010 r1=-0.36 | KL=0.0260 clip=0.34 |  1891fps   126s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  245760/300000 [████████████████░░░░]  81.9% | Eval= 1087.6 Rec= 450.1 | VL=102.475 EV=+0.180 | ᾱ=0.060(±0.049) αmax=0.13 | c_mc=0.68 | bias=-4.663 var=49.272 SNR=0.116 | ΔV=1.529 err_μ=16.495 err_ema=16.100 | δ:μ=+0.058 σ=5.427 r1=-0.43 | KL=0.0280 clip=0.35 |  1896fps   130s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  247808/300000 [████████████████░░░░]  82.6% | Eval= 1087.6 Rec= 456.2 | VL=119.229 EV=+0.709 | ᾱ=0.057(±0.046) αmax=0.13 | c_mc=0.70 | bias=-2.925 var=79.030 SNR=0.045 | ΔV=1.499 err_μ=16.550 err_ema=16.122 | δ:μ=+0.020 σ=7.810 r1=-0.32 | KL=0.0276 clip=0.34 |  1898fps   131s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  256000/300000 [█████████████████░░░]  85.3% | Eval= 1196.8 Rec= 581.0 | VL=113.803 EV=+0.211 | ᾱ=0.055(±0.045) αmax=0.12 | c_mc=0.69 | bias=+8.469 var=66.264 SNR=0.171 | ΔV=1.531 err_μ=17.823 err_ema=16.235 | δ:μ=-0.093 σ=6.734 r1=-0.42 | KL=0.0293 clip=0.35 |  1899fps   135s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  258048/300000 [█████████████████░░░]  86.0% | Eval= 1196.8 Rec= 601.0 | VL=52.555 EV=-0.123 | ᾱ=0.055(±0.044) αmax=0.12 | c_mc=0.70 | bias=-3.902 var=72.358 SNR=0.058 | ΔV=0.987 err_μ=11.721 err_ema=16.009 | δ:μ=+0.029 σ=7.459 r1=-0.38 | KL=0.0312 clip=0.37 |  1903fps   136s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  266240/300000 [█████████████████░░░]  88.7% | Eval= 1172.7 Rec= 629.3 | VL=124.220 EV=+0.111 | ᾱ=0.056(±0.044) αmax=0.11 | c_mc=0.79 | bias=-7.427 var=64.543 SNR=0.141 | ΔV=1.452 err_μ=17.775 err_ema=16.302 | δ:μ=+0.077 σ=6.228 r1=-0.41 | KL=0.0306 clip=0.37 |  1911fps   139s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  268288/300000 [█████████████████░░░]  89.4% | Eval= 1172.7 Rec= 593.6 | VL=186.415 EV=+0.679 | ᾱ=0.054(±0.043) αmax=0.11 | c_mc=0.80 | bias=+27.603 var=111.780 SNR=0.425 | ΔV=2.537 err_μ=32.008 err_ema=17.087 | δ:μ=-0.296 σ=11.591 r1=-0.30 | KL=0.0316 clip=0.38 |  1911fps   140s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  276480/300000 [██████████████████░░]  92.2% | Eval= 1200.6 Rec= 593.2 | VL=61.390 EV=+0.101 | ᾱ=0.049(±0.041) αmax=0.11 | c_mc=0.71 | bias=-9.835 var=41.483 SNR=0.243 | ΔV=1.097 err_μ=14.340 err_ema=17.041 | δ:μ=+0.099 σ=5.295 r1=-0.44 | KL=0.0304 clip=0.36 |  1915fps   144s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  278528/300000 [██████████████████░░]  92.8% | Eval= 1200.6 Rec= 611.3 | VL=104.742 EV=+0.219 | ᾱ=0.047(±0.040) αmax=0.11 | c_mc=0.73 | bias=-6.588 var=46.007 SNR=0.127 | ΔV=1.222 err_μ=15.680 err_ema=16.973 | δ:μ=+0.053 σ=5.135 r1=-0.44 | KL=0.0369 clip=0.41 |  1919fps   145s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  286720/300000 [███████████████████░]  95.6% | Eval= 1242.9 Rec= 552.2 | VL=105.863 EV=+0.098 | ᾱ=0.048(±0.039) αmax=0.10 | c_mc=0.75 | bias=-10.113 var=77.820 SNR=0.174 | ΔV=1.260 err_μ=17.292 err_ema=17.985 | δ:μ=+0.098 σ=7.036 r1=-0.43 | KL=0.0355 clip=0.41 |  1918fps   149s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  288768/300000 [███████████████████░]  96.3% | Eval= 1242.9 Rec= 596.6 | VL=136.306 EV=+0.171 | ᾱ=0.045(±0.038) αmax=0.10 | c_mc=0.76 | bias=+11.792 var=71.943 SNR=0.240 | ΔV=1.367 err_μ=18.926 err_ema=18.032 | δ:μ=-0.139 σ=6.805 r1=-0.44 | KL=0.0350 clip=0.39 |  1922fps   150s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  296960/300000 [███████████████████░]  99.0% | Eval= 1180.1 Rec= 649.4 | VL=186.611 EV=+0.131 | ᾱ=0.044(±0.037) αmax=0.10 | c_mc=0.80 | bias=-4.712 var=107.641 SNR=0.089 | ΔV=1.454 err_μ=20.187 err_ema=18.020 | δ:μ=+0.067 σ=7.619 r1=-0.35 | KL=0.0348 clip=0.39 |  1924fps   154s
+  [HCGAE_Imp12_s1234 |①✓②✓③✗④✗]  299008/300000 [███████████████████░]  99.7% | Eval= 1180.1 Rec= 638.7 | VL=181.153 EV=+0.170 | ᾱ=0.043(±0.036) αmax=0.10 | c_mc=0.80 | bias=+5.538 var=104.609 SNR=0.076 | ΔV=1.308 err_μ=18.647 err_ema=18.051 | δ:μ=-0.047 σ=7.865 r1=-0.36 | KL=0.0337 clip=0.38 |  1924fps   155s
+  ✓ [HCGAE_Imp12_s1234] 完成 | 耗时=156.3s | 最终=1198.6 | 最高=1242.9
+  -> HCGAE_Imp12 HalfCheetah-v4 s1234: final=1198.6  (156s)
+
+  All missing runs done in 2073s
+  Summary saved -> results/BaselineComparison/baseline_comparison_summary.json
+
+===========================================================================
+  Final Results (5-seed mean ± std)
+===========================================================================
+Algorithm              |       Hopper-v4 |     Walker2d-v4 |   HalfCheetah-v4
+---------------------- | --------------- | --------------- | ----------------
+Standard_PPO           |     2735±  511(n=5) |     1184±  589(n=5) |      902±  200(n=5)
+PPO_KLPEN              |     2772±  517(n=5) |     1346±  496(n=5) |      744±   52(n=5)
+PPO_Anneal             |     2720±  553(n=5) |      959±  463(n=5) |      897±   38(n=5)
+PPO_EntDecay           |     2665±  564(n=5) |      953±  379(n=5) |      813±  192(n=5)
+PPO_VClip              |      412±   35(n=5) |      437±   24(n=5) |     1006±   44(n=5)
+PPO_Full_Baseline      |      426±   53(n=5) |      405±   13(n=5) |      641±  216(n=5)
+HCGAE_Imp12            |     2873±  491(n=5) |     1290±  682(n=5) |      828±  253(n=5) ← OURS
+===========================================================================
+

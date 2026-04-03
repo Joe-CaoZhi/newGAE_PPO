@@ -1,0 +1,63 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Hopper-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+
+=================================================================
+  DCPPO Multi-Seed Experiment
+  Missing: 30 runs
+    Hopper-v4             DCPPO_Base       seed=42
+    Hopper-v4             DCPPO_Base       seed=123
+    Hopper-v4             DCPPO_Base       seed=456
+    Hopper-v4             DCPPO_Base       seed=789
+    Hopper-v4             DCPPO_Base       seed=1234
+    Hopper-v4             DCPPO_ImpS       seed=42
+    Hopper-v4             DCPPO_ImpS       seed=123
+    Hopper-v4             DCPPO_ImpS       seed=456
+    Hopper-v4             DCPPO_ImpS       seed=789
+    Hopper-v4             DCPPO_ImpS       seed=1234
+    Hopper-v4             DCPPO_Full       seed=42
+    Hopper-v4             DCPPO_Full       seed=123
+    Hopper-v4             DCPPO_Full       seed=456
+    Hopper-v4             DCPPO_Full       seed=789
+    Hopper-v4             DCPPO_Full       seed=1234
+    Walker2d-v4           DCPPO_Base       seed=42
+    Walker2d-v4           DCPPO_Base       seed=123
+    Walker2d-v4           DCPPO_Base       seed=456
+    Walker2d-v4           DCPPO_Base       seed=789
+    Walker2d-v4           DCPPO_Base       seed=1234
+    Walker2d-v4           DCPPO_ImpS       seed=42
+    Walker2d-v4           DCPPO_ImpS       seed=123
+    Walker2d-v4           DCPPO_ImpS       seed=456
+    Walker2d-v4           DCPPO_ImpS       seed=789
+    Walker2d-v4           DCPPO_ImpS       seed=1234
+    Walker2d-v4           DCPPO_Full       seed=42
+    Walker2d-v4           DCPPO_Full       seed=123
+    Walker2d-v4           DCPPO_Full       seed=456
+    Walker2d-v4           DCPPO_Full       seed=789
+    Walker2d-v4           DCPPO_Full       seed=1234
+=================================================================
+
+
+  [1/30] Hopper-v4 | DCPPO_Base | seed=42
+
+  ══════════════════════════════════════════════════════════════════════
+  DCPPO  [G=✗][A=✗][S=✗][HCGAE=✓]
+  Env: Hopper-v4  D=3  β_strict=0.6  β_loose=1.4  SNR_target=0.3
+  ──────────────────────────────────────────────────────────────────────
+  [DCPPO_Base        ]    2048/500000 [░░░░░░░░░░░░░░░░░░░░░░░░░]   0.4% | Eval=    N/A Recent=  12.5 | VLoss=22.651 EV=+0.008 | KL=0.0092 clip=0.137(s=0.14/l=0.14) | SNR=0.000→w=1.000 | geo_r=1.0013 c_mc=1.000 | δ:μ=+0.310/σ=0.291 | α=0.295±0.236 |  2410fps     1s
+  [DCPPO_Base        ]   10240/500000 [░░░░░░░░░░░░░░░░░░░░░░░░░]   2.0% | Eval=  211.5 Recent= 115.6 | VLoss=697.924 EV=+0.077 | KL=0.0099 clip=0.146(s=0.15/l=0.15) | SNR=0.000→w=1.000 | geo_r=1.0023 c_mc=0.979 | δ:μ=+0.168/σ=3.710 | α=0.310±0.257 |  2186fps     5s
+  [DCPPO_Base        ]   12288/500000 [░░░░░░░░░░░░░░░░░░░░░░░░░]   2.5% | Eval=  211.5 Recent= 169.8 | VLoss=554.576 EV=+0.201 | KL=0.0075 clip=0.104(s=0.10/l=0.10) | SNR=0.000→w=1.000 | geo_r=0.9992 c_mc=0.976 | δ:μ=+0.195/σ=3.455 | α=0.327±0.269 |  2141fps     6s
+  [DCPPO_Base        ]   20480/500000 [█░░░░░░░░░░░░░░░░░░░░░░░░]   4.1% | Eval=  352.7 Recent= 264.0 | VLoss=307.744 EV=+0.627 | KL=0.0092 clip=0.132(s=0.13/l=0.13) | SNR=0.000→w=1.000 | geo_r=0.9994 c_mc=0.879 | δ:μ=+0.151/σ=2.263 | α=0.285±0.223 |  2218fps     9s
+  [DCPPO_Base        ]   22528/500000 [█░░░░░░░░░░░░░░░░░░░░░░░░]   4.5% | Eval=  352.7 Recent= 298.0 | VLoss=136.891 EV=+0.822 | KL=0.0074 clip=0.100(s=0.10/l=0.10) | SNR=0.000→w=1.000 | geo_r=0.9983 c_mc=0.854 | δ:μ=+0.154/σ=2.826 | α=0.296±0.237 |  2241fps    10s
+  [DCPPO_Base        ]   30720/500000 [█░░░░░░░░░░░░░░░░░░░░░░░░]   6.1% | Eval=  340.1 Recent= 337.1 | VLoss=95.938 EV=+0.899 | KL=0.0072 clip=0.094(s=0.09/l=0.09) | SNR=0.000→w=1.000 | geo_r=0.9985 c_mc=0.724 | δ:μ=+0.010/σ=2.145 | α=0.226±0.117 |  2233fps    14s
+  [DCPPO_Base        ]   32768/500000 [█░░░░░░░░░░░░░░░░░░░░░░░░]   6.6% | Eval=  340.1 Recent= 321.9 | VLoss=70.467 EV=+0.911 | KL=0.0073 clip=0.091(s=0.09/l=0.09) | SNR=0.000→w=1.000 | geo_r=0.9972 c_mc=0.693 | δ:μ=-0.010/σ=1.791 | α=0.202±0.129 |  2205fps    15s
+  [DCPPO_Base        ]   40960/500000 [██░░░░░░░░░░░░░░░░░░░░░░░]   8.2% | Eval=  436.3 Recent= 332.8 | VLoss=53.837 EV=+0.934 | KL=0.0102 clip=0.140(s=0.14/l=0.14) | SNR=0.000→w=1.000 | geo_r=0.9976 c_mc=0.573 | δ:μ=-0.048/σ=2.481 | α=0.186±0.107 |  2166fps    19s
+  [DCPPO_Base        ]   43008/500000 [██░░░░░░░░░░░░░░░░░░░░░░░]   8.6% | Eval=  436.3 Recent= 354.4 | VLoss=22.279 EV=+0.971 | KL=0.0083 clip=0.108(s=0.11/l=0.11) | SNR=0.000→w=1.000 | geo_r=1.0017 c_mc=0.547 | δ:μ=+0.054/σ=1.710 | α=0.197±0.152 |  2183fps    20s
+  [DCPPO_Base        ]   51200/500000 [██░░░░░░░░░░░░░░░░░░░░░░░]  10.2% | Eval=  450.7 Recent= 384.9 | VLoss=8.900 EV=+0.992 | KL=0.0085 clip=0.111(s=0.11/l=0.11) | SNR=0.000→w=1.000 | geo_r=0.9971 c_mc=0.450 | δ:μ=+0.060/σ=0.852 | α=0.169±0.132 |  2152fps    24s
+  [DCPPO_Base        ]   53248/500000 [██░░░░░░░░░░░░░░░░░░░░░░░]  10.6% | Eval=  450.7 Recent= 389.4 | VLoss=6.409 EV=+0.994 | KL=0.0077 clip=0.102(s=0.10/l=0.10) | SNR=0.000→w=1.000 | geo_r=0.9998 c_mc=0.428 | δ:μ=+0.057/σ=0.910 | α=0.156±0.136 |  2163fps    25s
+  [DCPPO_Base        ]   61440/500000 [███░░░░░░░░░░░░░░░░░░░░░░]  12.3% | Eval=  446.7 Recent= 400.6 | VLoss=29.492 EV=+0.977 | KL=0.0080 clip=0.107(s=0.11/l=0.11) | SNR=0.000→w=1.000 | geo_r=0.9987 c_mc=0.349 | δ:μ=-0.018/σ=1.926 | α=0.117±0.071 |  2197fps    28s
+  [DCPPO_Base        ]   63488/500000 [███░░░░░░░░░░░░░░░░░░░░░░]  12.7% | Eval=  446.7 Recent= 409.2 | VLoss=3.483 EV=+0.997 | KL=0.0080 clip=0.105(s=0.10/l=0.10) | SNR=0.000→w=1.000 | geo_r=0.9986 c_mc=0.333 | δ:μ=+0.032/σ=1.083 | α=0.131±0.110 |  2200fps    29s
+  [DCPPO_Base        ]   71680/500000 [███░░░░░░░░░░░░░░░░░░░░░░]  14.3% | Eval=  442.7 Recent= 424.6 | VLoss=2.474 EV=+0.997 | KL=0.0096 clip=0.129(s=0.13/l=0.13) | SNR=0.000→w=1.000 | geo_r=0.9973 c_mc=0.272 | δ:μ=+0.025/σ=0.977 | α=0.099±0.074 |  2171fps    33s
+  [DCPPO_Base        ]   73728/500000 [███░░░░░░░░░░░░░░░░░░░░░░]  14.7% | Eval=  442.7 Recent= 426.0 | VLoss=1.791 EV=+0.999 | KL=0.0087 clip=0.126(s=0.13/l=0.13) | SNR=0.000→w=1.000 | geo_r=1.0041 c_mc=0.258 | δ:μ=+0.028/σ=0.918 | α=0.108±0.092 |  2181fps    34s
+  [DCPPO_Base        ]   81920/500000 [████░░░░░░░░░░░░░░░░░░░░░]  16.4% | Eval=  526.7 Recent= 480.9 | VLoss=12.203 EV=+0.987 | KL=0.0083 clip=0.112(s=0.11/l=0.11) | SNR=0.000→w=1.000 | geo_r=0.9954 c_mc=0.211 | δ:μ=+0.152/σ=1.165 | α=0.091±0.084 |  2209fps    37s
+  [DCPPO_Base        ]   83968/500000 [████░░░░░░░░░░░░░░░░░░░░░]  16.8% | Eval=  526.7 Recent= 530.3 | VLoss=18.174 EV=+0.985 | KL=0.0102 clip=0.137(s=0.14/l=0.14) | SNR=0.000→w=1.000 | geo_r=0.9989 c_mc=0.201 | δ:μ=+0.148/σ=1.490 | α=0.090±0.080 |  2207fps    38s
+  [DCPPO_Base        ]   92160/500000 [████░░░░░░░░░░░░░░░░░░░░░]  18.4% | Eval=  864.4 Recent= 728.9 | VLoss=14.919 EV=+0.976 | KL=0.0093 clip=0.124(s=0.12/l=0.12) | SNR=0.000→w=1.000 | geo_r=0.9990 c_mc=0.166 | δ:μ=+0.110/σ=2.223 | α=0.098±0.075 |  2195fps    42s

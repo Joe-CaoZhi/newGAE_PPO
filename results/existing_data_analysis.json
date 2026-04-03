@@ -1,0 +1,67 @@
+{
+  "summary": {
+    "Hopper-v4": {
+      "HCGAE_Imp12_mean": 2873.2780521518403,
+      "Standard_PPO_mean": 2734.7721384901474,
+      "stats": {
+        "mean_HCGAE_Imp12": 2873.2780521518403,
+        "mean_Standard_PPO": 2734.7721384901474,
+        "std_HCGAE_Imp12": 549.4741487256128,
+        "std_Standard_PPO": 571.115077137544,
+        "n_HCGAE_Imp12": 5,
+        "n_Standard_PPO": 5,
+        "mann_whitney_u": 14.0,
+        "p_value": 0.8412698412698413,
+        "cohens_d": 0.24715585212285482,
+        "ci_low": -486.93920648711884,
+        "ci_high": 740.3067731122086,
+        "power_estimate": 0.06766610044194313,
+        "pct_improvement": 5.064623546210863,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    "Walker2d-v4": {
+      "HCGAE_Imp12_mean": 1290.4377720627742,
+      "Standard_PPO_mean": 1184.0212360438727,
+      "stats": {
+        "mean_HCGAE_Imp12": 1290.4377720627742,
+        "mean_Standard_PPO": 1184.0212360438727,
+        "std_HCGAE_Imp12": 762.8693529088766,
+        "std_Standard_PPO": 658.4898471482371,
+        "n_HCGAE_Imp12": 5,
+        "n_Standard_PPO": 5,
+        "mann_whitney_u": 15.0,
+        "p_value": 0.6904761904761905,
+        "cohens_d": 0.14933697870033677,
+        "ci_low": -666.4999679437142,
+        "ci_high": 914.2461232882181,
+        "power_estimate": 0.05640656801847122,
+        "pct_improvement": 8.987721907215827,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    "HalfCheetah-v4": {
+      "HCGAE_Imp12_mean": 828.1266463252634,
+      "Standard_PPO_mean": 902.1765742873913,
+      "stats": {
+        "mean_HCGAE_Imp12": 828.1266463252634,
+        "mean_Standard_PPO": 902.1765742873913,
+        "std_HCGAE_Imp12": 282.9885535136748,
+        "std_Standard_PPO": 223.76872599544802,
+        "n_HCGAE_Imp12": 5,
+        "n_Standard_PPO": 5,
+        "mann_whitney_u": 10.0,
+        "p_value": 0.6904761904761905,
+        "cohens_d": -0.29027475670764813,
+        "ci_low": -349.2995081081782,
+        "ci_high": 211.20951681244853,
+        "power_estimate": 0.07445558991566757,
+        "pct_improvement": -8.207919610393057,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    }
+  }
+}

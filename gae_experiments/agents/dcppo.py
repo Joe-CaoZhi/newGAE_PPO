@@ -77,25 +77,37 @@ DCPPO: Dual-Control PPO
   从消融数据可见：HCGAE_Imp2 的 EV_ema 在 50K 步时已达 0.978，
   但 clip_frac 仍在 15-25%，说明 advantage 的"信噪比"没有被 clip 感知
 
-改进 S：信噪比自适应梯度缩放（SNR-Adaptive Gradient Scaling）
-  定义 advantage 的局部信噪比：
-    SNR = |A_mean| / (A_std + ε)  ← 批内信噪比
+改进 S：信噪比自适应梯度缩放（EV-Driven SNR-Adaptive Gradient Scaling）
+  动机：
+    原始定义 SNR = E[|A|] / std(A) 在零均值归一化优势下，对称分布时恒近似
+    sqrt(2/π) ≈ 0.798（与 Critic 精度无关）。因此，该定义无法有效区分早期
+    低质量优势和后期高质量优势。
+
+  改进方案：使用 EV（Explained Variance）作为 SNR 的无偏代理
+    SNR_eff = clip(EV_ema, 0.01, 1.0)
+
+  理由：EV = 1 - Var[G - V] / Var[G] 直接衡量 Critic 对 MC 回报的解释度；
+    EV_ema 高 → Critic 精准 → 优势估计高信噪 → 应全量更新策略；
+    EV_ema 低 → Critic 噪声大 → 优势含 Critic 误差 → 应衰减梯度以防退步。
 
   梯度缩放因子：
-    w(SNR) = min(1.0, SNR / SNR_target)^γ_snr
+    w(EV) = clip( (EV_ema / target_EV)^γ_snr, w_min, 1.0 )
 
-  等价操作：用 w(SNR) × A 替换 A 进入 policy loss
-  当 SNR 高时（advantage 信号强），w→1，全量梯度
-  当 SNR 低时（advantage 噪声大），w<1，衰减梯度
+  等价操作：用 w(EV) × A 替换 A 进入 policy loss
+  当 EV 高时（Critic 准），w→1，全量梯度
+  当 EV 低时（Critic 噪声大），w<1，衰减梯度
+
+  诊断统计：同时计算原始 E[|A|]/std(A)（恒≈0.798）用于对比分析
 
   理论联系：这是 Trust-PCL 和 MPO 中"用 Q 估计质量来控制更新幅度"思路的
   on-policy 版本，无需显式 Q 网络。
+  与 HCGAE 的协同效应：HCGAE 加速了 EV 提升（更好的 Critic 目标→更快收敛），
+  EV 提升后 SNR-scaling 的抑制更快解除，形成正向循环。
 
   数学性质：
-  1. 当 A 均为噪声（A ~ N(0, σ)），SNR → 0，更新被抑制 ✓
-  2. 当 A 有明确方向（E[A] >> σ），SNR 大，全量更新 ✓
-  3. 与 HCGAE 配合：HCGAE 改善了 advantage 质量（EV↑），从而 SNR↑，
-     使得 SNR-adaptive 的抑制更快解除，形成第三条正向循环 ✓
+  1. 训练初期（EV≈0）：w ≈ w_min，梯度被抑制，防止噪声驱动的过早策略退化 ✓
+  2. 训练收敛（EV→1）：w → 1，退化为标准 PPO，无额外偏差 ✓
+  3. w(EV)·A 仍为策略梯度的单调变换，梯度方向不变，仅幅度缩放 ✓
 
 ────────────────────────────────────────────────────────────────────────
 DCPPO 命名含义
@@ -189,6 +201,11 @@ class DCPPO:
         hindsight_beta: float = 3.0,
         hindsight_alpha_max: float = 0.7,
         hindsight_alpha_min: float = 0.1,
+        # ── SCR 自适应校正强度 ──
+        use_scr_adapt: bool = False,   # 启用 SCR 驱动的 alpha_max 自适应缩放
+        scr_threshold: float = 1.0,    # SCR > 此值时 HCGAE 有益；< 此值时抑制校正
+        scr_min_scale: float = 0.1,    # SCR 极低时的最小 alpha_max 缩放因子
+        scr_ema_alpha: float = 0.1,    # SCR EMA 更新速率
         # ── 其他 ──
         device: str = "cpu",
         save_dir: str = "results",
@@ -230,6 +247,15 @@ class DCPPO:
         self._ev_ema = 0.0
         self._ev_ema_alpha = 0.05
         self._total_timesteps = 1
+
+        # SCR 自适应参数
+        self.use_scr_adapt = use_scr_adapt
+        self.scr_threshold = scr_threshold
+        self.scr_min_scale = scr_min_scale
+        self.scr_ema_alpha = scr_ema_alpha
+        # SCR EMA：初始化为 threshold 表示「中性」
+        self._scr_ema = scr_threshold
+        self._scr_history = []  # 历史 SCR 值（最近 50 次）
 
         self.device = torch.device(device)
 
@@ -324,6 +350,18 @@ class DCPPO:
 
         progress = self.total_steps / max(self._total_timesteps, 1)
 
+        # ── 在线 SCR 估计（每次 rollout 更新，用于诊断和自适应）──────────
+        # SCR = |bias| / std(G)；> threshold 表示 HCGAE 有益（偏差主导）
+        mc_std_for_scr = float(np.std(G)) + 1e-8
+        bias_abs_raw = float(np.mean(np.abs(V - G)))
+        scr_current = bias_abs_raw / mc_std_for_scr
+        # EMA 平滑，减少单次 rollout 噪声
+        self._scr_ema = (1 - self.scr_ema_alpha) * self._scr_ema + self.scr_ema_alpha * scr_current
+        # 记录历史（最多保留最近 50 次）
+        self._scr_history.append(scr_current)
+        if len(self._scr_history) > 50:
+            self._scr_history.pop(0)
+
         if self.use_hcgae:
             # ── 改进①：批内中心化归一化 alpha ──────────────────────────
             err = np.abs(V - G)
@@ -337,10 +375,28 @@ class DCPPO:
                 + (self.hindsight_alpha_max - self.hindsight_alpha_min)
                 * cosine_decay * ev_factor
             )
+
+            # ── SCR 自适应缩放 alpha_max ────────────────────────────────
+            # 当 scr_ema > threshold 时：偏差主导，HCGAE 有益，保持校正强度
+            # 当 scr_ema < threshold 时：MC 方差主导，抑制校正强度防止引入噪声
+            if self.use_scr_adapt:
+                scr_scale = float(np.clip(
+                    self._scr_ema / (self.scr_threshold + 1e-8),
+                    self.scr_min_scale,
+                    1.0,
+                ))
+                dynamic_alpha_max = dynamic_alpha_max * scr_scale
+            else:
+                scr_scale = 1.0
+
             z     = self.hindsight_beta * (err - err_batch_mean) / err_batch_std
             alpha = dynamic_alpha_max * (1.0 / (1.0 + np.exp(-z)))
         else:
             alpha = np.zeros(T, dtype=np.float32)
+            err_batch_mean = 0.0
+            err_batch_std  = 1.0
+            dynamic_alpha_max = 0.0
+            scr_scale = 1.0
 
         V_corrected = (1.0 - alpha) * V + alpha * G
 
@@ -354,7 +410,7 @@ class DCPPO:
             else:
                 V_corrected_next[t] = V_corrected[t + 1]
 
-        # GAE on corrected values
+        # GAE on corrected values (for advantage estimation)
         adv = np.zeros(T, dtype=np.float32)
         gae = 0.0
         for t in reversed(range(T)):
@@ -364,23 +420,35 @@ class DCPPO:
             adv[t]   = gae
 
         # ── 改进②：EV 驱动 Critic 目标混合 ─────────────────────────────
+        # 论文声明：Critic 训练目标使用【未校正】的原始 V 计算的标准 GAE lambda-return
+        # R_t^GAE = A_t^std + V(s_t)，其中 A_t^std 基于原始 V 而非 V_corrected 计算
+        # 这确保 Critic 的训练目标不受优势估计校正路径的污染（两个更新通道独立）
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+
         c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
-        gae_returns = adv + V
         self.buffer.advantages = adv
-        self.buffer.returns    = c_mc * G + (1.0 - c_mc) * gae_returns
+        self.buffer.returns    = c_mc * G + (1.0 - c_mc) * std_gae_returns
 
         # 统计信息
         deltas = self.buffer.rewards[:T] + self.gamma * V_corrected_next - V_corrected
         autocorr = float(np.corrcoef(deltas[:-1], deltas[1:])[0, 1]) if T > 2 else 0.0
         return {
-            "delta_mean":    float(deltas.mean()),
-            "delta_std":     float(deltas.std()),
-            "delta_autocorr": autocorr,
-            "adv_mean":      float(adv.mean()),
-            "adv_std":       float(adv.std()),
-            "c_mc":          c_mc,
-            "alpha_mean":    float(alpha.mean()),
-            "alpha_std":     float(alpha.std()),
+            "delta_mean":       float(deltas.mean()),
+            "delta_std":        float(deltas.std()),
+            "delta_autocorr":   autocorr,
+            "adv_mean":         float(adv.mean()),
+            "adv_std":          float(adv.std()),
+            "c_mc":             c_mc,
+            "alpha_mean":       float(alpha.mean()),
+            "alpha_std":        float(alpha.std()),
+            # SCR 诊断统计（来自 rollout 开始时计算的 SCR）
+            "scr_current":      scr_current,             # 当次 rollout SCR
+            "scr_ema":          float(self._scr_ema),    # 平滑后 SCR EMA
+            "scr_scale":        scr_scale,               # SCR 对 alpha_max 的缩放因子
+            "mc_std":           mc_std_for_scr,          # MC 回报标准差（分母）
+            "bias_abs_proxy":   bias_abs_raw,            # |V-G| 均值（分子）
+            "bias_proxy":       float(np.mean(V - G)),   # 有符号偏差（负 = Critic 低估）
+            "dynamic_alpha_max": dynamic_alpha_max,      # 实际使用的 alpha_max（含 SCR 缩放）
         }
 
     # ──────────────────────────────────────────────────────────────────
@@ -399,11 +467,26 @@ class DCPPO:
         advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
         # ── 改进 S：计算批级 SNR，用于后续梯度缩放 ────────────────────
+        # SNR 改进说明：
+        # 原始定义 E[|A|] / std(A) 在零均值优势下，对称分布时 ≈ sqrt(2/π) ≈ 0.798（常数），
+        # 缺乏对 Critic 精度的区分度。
+        #
+        # 改进方案：SNR_eff = EV_ema^{gamma_s} 作为主要缩放信号。
+        # 理由：EV = 1 - Var[G-V]/Var[G] 直接衡量 Critic 对 MC 回报的拟合程度；
+        # EV 高 → Critic 准 → 优势估计准 → SNR 高 → 应该用完整梯度。
+        # 这消除了原始 SNR 对分布形状的依赖，并且 EV_ema 已经由 HCGAE 跟踪维护。
+        #
+        # 同时保留原始 E[|A|]/std(A) 作为诊断统计量，便于分析对比。
         if self.use_imp_s:
+            # 原始 E[|A|]/std(A) 统计量（保留用于诊断）
             adv_mean_abs = float(advantages.abs().mean().item())
             adv_std      = float(advantages.std().item()) + 1e-8
-            snr_batch    = adv_mean_abs / adv_std
-            # w = min(1, (SNR/SNR_target)^γ)^γ，且 w >= snr_min_weight
+            snr_ratio    = adv_mean_abs / adv_std   # 原始比值，约 ≈ 0.798 for Gaussian
+            # EV 驱动的有效 SNR：直接用 Critic 精度作为信号质量代理
+            # clip 到 [0.01, 1.0] 防止 EV 负值时权重过小
+            ev_for_snr = float(np.clip(self._ev_ema, 0.01, 1.0))
+            snr_batch   = ev_for_snr   # 用 EV 作为 SNR 的无偏代理
+            # w = min(1, (SNR/SNR_target)^γ)，且 w >= snr_min_weight
             snr_weight = float(
                 np.clip(
                     (snr_batch / (self.snr_target + 1e-8)) ** self.snr_gamma,
@@ -412,8 +495,11 @@ class DCPPO:
                 )
             )
         else:
-            snr_batch  = 0.0
-            snr_weight = 1.0
+            adv_mean_abs = 0.0
+            adv_std      = 1.0
+            snr_ratio    = 0.0
+            snr_batch    = 0.0
+            snr_weight   = 1.0
 
         # 应用 SNR 缩放到 advantages（方向不变，幅度缩放）
         effective_adv = advantages * snr_weight
@@ -430,9 +516,12 @@ class DCPPO:
             "clip_frac_loose": 0.0,    # 安全方向被截断的比例
             "ratio_mean": 0.0,
             "geo_ratio_mean": 0.0,     # 几何均值 ratio 统计
-            "snr_batch": snr_batch,
-            "snr_weight": snr_weight,
+            "snr_batch": snr_batch,    # EV 驱动的 SNR（主要）
+            "snr_weight": snr_weight,  # 对应的梯度缩放权重
+            "snr_ratio": snr_ratio,    # 原始 E[|A|]/std(A)（诊断用，≈0.798 for Gaussian）
         }
+        # 不参与 update_count 平均的标量（已是 rollout 级别的统计量）
+        _no_avg_keys = {"snr_batch", "snr_weight", "snr_ratio"}
         update_count = 0
 
         for epoch in range(self.n_epochs):
@@ -569,7 +658,7 @@ class DCPPO:
 
         if update_count > 0:
             for k in metrics:
-                if k not in ("snr_batch", "snr_weight"):
+                if k not in _no_avg_keys:
                     metrics[k] /= update_count
 
         # 计算 Explained Variance
@@ -730,12 +819,17 @@ DCPPO_VARIANTS = {
 
 
 def build_dcppo_agent(variant_name: str, env: gym.Env, save_dir: str, **kwargs) -> DCPPO:
-    """根据变体名称构建 DCPPO agent"""
+    """根据变体名称构建 DCPPO agent
+
+    可以通过 kwargs 传入 name 来覆盖默认的 variant_name 作为 agent 名称。
+    """
     if variant_name not in DCPPO_VARIANTS:
         raise ValueError(f"Unknown DCPPO variant: {variant_name}. "
                          f"Available: {list(DCPPO_VARIANTS.keys())}")
     flags = DCPPO_VARIANTS[variant_name]
-    return DCPPO(env=env, name=variant_name, save_dir=save_dir, **flags, **kwargs)
+    # 如果 kwargs 中没有 name，使用 variant_name 作为默认名称
+    name = kwargs.pop("name", variant_name)
+    return DCPPO(env=env, name=name, save_dir=save_dir, **flags, **kwargs)
 
 
 def get_all_dcppo_variant_names():

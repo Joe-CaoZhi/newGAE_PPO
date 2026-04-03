@@ -1,4 +1,5 @@
 import json
+
 import numpy as np
 from scipy import stats
 
@@ -19,7 +20,7 @@ print("\n### Hopper-v4 (500K steps)")
 print("-" * 40)
 
 dcppo_imps_seeds = dcppo_data['Hopper-v4']['DCPPO_ImpS']['seeds']
-standard_ppo_seeds = baseline_data['Hopper-v4']['Standard PPO']['seeds']
+standard_ppo_seeds = baseline_data['Hopper-v4']['Standard_PPO']['seeds']
 
 print(f"DCPPO_ImpS seeds: {[f'{x:.1f}' for x in dcppo_imps_seeds]}")
 print(f"Standard PPO seeds: {[f'{x:.1f}' for x in standard_ppo_seeds]}")
@@ -58,7 +59,7 @@ print("Note: DCPPO_ImpS seeds are identical to DCPPO_Base seeds")
 print("      (SNR scaling may not have been applied)")
 
 dcppo_walker_seeds = dcppo_data['Walker2d-v4']['DCPPO_ImpS']['seeds']
-standard_walker_seeds = baseline_data['Walker2d-v4']['Standard PPO']['seeds']
+standard_walker_seeds = baseline_data['Walker2d-v4']['Standard_PPO']['seeds']
 
 print(f"\nDCPPO_ImpS seeds: {[f'{x:.1f}' for x in dcppo_walker_seeds]}")
 print(f"Standard PPO seeds: {[f'{x:.1f}' for x in standard_walker_seeds]}")
@@ -106,15 +107,15 @@ print("|------------|-----|---|---------|-----------|-----|")
 
 # Recalculate for summary
 u1, p1 = stats.mannwhitneyu(dcppo_data['Hopper-v4']['DCPPO_ImpS']['seeds'],
-                            baseline_data['Hopper-v4']['Standard PPO']['seeds'])
-d1 = (np.mean(dcppo_data['Hopper-v4']['DCPPO_ImpS']['seeds']) - np.mean(baseline_data['Hopper-v4']['Standard PPO']['seeds'])) / \
-     np.sqrt((np.var(dcppo_data['Hopper-v4']['DCPPO_ImpS']['seeds']) + np.var(baseline_data['Hopper-v4']['Standard PPO']['seeds']))/2)
+                            baseline_data['Hopper-v4']['Standard_PPO']['seeds'])
+d1 = (np.mean(dcppo_data['Hopper-v4']['DCPPO_ImpS']['seeds']) - np.mean(baseline_data['Hopper-v4']['Standard_PPO']['seeds'])) / \
+     np.sqrt((np.var(dcppo_data['Hopper-v4']['DCPPO_ImpS']['seeds']) + np.var(baseline_data['Hopper-v4']['Standard_PPO']['seeds']))/2)
 sig1 = "**" if p1 < 0.01 else "*" if p1 < 0.05 else "." if p1 < 0.1 else "n.s."
 
 u2, p2 = stats.mannwhitneyu(dcppo_data['Walker2d-v4']['DCPPO_ImpS']['seeds'],
-                            baseline_data['Hopper-v4']['Standard PPO']['seeds'] if False else baseline_data['Walker2d-v4']['Standard PPO']['seeds'])
-d2 = (np.mean(dcppo_data['Walker2d-v4']['DCPPO_ImpS']['seeds']) - np.mean(baseline_data['Walker2d-v4']['Standard PPO']['seeds'])) / \
-     np.sqrt((np.var(dcppo_data['Walker2d-v4']['DCPPO_ImpS']['seeds']) + np.var(baseline_data['Walker2d-v4']['Standard PPO']['seeds']))/2)
+                            baseline_data['Walker2d-v4']['Standard_PPO']['seeds'])
+d2 = (np.mean(dcppo_data['Walker2d-v4']['DCPPO_ImpS']['seeds']) - np.mean(baseline_data['Walker2d-v4']['Standard_PPO']['seeds'])) / \
+     np.sqrt((np.var(dcppo_data['Walker2d-v4']['DCPPO_ImpS']['seeds']) + np.var(baseline_data['Walker2d-v4']['Standard_PPO']['seeds']))/2)
 sig2 = "**" if p2 < 0.01 else "*" if p2 < 0.05 else "." if p2 < 0.1 else "n.s."
 
 print(f"| DCPPO_ImpS vs Std PPO | Hopper | {u1:.0f} | {p1:.4f} | {d1:+.2f} | {sig1} |")
@@ -123,9 +124,9 @@ print(f"| DCPPO_ImpS vs Std PPO | Walker | {u2:.0f} | {p2:.4f} | {d2:+.2f} | {si
 # Additional: DCPPO_Base vs Standard PPO
 print("\n| DCPPO_Base vs Std PPO |")
 u3, p3 = stats.mannwhitneyu(dcppo_data['Hopper-v4']['DCPPO_Base']['seeds'],
-                            baseline_data['Hopper-v4']['Standard PPO']['seeds'])
-d3 = (np.mean(dcppo_data['Hopper-v4']['DCPPO_Base']['seeds']) - np.mean(baseline_data['Hopper-v4']['Standard PPO']['seeds'])) / \
-     np.sqrt((np.var(dcppo_data['Hopper-v4']['DCPPO_Base']['seeds']) + np.var(baseline_data['Hopper-v4']['Standard PPO']['seeds']))/2)
+                            baseline_data['Hopper-v4']['Standard_PPO']['seeds'])
+d3 = (np.mean(dcppo_data['Hopper-v4']['DCPPO_Base']['seeds']) - np.mean(baseline_data['Hopper-v4']['Standard_PPO']['seeds'])) / \
+     np.sqrt((np.var(dcppo_data['Hopper-v4']['DCPPO_Base']['seeds']) + np.var(baseline_data['Hopper-v4']['Standard_PPO']['seeds']))/2)
 sig3 = "**" if p3 < 0.01 else "*" if p3 < 0.05 else "." if p3 < 0.1 else "n.s."
 print(f"| DCPPO_Base vs Std PPO | Hopper | {u3:.0f} | {p3:.4f} | {d3:+.2f} | {sig3} |")
 

@@ -2,15 +2,19 @@
 DCPPO-S 多种子实验
 ==================
 
-目标：在 Hopper-v4 / Walker2d-v4 / HalfCheetah-v4 上运行 DCPPO-S (仅改进S)
+目标：在 Hopper-v4 / Walker2d-v4 上运行 DCPPO-S (仅改进S)
 和 DCPPO_Full 的5种子完整实验，验证 SNR 自适应梯度缩放的稳定改进效果。
 
 实验设计：
-- Variants: DCPPO_ImpS (S only), DCPPO_Full (G+A+S), DCPPO_Base (baseline)
-- Envs: Hopper-v4, Walker2d-v4 (HalfCheetah 待完整基线先跑完)
+- Variants: DCPPO_Base, DCPPO_ImpS (S only), DCPPO_Full (G+A+S)
+- Envs: Hopper-v4, Walker2d-v4
 - Seeds: [42, 123, 456, 789, 1234] (5 seeds)
-- Timesteps: 500,000 (比 BaselineComparison 更多，更可靠)
+- Timesteps: 500,000
 - Eval: every 10,240 steps, 10 episodes
+
+关键修复：每个 seed 独立保存文件，name=f"{variant}_s{seed}"
+MetricLogger 保存路径: {save_dir}/{agent_name}_metrics.json
+= {save_dir}/{variant}_s{seed}_metrics.json
 """
 
 import json
@@ -42,6 +46,9 @@ SUMMARY_PATH = RESULTS_DIR / "dcppo_multiseed_summary.json"
 
 
 def metrics_path(env_name: str, variant: str, seed: int) -> Path:
+    # MetricLogger saves as {save_dir}/{agent_name}_metrics.json
+    # We pass name=f"{variant}_s{seed}" so agent_name = f"{variant}_s{seed}"
+    # => file = {variant}_s{seed}_metrics.json
     return RESULTS_DIR / env_name / variant / f"{variant}_s{seed}_metrics.json"
 
 
@@ -51,7 +58,7 @@ def is_done(env_name: str, variant: str, seed: int) -> bool:
         return False
     try:
         d = json.load(open(p))
-        return len(d.get("eval_rewards", [])) >= 20  # ~200K steps min
+        return len(d.get("eval_rewards", [])) >= 48  # 500K / 10240 ≈ 48 evals
     except Exception:
         return False
 
@@ -72,8 +79,12 @@ def run_single(env_name: str, variant: str, seed: int) -> float:
     np.random.seed(seed)
     torch.manual_seed(seed)
 
+    # Each variant's seeds share the same directory, but have distinct file names
     save_dir = str(RESULTS_DIR / env_name / variant)
     os.makedirs(save_dir, exist_ok=True)
+
+    # Unique name per seed so MetricLogger creates separate files
+    agent_name = f"{variant}_s{seed}"
 
     env = gym.make(env_name)
     eval_env = gym.make(env_name)
@@ -97,10 +108,11 @@ def run_single(env_name: str, variant: str, seed: int) -> float:
     )
 
     try:
+        # Pass name=agent_name so each seed gets its own metrics file
         agent = build_dcppo_agent(
             variant, env,
             save_dir=save_dir,
-            name=f"{variant}_s{seed}",
+            name=agent_name,
             **kwargs,
         )
 
