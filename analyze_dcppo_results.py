@@ -10,11 +10,9 @@ DCPPO 实验结果深度分析与可视化
 用法：
   python analyze_dcppo_results.py
 """
-import os
-import sys
-import json
 import glob
-import numpy as np
+import json
+import os
 
 SAVE_DIR = "results/Hopper-v4-DCPPO"
 PLOT_DIR = SAVE_DIR

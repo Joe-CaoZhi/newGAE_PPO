@@ -1,0 +1,13 @@
+{
+  "figures": {
+    "fig1_learning_curves": "results/paper_figures_v2/fig1_learning_curves.png",
+    "fig2_hcgae_ablation": "results/paper_figures_v2/fig2_hcgae_ablation.png",
+    "fig3_dcppo_multienv": "results/paper_figures_v2/fig3_dcppo_multienv.png",
+    "fig4_sensitivity": "results/paper_figures_v2/fig4_sensitivity.png",
+    "fig5_ev_snr_trajectory": "results/paper_figures_v2/fig5_ev_snr_trajectory.png",
+    "fig6_overhead": "results/paper_figures_v2/fig6_overhead.png",
+    "fig7_improvement_heatmap": "results/paper_figures_v2/fig7_improvement_heatmap.png",
+    "fig8_dcppo_curves": "results/paper_figures_v2/fig8_dcppo_curves.png"
+  },
+  "count": 8
+}

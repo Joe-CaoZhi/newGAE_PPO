@@ -11,18 +11,19 @@ DCPPO 消融实验脚本
 结果保存至：
   results/Hopper-v4-DCPPO/
 """
+import json
 import os
+import random
 import sys
 import time
-import json
+
 import numpy as np
-import random
 
 # ── 路径处理 ──────────────────────────────────────────────────────────
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import gymnasium as gym
-from gae_experiments.agents import DCPPO, build_dcppo_agent, get_all_dcppo_variant_names
+from gae_experiments.agents import build_dcppo_agent, get_all_dcppo_variant_names
 from gae_experiments.agents.hindsight_ablation import HindsightAblation
 
 # ── 实验配置 ──────────────────────────────────────────────────────────
@@ -202,8 +203,6 @@ def print_dcppo_math_analysis(all_results):
     print(f"  【DCPPO 数学分析】")
     print(f"{'═'*72}")
 
-    from gae_experiments.agents.dcppo import DCPPO_VARIANTS
-
     baseline_r = next((r["final_reward"] for r in all_results if r.get("is_baseline")), 0.0)
     rf = {r["variant"]: r["final_reward"] for r in all_results}
     rb = {r["variant"]: r["best_reward"]  for r in all_results}
@@ -290,8 +289,6 @@ def plot_dcppo_results(all_results):
     except ImportError:
         print("  ⚠ matplotlib 未安装，跳过图表生成")
         return
-
-    from gae_experiments.agents.dcppo import DCPPO_VARIANTS
 
     # ── 颜色方案 ───────────────────────────────────────────────────────
     COLORS = {

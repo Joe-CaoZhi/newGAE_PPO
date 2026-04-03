@@ -427,6 +427,9 @@ class HindsightAblation:
                 approx_kl=metrics["approx_kl"],
                 clip_frac=metrics["clip_frac"],
                 explained_variance=metrics["explained_variance"],
+                ev_ema=float(self._ev_ema),
+                alpha_mean=float(metrics.get("mean_alpha", 0.0)),
+                c_mc=float(metrics.get("c_mc", 0.5)),
                 total_steps=self.total_steps,
             )
 

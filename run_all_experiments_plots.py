@@ -15,11 +15,12 @@ Figures produced:
     fig6_mechanism.png            -- HCGAE alpha dynamics + EV/SNR trajectory
 """
 
-import os
-import sys
 import json
-import numpy as np
+import os
+
 import matplotlib
+import numpy as np
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec

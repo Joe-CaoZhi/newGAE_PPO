@@ -6,7 +6,7 @@ HCGAE 消融实验深度数学分析脚本
 """
 import json
 import os
-import sys
+
 import numpy as np
 
 SAVE_DIR = "results/Hopper-v4-Ablation"
@@ -386,7 +386,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from matplotlib.patches import FancyBboxPatch
 import matplotlib.cm as cm
 
 # ── 颜色方案 ─────────────────────────────────────────────────────

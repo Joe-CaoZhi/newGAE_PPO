@@ -33,6 +33,13 @@ class MetricLogger:
         # 自适应 λ 相关
         self.mean_lambda_values: List[float] = []
 
+        # 诊断指标（GAP4: EV/SNR/α 完整轨迹，用于论文图表）
+        self.ev_ema_history:  List[float] = []   # EV EMA 轨迹
+        self.snr_history:     List[float] = []   # SNR 轨迹（每次 update）
+        self.snr_weight_history: List[float] = [] # SNR→weight 轨迹
+        self.alpha_mean_history: List[float] = [] # HCGAE α 均值轨迹
+        self.c_mc_history:    List[float] = []   # MC 混合系数轨迹
+
         # 步骤计数
         self.total_steps: List[int] = []
         self._current_total_steps = 0
@@ -55,6 +62,12 @@ class MetricLogger:
         explained_variance: float,
         total_steps: int,
         mean_lambda: Optional[float] = None,
+        # GAP4 extended diagnostics
+        ev_ema: Optional[float] = None,
+        snr: Optional[float] = None,
+        snr_weight: Optional[float] = None,
+        alpha_mean: Optional[float] = None,
+        c_mc: Optional[float] = None,
     ):
         self.value_losses.append(value_loss)
         self.policy_losses.append(policy_loss)
@@ -65,6 +78,17 @@ class MetricLogger:
         self.total_steps.append(total_steps)
         if mean_lambda is not None:
             self.mean_lambda_values.append(mean_lambda)
+        # Extended diagnostics
+        if ev_ema is not None:
+            self.ev_ema_history.append(ev_ema)
+        if snr is not None:
+            self.snr_history.append(snr)
+        if snr_weight is not None:
+            self.snr_weight_history.append(snr_weight)
+        if alpha_mean is not None:
+            self.alpha_mean_history.append(alpha_mean)
+        if c_mc is not None:
+            self.c_mc_history.append(c_mc)
 
     def get_recent_reward(self, window: int = 20) -> float:
         if len(self.episode_rewards) == 0:
@@ -87,6 +111,12 @@ class MetricLogger:
             "explained_variances": self.explained_variances,
             "total_steps": self.total_steps,
             "mean_lambda_values": self.mean_lambda_values,
+            # GAP4 diagnostics
+            "ev_ema_history":       self.ev_ema_history,
+            "snr_history":          self.snr_history,
+            "snr_weight_history":   self.snr_weight_history,
+            "alpha_mean_history":   self.alpha_mean_history,
+            "c_mc_history":         self.c_mc_history,
         }
         path = os.path.join(self.save_dir, f"{self.agent_name}_metrics.json")
         with open(path, "w") as f:
@@ -110,5 +140,11 @@ class MetricLogger:
         logger.explained_variances = data.get("explained_variances", [])
         logger.total_steps = data.get("total_steps", [])
         logger.mean_lambda_values = data.get("mean_lambda_values", [])
+        # GAP4 diagnostics
+        logger.ev_ema_history      = data.get("ev_ema_history", [])
+        logger.snr_history         = data.get("snr_history", [])
+        logger.snr_weight_history  = data.get("snr_weight_history", [])
+        logger.alpha_mean_history  = data.get("alpha_mean_history", [])
+        logger.c_mc_history        = data.get("c_mc_history", [])
         return logger
 
