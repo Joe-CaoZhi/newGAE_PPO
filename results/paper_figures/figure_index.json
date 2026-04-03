@@ -1,0 +1,10 @@
+{
+  "fig1": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig1_main_comparison.png",
+  "fig1b": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig1b_bar_summary.png",
+  "fig2": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig2_hcgae_ablation.png",
+  "fig3": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig3_dcppo_analysis.png",
+  "fig4": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig4_overhead.png",
+  "fig5": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig5_sensitivity.png",
+  "fig6": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig6_mechanism.png",
+  "fig7": "/Users/joe-caozhi/newGAE_ppo/results/paper_figures/fig7_improvement_heatmap.png"
+}
