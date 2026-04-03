@@ -180,6 +180,8 @@ L = -E[min(ρ * A_eff, clip(ρ, 1±ε) * A_eff)]
 
 | 文档 | 语言 | 内容 |
 |---|---|---|
+| [`docs/paper_draft_zh.md`](docs/paper_draft_zh.md) | 中文 | 📄 论文草稿（完整中文版，含摘要、方法、实验、附录） |
+| [`docs/paper_draft.md`](docs/paper_draft.md) | 英文 | 📄 论文草稿（English version, ICML-style full paper） |
 | [`docs/技术报告.md`](docs/技术报告.md) | 中文 | 完整数学推导、实验分析、理论证明 |
 | [`docs/TECH_REPORT_EN.md`](docs/TECH_REPORT_EN.md) | 英文 | ICML 风格精简报告 |
 | [`docs/EXP_RECORD.md`](docs/EXP_RECORD.md) | 英文 | 完整实验记录（所有变体、原始数据） |
