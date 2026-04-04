@@ -1,0 +1,24 @@
+{
+  "issues": [
+    "Table2 DCPPO_Base: No data found, paper claims 2958\u00b1397",
+    "Table2 DCPPO_ImpS: No data found, paper claims 3056\u00b1420",
+    "Table2 DCPPO_Full: No data found, paper claims 1192\u00b1461",
+    "Table2 DCPPO_Base: No data found, paper claims 1895\u00b1632",
+    "Table2 DCPPO_ImpS: No data found, paper claims 1895\u00b1632",
+    "Table2 DCPPO_Full: No data found, paper claims 610\u00b1205",
+    "CRITICAL: Section 4.3 HalfCheetah table uses old UnifiedComparison data (HCGAE=828) that contradicts the new ICMLExperiment data in Table 1 (HCGAE=1250)"
+  ],
+  "n_issues": 7,
+  "tables_checked": [
+    "Table1",
+    "Table2",
+    "Table3",
+    "Table4",
+    "Table5",
+    "Table6",
+    "TableS1",
+    "TableS2",
+    "TableS3",
+    "AppF"
+  ]
+}

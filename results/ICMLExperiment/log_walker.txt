@@ -1,0 +1,86 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+
+================================================================================
+  ICML PPO Experiment
+  Envs:   ['Walker2d-v4']
+  Algos:  ['Standard_PPO', 'Optimal_PPO', 'Optimal_HCGAE', 'Optimal_HCGAE_SCR']
+  Seeds:  [0, 1, 2, 3, 4]
+  Steps:  500,000
+  Total runs: 20
+================================================================================
+
+
+[1/20] Walker2d-v4 | Standard_PPO | seed=0
+    Done: Standard_PPO Walker2d-v4 s0 → final=1174.0 (238s)
+
+[2/20] Walker2d-v4 | Standard_PPO | seed=1
+    Done: Standard_PPO Walker2d-v4 s1 → final=1365.9 (230s)
+
+[3/20] Walker2d-v4 | Standard_PPO | seed=2
+    Done: Standard_PPO Walker2d-v4 s2 → final=1787.1 (238s)
+
+[4/20] Walker2d-v4 | Standard_PPO | seed=3
+    Done: Standard_PPO Walker2d-v4 s3 → final=1400.9 (236s)
+
+[5/20] Walker2d-v4 | Standard_PPO | seed=4
+    Done: Standard_PPO Walker2d-v4 s4 → final=1396.3 (233s)
+
+[6/20] Walker2d-v4 | Optimal_PPO | seed=0
+    Done: Optimal_PPO Walker2d-v4 s0 → final=2034.5 (242s)
+
+[7/20] Walker2d-v4 | Optimal_PPO | seed=1
+    Done: Optimal_PPO Walker2d-v4 s1 → final=1415.9 (243s)
+
+[8/20] Walker2d-v4 | Optimal_PPO | seed=2
+    Done: Optimal_PPO Walker2d-v4 s2 → final=1290.9 (243s)
+
+[9/20] Walker2d-v4 | Optimal_PPO | seed=3
+    Done: Optimal_PPO Walker2d-v4 s3 → final=1185.5 (252s)
+
+[10/20] Walker2d-v4 | Optimal_PPO | seed=4
+    Done: Optimal_PPO Walker2d-v4 s4 → final=2055.2 (253s)
+
+[11/20] Walker2d-v4 | Optimal_HCGAE | seed=0
+    Done: Optimal_HCGAE Walker2d-v4 s0 → final=1880.6 (240s)
+
+[12/20] Walker2d-v4 | Optimal_HCGAE | seed=1
+    Done: Optimal_HCGAE Walker2d-v4 s1 → final=1182.8 (234s)
+
+[13/20] Walker2d-v4 | Optimal_HCGAE | seed=2
+    Done: Optimal_HCGAE Walker2d-v4 s2 → final=1741.2 (243s)
+
+[14/20] Walker2d-v4 | Optimal_HCGAE | seed=3
+    Done: Optimal_HCGAE Walker2d-v4 s3 → final=2712.1 (240s)
+
+[15/20] Walker2d-v4 | Optimal_HCGAE | seed=4
+    Done: Optimal_HCGAE Walker2d-v4 s4 → final=1844.5 (248s)
+
+[16/20] Walker2d-v4 | Optimal_HCGAE_SCR | seed=0
+    Done: Optimal_HCGAE_SCR Walker2d-v4 s0 → final=2075.2 (249s)
+
+[17/20] Walker2d-v4 | Optimal_HCGAE_SCR | seed=1
+    Done: Optimal_HCGAE_SCR Walker2d-v4 s1 → final=2119.3 (229s)
+
+[18/20] Walker2d-v4 | Optimal_HCGAE_SCR | seed=2
+    Done: Optimal_HCGAE_SCR Walker2d-v4 s2 → final=1771.8 (224s)
+
+[19/20] Walker2d-v4 | Optimal_HCGAE_SCR | seed=3
+    Done: Optimal_HCGAE_SCR Walker2d-v4 s3 → final=827.2 (214s)
+
+[20/20] Walker2d-v4 | Optimal_HCGAE_SCR | seed=4
+    Done: Optimal_HCGAE_SCR Walker2d-v4 s4 → final=2684.2 (234s)
+
+
+Total elapsed: 4764s
+
+Algorithm                            Walker2d
+─────────────────────────  ──────────────────
+Standard_PPO                   1425±   89(n=5)
+Optimal_PPO                    1596±  167(n=5)
+Optimal_HCGAE                  1872±  219(n=5) ◄ OURS
+Optimal_HCGAE_SCR              1896±  273(n=5) ◄ OURS
+
+Saved: results/ICMLExperiment/icml_summary.json

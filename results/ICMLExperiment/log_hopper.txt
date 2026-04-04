@@ -1,0 +1,86 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Hopper-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Hopper-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+
+================================================================================
+  ICML PPO Experiment
+  Envs:   ['Hopper-v4']
+  Algos:  ['Standard_PPO', 'Optimal_PPO', 'Optimal_HCGAE', 'Optimal_HCGAE_SCR']
+  Seeds:  [0, 1, 2, 3, 4]
+  Steps:  500,000
+  Total runs: 20
+================================================================================
+
+
+[1/20] Hopper-v4 | Standard_PPO | seed=0
+    Done: Standard_PPO Hopper-v4 s0 → final=1793.5 (218s)
+
+[2/20] Hopper-v4 | Standard_PPO | seed=1
+    Done: Standard_PPO Hopper-v4 s1 → final=1827.7 (220s)
+
+[3/20] Hopper-v4 | Standard_PPO | seed=2
+    Done: Standard_PPO Hopper-v4 s2 → final=1885.9 (220s)
+
+[4/20] Hopper-v4 | Standard_PPO | seed=3
+    Done: Standard_PPO Hopper-v4 s3 → final=1697.5 (222s)
+
+[5/20] Hopper-v4 | Standard_PPO | seed=4
+    Done: Standard_PPO Hopper-v4 s4 → final=1815.6 (220s)
+
+[6/20] Hopper-v4 | Optimal_PPO | seed=0
+    Done: Optimal_PPO Hopper-v4 s0 → final=1441.8 (214s)
+
+[7/20] Hopper-v4 | Optimal_PPO | seed=1
+    Done: Optimal_PPO Hopper-v4 s1 → final=1634.3 (216s)
+
+[8/20] Hopper-v4 | Optimal_PPO | seed=2
+    Done: Optimal_PPO Hopper-v4 s2 → final=1745.2 (222s)
+
+[9/20] Hopper-v4 | Optimal_PPO | seed=3
+    Done: Optimal_PPO Hopper-v4 s3 → final=1441.3 (224s)
+
+[10/20] Hopper-v4 | Optimal_PPO | seed=4
+    Done: Optimal_PPO Hopper-v4 s4 → final=1727.6 (236s)
+
+[11/20] Hopper-v4 | Optimal_HCGAE | seed=0
+    Done: Optimal_HCGAE Hopper-v4 s0 → final=1887.9 (234s)
+
+[12/20] Hopper-v4 | Optimal_HCGAE | seed=1
+    Done: Optimal_HCGAE Hopper-v4 s1 → final=1722.1 (226s)
+
+[13/20] Hopper-v4 | Optimal_HCGAE | seed=2
+    Done: Optimal_HCGAE Hopper-v4 s2 → final=1753.3 (225s)
+
+[14/20] Hopper-v4 | Optimal_HCGAE | seed=3
+    Done: Optimal_HCGAE Hopper-v4 s3 → final=1674.1 (225s)
+
+[15/20] Hopper-v4 | Optimal_HCGAE | seed=4
+    Done: Optimal_HCGAE Hopper-v4 s4 → final=1723.0 (222s)
+
+[16/20] Hopper-v4 | Optimal_HCGAE_SCR | seed=0
+    Done: Optimal_HCGAE_SCR Hopper-v4 s0 → final=1200.4 (216s)
+
+[17/20] Hopper-v4 | Optimal_HCGAE_SCR | seed=1
+    Done: Optimal_HCGAE_SCR Hopper-v4 s1 → final=1323.1 (220s)
+
+[18/20] Hopper-v4 | Optimal_HCGAE_SCR | seed=2
+    Done: Optimal_HCGAE_SCR Hopper-v4 s2 → final=1542.2 (209s)
+
+[19/20] Hopper-v4 | Optimal_HCGAE_SCR | seed=3
+    Done: Optimal_HCGAE_SCR Hopper-v4 s3 → final=1313.0 (206s)
+
+[20/20] Hopper-v4 | Optimal_HCGAE_SCR | seed=4
+    Done: Optimal_HCGAE_SCR Hopper-v4 s4 → final=1452.0 (207s)
+
+
+Total elapsed: 4401s
+
+Algorithm                              Hopper
+─────────────────────────  ──────────────────
+Standard_PPO                   1804±   27(n=5)
+Optimal_PPO                    1598±   60(n=5)
+Optimal_HCGAE                  1752±   32(n=5) ◄ OURS
+Optimal_HCGAE_SCR              1366±   53(n=5) ◄ OURS
+
+Saved: results/ICMLExperiment/icml_summary.json

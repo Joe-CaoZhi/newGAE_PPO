@@ -27,9 +27,7 @@
 注意：此脚本不产生虚假结论，只报告实测数据。
 """
 import json
-import os
 import sys
-import time
 from pathlib import Path
 
 import gymnasium as gym
@@ -39,7 +37,6 @@ import torch
 sys.path.insert(0, str(Path(__file__).parent))
 
 from gae_experiments.agents.dcppo import DCPPO, build_dcppo_agent
-from gae_experiments.agents.hindsight_ablation import build_ablation_agent
 
 RESULTS_DIR = Path("results/QuickValidation")
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -217,7 +214,7 @@ def run_single(agent, total_timesteps: int, eval_env, seed: int) -> dict:
 
         # 收集诊断指标
         ev = float(metrics.get("explained_variance", 0.0))
-        scr = float(metrics.get("scr_estimate", 0.0))
+        scr = float(metrics.get("scr_current", metrics.get("scr_ema", 0.0)))
         snr_w = float(metrics.get("snr_weight", 1.0))
         snr_r = float(metrics.get("snr_ratio", 0.0))
 
@@ -278,13 +275,23 @@ def main():
             save_dir=str(RESULTS_DIR / "DCPPO_ImpS_OldSNR"),
             **SHARED_KWARGS,
         ),
-        # 新 EV 驱动 SNR（改进后）
+        # 新 EV 驱动 SNR（当前论文/代码中的幂律门控）
         "DCPPO_ImpS_EVdriven": lambda seed, env: build_dcppo_agent(
             "DCPPO_ImpS", env,
             save_dir=str(RESULTS_DIR / "DCPPO_ImpS_EVdriven"),
             name=f"DCPPO_ImpS_EVdriven_s{seed}",
+            snr_mode="ev_power",
             # snr_target=0.3 对应 EV=0.3 时开始充分发挥
             snr_target=0.3, snr_gamma=0.5, snr_min_weight=0.2,
+            **SHARED_KWARGS,
+        ),
+        # 新改进：线性 EV 收缩（MSE-optimal linear shrinkage）
+        "DCPPO_ImpS_EVlinear": lambda seed, env: build_dcppo_agent(
+            "DCPPO_ImpS", env,
+            save_dir=str(RESULTS_DIR / "DCPPO_ImpS_EVlinear"),
+            name=f"DCPPO_ImpS_EVlinear_s{seed}",
+            snr_mode="ev_linear",
+            snr_min_weight=0.2,
             **SHARED_KWARGS,
         ),
     }
@@ -372,6 +379,7 @@ def main():
     base = all_results.get("DCPPO_Base", {})
     old_snr = all_results.get("DCPPO_ImpS_OldSNR", {})
     new_snr = all_results.get("DCPPO_ImpS_EVdriven", {})
+    linear_snr = all_results.get("DCPPO_ImpS_EVlinear", {})
 
     if base and old_snr and new_snr:
         print(f"\n  对照组  DCPPO_Base:         {base['final_reward_mean']:.1f}±{base['final_reward_std']:.1f}")
@@ -379,16 +387,25 @@ def main():
               f"早期EV={old_snr['ev_early_mean']:.3f}  SNR_w={old_snr['snr_weight_late_mean']:.3f}")
         print(f"  新SNR   DCPPO_ImpS_EVdriven: {new_snr['final_reward_mean']:.1f}±{new_snr['final_reward_std']:.1f}  "
               f"早期EV={new_snr['ev_early_mean']:.3f}  SNR_w={new_snr['snr_weight_late_mean']:.3f}")
+        if linear_snr:
+            print(f"  线性EV  DCPPO_ImpS_EVlinear:  {linear_snr['final_reward_mean']:.1f}±{linear_snr['final_reward_std']:.1f}  "
+                  f"早期EV={linear_snr['ev_early_mean']:.3f}  SNR_w={linear_snr['snr_weight_late_mean']:.3f}")
 
         delta_old = old_snr['final_reward_mean'] - base['final_reward_mean']
         delta_new = new_snr['final_reward_mean'] - base['final_reward_mean']
         print(f"\n  相对基线: 旧SNR Δ={delta_old:+.1f}  |  新EV-SNR Δ={delta_new:+.1f}")
+        if linear_snr:
+            delta_linear = linear_snr['final_reward_mean'] - base['final_reward_mean']
+            print(f"            线性EV Δ={delta_linear:+.1f}")
 
         ev_delta = new_snr['ev_early_mean'] - old_snr['ev_early_mean']
         print(f"  早期EV差（新-旧）: {ev_delta:+.4f}  "
               f"（{'新定义早期更好' if ev_delta > 0 else '新定义早期无明显优势'}）")
+        if linear_snr:
+            ev_linear_delta = linear_snr['ev_early_mean'] - old_snr['ev_early_mean']
+            print(f"  早期EV差（线性-旧）: {ev_linear_delta:+.4f}")
 
-        scr = new_snr.get("scr_mean", 0)
+        scr = (linear_snr or new_snr).get("scr_mean", 0)
         print(f"\n  SCR 诊断: Hopper-v4 SCR均值={scr:.3f}  "
               f"（{'> 1.0，HCGAE 有益' if scr > 1.0 else '≤ 1.0，HCGAE 收益有限'}）")
 

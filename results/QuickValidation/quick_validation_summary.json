@@ -1,0 +1,74 @@
+{
+  "DCPPO_Base": {
+    "variant": "DCPPO_Base",
+    "env": "Hopper-v4",
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "total_timesteps": 200000,
+    "final_reward_mean": 2636.911285625242,
+    "final_reward_std": 394.16726499151196,
+    "best_reward_mean": 2964.8425271297224,
+    "best_reward_std": 276.2220825539458,
+    "ev_early_mean": 0.3097550778379943,
+    "ev_late_mean": 0.9675286290985058,
+    "snr_weight_late_mean": 1.0,
+    "scr_mean": 0.21777194359068433
+  },
+  "DCPPO_ImpS_OldSNR": {
+    "variant": "DCPPO_ImpS_OldSNR",
+    "env": "Hopper-v4",
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "total_timesteps": 200000,
+    "final_reward_mean": 2636.911285625242,
+    "final_reward_std": 394.16726499151196,
+    "best_reward_mean": 2964.8425271297224,
+    "best_reward_std": 276.2220825539458,
+    "ev_early_mean": 0.3097550778379943,
+    "ev_late_mean": 0.9675286290985058,
+    "snr_weight_late_mean": 1.0,
+    "scr_mean": 0.21777194359068433
+  },
+  "DCPPO_ImpS_EVdriven": {
+    "variant": "DCPPO_ImpS_EVdriven",
+    "env": "Hopper-v4",
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "total_timesteps": 200000,
+    "final_reward_mean": 2269.591720686514,
+    "final_reward_std": 694.2381100112818,
+    "best_reward_mean": 2942.052872464817,
+    "best_reward_std": 308.4385737979698,
+    "ev_early_mean": 0.3214357740180293,
+    "ev_late_mean": 0.9729141646753865,
+    "snr_weight_late_mean": 1.0,
+    "scr_mean": 0.21063198455816226
+  },
+  "DCPPO_ImpS_EVlinear": {
+    "variant": "DCPPO_ImpS_EVlinear",
+    "env": "Hopper-v4",
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "total_timesteps": 200000,
+    "final_reward_mean": 2656.337133654713,
+    "final_reward_std": 426.39851652843583,
+    "best_reward_mean": 3053.195311662212,
+    "best_reward_std": 144.74207644821476,
+    "ev_early_mean": 0.3054845731517846,
+    "ev_late_mean": 0.9183658036553511,
+    "snr_weight_late_mean": 0.9306911437333247,
+    "scr_mean": 0.23047220646505098
+  }
+}

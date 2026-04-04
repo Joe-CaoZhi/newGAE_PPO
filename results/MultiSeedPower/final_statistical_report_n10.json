@@ -1,0 +1,408 @@
+{
+  "summary": {
+    "Hopper-v4": {
+      "Standard_PPO": {
+        "mean": 2524.3468635844342,
+        "std": 527.9131452573255,
+        "sem": 166.9407945756465,
+        "n_seeds": 10,
+        "seeds": [
+          1981.1142544480942,
+          2474.5102810307294,
+          2403.2072565816025,
+          2094.698177533829,
+          3422.117215877473,
+          1801.8859345664775,
+          2253.376752371752,
+          2702.6603194650434,
+          2967.9640640337975,
+          3141.9343799355443
+        ],
+        "scr_ema_list": []
+      },
+      "HCGAE_Imp12": {
+        "mean": 2663.2814231956645,
+        "std": 474.5882800015339,
+        "sem": 150.0779915626586,
+        "n_seeds": 10,
+        "seeds": [
+          2870.474858994935,
+          3098.1523966896175,
+          2005.4640372033355,
+          2906.496448877939,
+          1991.485264611095,
+          1999.7197145835842,
+          2757.198260573068,
+          3095.4149739721674,
+          2801.3461582888895,
+          3107.0621181620204
+        ],
+        "scr_ema_list": []
+      },
+      "HCGAE_Imp12_SCR": {
+        "mean": 2834.220759382669,
+        "std": 488.85755703504503,
+        "sem": 154.5903331616412,
+        "n_seeds": 10,
+        "seeds": [
+          3332.097835571249,
+          3345.166284920513,
+          3056.5166071797603,
+          2086.707298992504,
+          2203.1934634782256,
+          2723.1390528626735,
+          3018.8395643477297,
+          2279.8508018578023,
+          3353.7742970911313,
+          2942.922387525098
+        ],
+        "scr_ema_list": []
+      }
+    },
+    "Walker2d-v4": {
+      "Standard_PPO": {
+        "mean": 1251.7396352344267,
+        "std": 720.197769061135,
+        "sem": 227.74653160051326,
+        "n_seeds": 10,
+        "seeds": [
+          1084.545291936785,
+          821.269847373901,
+          665.518060392428,
+          639.1187966263219,
+          1817.7508853815339,
+          2474.208371647056,
+          1717.6760317631924,
+          2141.2737702355325,
+          627.8992336221003,
+          528.1360633654164
+        ],
+        "scr_ema_list": []
+      },
+      "HCGAE_Imp12": {
+        "mean": 1062.6089290136267,
+        "std": 670.821272420414,
+        "sem": 212.13231237408016,
+        "n_seeds": 10,
+        "seeds": [
+          691.2537165591036,
+          608.1389725607262,
+          2117.302442233146,
+          577.3666788178423,
+          503.07892049025077,
+          2250.7379301416017,
+          811.2648337326102,
+          1335.0535380503334,
+          408.64549162981695,
+          1323.246765920838
+        ],
+        "scr_ema_list": []
+      },
+      "HCGAE_Imp12_SCR": {
+        "mean": 1515.7929497373239,
+        "std": 943.3779234733712,
+        "sem": 298.32229324958763,
+        "n_seeds": 10,
+        "seeds": [
+          502.72341216211714,
+          2312.3056322533535,
+          2470.188623313215,
+          509.67809526080794,
+          458.548221811155,
+          2356.6687467709244,
+          1617.1614107883834,
+          2744.459995669614,
+          1694.6362224394932,
+          491.55913690417464
+        ],
+        "scr_ema_list": []
+      }
+    },
+    "HalfCheetah-v4": {
+      "Standard_PPO": {
+        "mean": 949.8773971465805,
+        "std": 178.11963153008173,
+        "sem": 56.32637316250007,
+        "n_seeds": 10,
+        "seeds": [
+          978.3601630901434,
+          755.555048275324,
+          1012.379419005887,
+          1210.7770649118181,
+          819.3031944986294,
+          1025.3223046406788,
+          1001.625937872328,
+          1125.5053405111253,
+          605.6126123710096,
+          964.3328862888602
+        ],
+        "scr_ema_list": []
+      },
+      "HCGAE_Imp12": {
+        "mean": 757.3438442051215,
+        "std": 150.1348786085661,
+        "sem": 47.47681726359601,
+        "n_seeds": 10,
+        "seeds": [
+          669.7283627632672,
+          818.5166066283343,
+          1072.360085455728,
+          681.4169663446058,
+          669.5388625388716,
+          929.8522054466963,
+          592.4594674532203,
+          654.4046935348622,
+          815.9207300763462,
+          669.2404618092833
+        ],
+        "scr_ema_list": []
+      },
+      "HCGAE_Imp12_SCR": {
+        "mean": 709.2831413758004,
+        "std": 185.36674928668216,
+        "sem": 58.61811302073078,
+        "n_seeds": 10,
+        "seeds": [
+          669.9636876743094,
+          879.289091820762,
+          748.3017776162488,
+          696.8878956250003,
+          1116.3337846395564,
+          583.9116677099976,
+          772.4200906859469,
+          601.95788958253,
+          545.6193356379623,
+          478.146192765689
+        ],
+        "scr_ema_list": []
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "env": "Hopper-v4",
+      "name_a": "HCGAE_Imp12",
+      "name_b": "Standard_PPO",
+      "label": "HCGAE_Imp12 vs Standard_PPO",
+      "stats": {
+        "mean_HCGAE_Imp12": 2663.2814231956645,
+        "mean_Standard_PPO": 2524.3468635844342,
+        "std_HCGAE_Imp12": 474.5882800015339,
+        "std_Standard_PPO": 527.9131452573255,
+        "sem_HCGAE_Imp12": 150.0779915626586,
+        "sem_Standard_PPO": 166.9407945756465,
+        "n_HCGAE_Imp12": 10,
+        "n_Standard_PPO": 10,
+        "mann_whitney_u": 58.0,
+        "p_value": 0.5707503880581739,
+        "cohens_d": 0.27678449859505966,
+        "ci_low": -281.40814417493027,
+        "ci_high": 545.6158978924616,
+        "power_estimate": 0.09490109231095167,
+        "pct_improvement": 5.503782448240906,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    {
+      "env": "Hopper-v4",
+      "name_a": "HCGAE_Imp12_SCR",
+      "name_b": "Standard_PPO",
+      "label": "HCGAE_Imp12_SCR vs Standard_PPO",
+      "stats": {
+        "mean_HCGAE_Imp12_SCR": 2834.220759382669,
+        "mean_Standard_PPO": 2524.3468635844342,
+        "std_HCGAE_Imp12_SCR": 488.85755703504503,
+        "std_Standard_PPO": 527.9131452573255,
+        "sem_HCGAE_Imp12_SCR": 154.5903331616412,
+        "sem_Standard_PPO": 166.9407945756465,
+        "n_HCGAE_Imp12_SCR": 10,
+        "n_Standard_PPO": 10,
+        "mann_whitney_u": 66.0,
+        "p_value": 0.24132159301718004,
+        "cohens_d": 0.6090764578989342,
+        "ci_low": -111.51592134480022,
+        "ci_high": 715.4628245565942,
+        "power_estimate": 0.2753457116279772,
+        "pct_improvement": 12.275408750959173,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    {
+      "env": "Hopper-v4",
+      "name_a": "HCGAE_Imp12_SCR",
+      "name_b": "HCGAE_Imp12",
+      "label": "HCGAE_Imp12_SCR vs HCGAE_Imp12",
+      "stats": {
+        "mean_HCGAE_Imp12_SCR": 2834.220759382669,
+        "mean_HCGAE_Imp12": 2663.2814231956645,
+        "std_HCGAE_Imp12_SCR": 488.85755703504503,
+        "std_HCGAE_Imp12": 474.5882800015339,
+        "sem_HCGAE_Imp12_SCR": 154.5903331616412,
+        "sem_HCGAE_Imp12": 150.0779915626586,
+        "n_HCGAE_Imp12_SCR": 10,
+        "n_HCGAE_Imp12": 10,
+        "mann_whitney_u": 63.0,
+        "p_value": 0.3447042220069576,
+        "cohens_d": 0.35481100113861314,
+        "ci_low": -217.74269817627996,
+        "ci_high": 576.9365634782582,
+        "power_estimate": 0.12463139381228666,
+        "pct_improvement": 6.418373015242708,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    {
+      "env": "Walker2d-v4",
+      "name_a": "HCGAE_Imp12",
+      "name_b": "Standard_PPO",
+      "label": "HCGAE_Imp12 vs Standard_PPO",
+      "stats": {
+        "mean_HCGAE_Imp12": 1062.6089290136267,
+        "mean_Standard_PPO": 1251.7396352344267,
+        "std_HCGAE_Imp12": 670.821272420414,
+        "std_Standard_PPO": 720.197769061135,
+        "sem_HCGAE_Imp12": 212.13231237408016,
+        "sem_Standard_PPO": 227.74653160051326,
+        "n_HCGAE_Imp12": 10,
+        "n_Standard_PPO": 10,
+        "mann_whitney_u": 39.0,
+        "p_value": 0.4273553138978077,
+        "cohens_d": -0.271759997042744,
+        "ci_low": -760.2456314959295,
+        "ci_high": 367.7220664918242,
+        "power_estimate": 0.0932546697144944,
+        "pct_improvement": -15.10942858207638,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    {
+      "env": "Walker2d-v4",
+      "name_a": "HCGAE_Imp12_SCR",
+      "name_b": "Standard_PPO",
+      "label": "HCGAE_Imp12_SCR vs Standard_PPO",
+      "stats": {
+        "mean_HCGAE_Imp12_SCR": 1515.7929497373239,
+        "mean_Standard_PPO": 1251.7396352344267,
+        "std_HCGAE_Imp12_SCR": 943.3779234733712,
+        "std_Standard_PPO": 720.197769061135,
+        "sem_HCGAE_Imp12_SCR": 298.32229324958763,
+        "sem_Standard_PPO": 227.74653160051326,
+        "n_HCGAE_Imp12_SCR": 10,
+        "n_Standard_PPO": 10,
+        "mann_whitney_u": 49.0,
+        "p_value": 0.9698499769931556,
+        "cohens_d": 0.31463394446852416,
+        "ci_low": -430.46317901828127,
+        "ci_high": 950.840761327336,
+        "power_estimate": 0.10834127077815711,
+        "pct_improvement": 21.094907204990403,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    {
+      "env": "Walker2d-v4",
+      "name_a": "HCGAE_Imp12_SCR",
+      "name_b": "HCGAE_Imp12",
+      "label": "HCGAE_Imp12_SCR vs HCGAE_Imp12",
+      "stats": {
+        "mean_HCGAE_Imp12_SCR": 1515.7929497373239,
+        "mean_HCGAE_Imp12": 1062.6089290136267,
+        "std_HCGAE_Imp12_SCR": 943.3779234733712,
+        "std_HCGAE_Imp12": 670.821272420414,
+        "sem_HCGAE_Imp12_SCR": 298.32229324958763,
+        "sem_HCGAE_Imp12": 212.13231237408016,
+        "n_HCGAE_Imp12_SCR": 10,
+        "n_HCGAE_Imp12": 10,
+        "mann_whitney_u": 61.0,
+        "p_value": 0.4273553138978077,
+        "cohens_d": 0.5536600261166281,
+        "ci_low": -237.76839222299878,
+        "ci_high": 1125.7228892631722,
+        "power_estimate": 0.2358457041140104,
+        "pct_improvement": 42.64824135631,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    },
+    {
+      "env": "HalfCheetah-v4",
+      "name_a": "HCGAE_Imp12",
+      "name_b": "Standard_PPO",
+      "label": "HCGAE_Imp12 vs Standard_PPO",
+      "stats": {
+        "mean_HCGAE_Imp12": 757.3438442051215,
+        "mean_Standard_PPO": 949.8773971465805,
+        "std_HCGAE_Imp12": 150.1348786085661,
+        "std_Standard_PPO": 178.11963153008173,
+        "sem_HCGAE_Imp12": 47.47681726359601,
+        "sem_Standard_PPO": 56.32637316250007,
+        "n_HCGAE_Imp12": 10,
+        "n_Standard_PPO": 10,
+        "mann_whitney_u": 20.0,
+        "p_value": 0.025748080821108073,
+        "cohens_d": -1.1688349158123896,
+        "ci_low": -325.84841897422865,
+        "ci_high": -52.18380017307771,
+        "power_estimate": 0.7433157968423495,
+        "pct_improvement": -20.269305651213553,
+        "significant_p05": true,
+        "significant_p10": true
+      }
+    },
+    {
+      "env": "HalfCheetah-v4",
+      "name_a": "HCGAE_Imp12_SCR",
+      "name_b": "Standard_PPO",
+      "label": "HCGAE_Imp12_SCR vs Standard_PPO",
+      "stats": {
+        "mean_HCGAE_Imp12_SCR": 709.2831413758004,
+        "mean_Standard_PPO": 949.8773971465805,
+        "std_HCGAE_Imp12_SCR": 185.36674928668216,
+        "std_Standard_PPO": 178.11963153008173,
+        "sem_HCGAE_Imp12_SCR": 58.61811302073078,
+        "sem_Standard_PPO": 56.32637316250007,
+        "n_HCGAE_Imp12_SCR": 10,
+        "n_Standard_PPO": 10,
+        "mann_whitney_u": 16.0,
+        "p_value": 0.011329696684474666,
+        "cohens_d": -1.3235513774419416,
+        "ci_low": -383.8703438518981,
+        "ci_high": -86.80940492190176,
+        "power_estimate": 0.8412364746308704,
+        "pct_improvement": -25.328979981099593,
+        "significant_p05": true,
+        "significant_p10": true
+      }
+    },
+    {
+      "env": "HalfCheetah-v4",
+      "name_a": "HCGAE_Imp12_SCR",
+      "name_b": "HCGAE_Imp12",
+      "label": "HCGAE_Imp12_SCR vs HCGAE_Imp12",
+      "stats": {
+        "mean_HCGAE_Imp12_SCR": 709.2831413758004,
+        "mean_HCGAE_Imp12": 757.3438442051215,
+        "std_HCGAE_Imp12_SCR": 185.36674928668216,
+        "std_HCGAE_Imp12": 150.1348786085661,
+        "sem_HCGAE_Imp12_SCR": 58.61811302073078,
+        "sem_HCGAE_Imp12": 47.47681726359601,
+        "n_HCGAE_Imp12_SCR": 10,
+        "n_HCGAE_Imp12": 10,
+        "mann_whitney_u": 42.0,
+        "p_value": 0.5707503880581739,
+        "cohens_d": -0.2849337995934104,
+        "ci_low": -182.42489386177098,
+        "ci_high": 89.0096775873467,
+        "power_estimate": 0.09763982889497126,
+        "pct_improvement": -6.345955433113631,
+        "significant_p05": false,
+        "significant_p10": false
+      }
+    }
+  ]
+}

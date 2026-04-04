@@ -2,8 +2,8 @@
 DCPPO-S 多种子实验
 ==================
 
-目标：在 Hopper-v4 / Walker2d-v4 上运行 DCPPO-S (仅改进S)
-和 DCPPO_Full 的5种子完整实验，验证 SNR 自适应梯度缩放的稳定改进效果。
+目标：在多环境上运行 DCPPO-S 的不同缩放律，并与 DCPPO_Full 对比，验证
+线性 EV 收缩是否优于幂律 EV 门控。
 
 实验设计：
 - Variants: DCPPO_Base, DCPPO_ImpS (S only), DCPPO_Full (G+A+S)
@@ -31,13 +31,13 @@ sys.path.insert(0, str(Path(__file__).parent))
 from gae_experiments.agents.dcppo import build_dcppo_agent
 
 # ──────────────────────────────────────────────────────────────────────────
-ENVS = ["Hopper-v4", "Walker2d-v4"]
+ENVS = ["Hopper-v4", "Walker2d-v4", "HalfCheetah-v4"]
 SEEDS = [42, 123, 456, 789, 1234]
 TOTAL_TIMESTEPS = 500_000
 EVAL_FREQ = 10_240
 N_EVAL_EPISODES = 10
 
-VARIANTS = ["DCPPO_Base", "DCPPO_ImpS", "DCPPO_Full"]
+VARIANTS = ["DCPPO_ImpS_Power", "DCPPO_ImpS_Linear"]
 
 RESULTS_DIR = Path("results/MultiEnv_DCPPO")
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -162,7 +162,7 @@ def main():
                if not is_done(e, v, s)]
 
     print(f"\n{'='*65}")
-    print(f"  DCPPO Multi-Seed Experiment")
+    print(f"  DCPPO Power vs Linear Experiment")
     print(f"  Missing: {len(missing)} runs")
     for e, v, s in missing:
         print(f"    {e:20s}  {v:15s}  seed={s}")
@@ -186,9 +186,9 @@ def main():
     print(f"  Summary saved -> {SUMMARY_PATH}")
 
     # Print table
-    print(f"\n{'='*65}")
-    print(f"  {'Variant':<18} | {'Hopper-v4':>16} | {'Walker2d-v4':>16}")
-    print(f"  {'-'*18} | {'-'*16} | {'-'*16}")
+    print(f"\n{'='*90}")
+    print(f"  {'Variant':<18} | {'Hopper-v4':>16} | {'Walker2d-v4':>16} | {'HalfCheetah-v4':>16}")
+    print(f"  {'-'*18} | {'-'*16} | {'-'*16} | {'-'*16}")
     for v in VARIANTS:
         row = f"  {v:<18}"
         for env_name in ENVS:
@@ -199,7 +199,7 @@ def main():
             else:
                 row += f" | {'N/A':>16}"
         print(row)
-    print(f"{'='*65}\n")
+    print(f"{'='*90}\n")
 
 
 if __name__ == "__main__":

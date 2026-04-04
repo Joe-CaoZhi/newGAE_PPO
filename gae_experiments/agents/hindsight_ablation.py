@@ -61,7 +61,7 @@ class HindsightAblation:
         name: str,
         # 改进开关
         use_imp1: bool = False,   # ① 批内中心化归一化
-        use_imp2: bool = False,   # ② EV 驱动混合
+        use_imp2: bool = False,   # ② EV 驱动混合（Critic 目标用原始 V 的标准 GAE，与优势估计路径完全分离）
         use_imp3: bool = False,   # ③ 末端 Bootstrap 修正
         use_imp4: bool = False,   # ④ 冻结优势统计量
         # SCR 自适应校正强度（⑤ 在线 SCR 估计 + 自动环境适配）
@@ -69,6 +69,9 @@ class HindsightAblation:
         scr_threshold: float = 1.0,    # SCR > 此值时 HCGAE 有益；< 此值时抑制校正
         scr_min_scale: float = 0.1,    # SCR 极低时的最小 alpha_max 缩放因子
         scr_ema_alpha: float = 0.1,    # SCR EMA 更新速率
+        # 自适应 β（⑥ 基于 err 分布峰度的自动 β 调整）
+        use_adapt_beta: bool = False,  # ⑥ 自适应 β：根据 err 峰度自动调整 sigmoid 陡峭度
+        adapt_beta_gamma: float = 0.5, # β_t = β₀ / max(Kurt[e]^γ, 1.0)，γ 控制调整幅度
         # 标准 PPO 超参
         hidden_dim: int = 64,
         lr_actor: float = 3e-4,
@@ -99,6 +102,9 @@ class HindsightAblation:
         self.scr_threshold = scr_threshold
         self.scr_min_scale = scr_min_scale
         self.scr_ema_alpha = scr_ema_alpha
+        # 自适应 β 参数
+        self.use_adapt_beta = use_adapt_beta
+        self.adapt_beta_gamma = adapt_beta_gamma
 
         self.env = env
         self.gamma = gamma
@@ -234,19 +240,34 @@ class HindsightAblation:
             self._scr_history.pop(0)
 
         # ── 改进① / v1 EMA 归一化 的分叉 ──────────────────────────
+        # 首先计算批内统计量（两个分支均需要）
+        err_batch_mean = float(err.mean())
+        err_batch_std  = float(err.std()) + 1e-8
+        self._err_ema  = (1 - self._err_ema_alpha) * self._err_ema + self._err_ema_alpha * err_batch_mean
+
+        # ── 改进⑥：自适应 β（根据 err 分布的峰度动态调整 sigmoid 陡峭度）──
+        # 当 err 分布扁平（高峰度）时，降低 β 防止 sigmoid 过陡导致二值化；
+        # 分布集中（低峰度）时，允许较高 β 使选择性更锐利。
+        # β_t = β₀ / max(Kurt[e]^γ, 1.0)，其中 Kurt[e] = E[(e-μ)⁴]/σ⁴
+        # 正态分布 Kurt=3，故 β 退化因子约为 3^γ（γ=0.5→≈1.73）
+        if self.use_adapt_beta:
+            err_centered = err - err_batch_mean
+            err_var = float(np.var(err_centered)) + 1e-8
+            # 超额峰度（excess kurtosis）= Kurt[e] - 3，正值=胖尾，负值=细尾
+            kurtosis_raw = float(np.mean(err_centered ** 4)) / (err_var ** 2)
+            # 使用原始峰度（≥1 保证分母有效），不减3
+            beta_factor = max(kurtosis_raw ** self.adapt_beta_gamma, 1.0)
+            beta_effective = self.hindsight_beta / beta_factor
+        else:
+            beta_effective = self.hindsight_beta
+
         if self.use_imp1:
             # 改进①：批内中心化归一化
-            err_batch_mean = float(err.mean())
-            err_batch_std  = float(err.std()) + 1e-8
-            self._err_ema  = (1 - self._err_ema_alpha) * self._err_ema + self._err_ema_alpha * err_batch_mean
-            z = self.hindsight_beta * (err - err_batch_mean) / err_batch_std
+            z = beta_effective * (err - err_batch_mean) / err_batch_std
         else:
             # v1 基线：慢速 EMA 归一化（分母为历史均值，无中心化）
-            err_batch_mean = float(err.mean())
-            err_batch_std  = float(err.std()) + 1e-8
-            self._err_ema  = (1 - self._err_ema_alpha) * self._err_ema + self._err_ema_alpha * err_batch_mean
             # v1：z = β * err / err_ema（无中心化，用慢速 EMA 作分母）
-            z = self.hindsight_beta * err / (self._err_ema + 1e-8)
+            z = beta_effective * err / (self._err_ema + 1e-8)
 
         # ── 自适应 α_max（EV 门控 + 余弦退火）──────────────────────
         progress = min(self.total_steps / max(self._total_timesteps, 1), 1.0)
@@ -319,16 +340,20 @@ class HindsightAblation:
         buf.advantages = adv
 
         # ── 改进② EV 驱动混合分叉 ─────────────────────────────────
+        # 关键设计：Critic 目标必须使用【未校正原始 V】计算的标准 GAE returns
+        # R_t^{Critic} = A_t^{std}(V_orig) + V_orig(s_t)
+        # 不能使用 adv（基于 V_corrected 计算）+ V_orig，那样数学上不一致：
+        #   adv + V_orig ≠ A^{std}(V_orig) + V_orig（因为 adv 的 δ 使用了 V_corrected）
+        # _compute_standard_returns 内部使用 buf.values（原始 V），确保两条路径完全分离。
+        std_gae_returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
         if self.use_imp2:
             ev_current = max(0.0, min(1.0, self._ev_ema))
             c_mc = float(np.clip(1.0 - ev_current, 0.1, 1.0))
-            gae_returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
-            buf.returns = c_mc * G + (1.0 - c_mc) * gae_returns
+            buf.returns = c_mc * G + (1.0 - c_mc) * std_gae_returns
         else:
-            # v1：固定 50-50 混合
+            # v1：固定 50-50 混合（同样使用原始 V 的标准 GAE，保持一致性）
             c_mc = 0.5
-            gae_returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
-            buf.returns = 0.5 * G + 0.5 * gae_returns
+            buf.returns = 0.5 * G + 0.5 * std_gae_returns
 
         # ── 改进④ 冻结统计量分叉 ──────────────────────────────────
         if self.use_imp4:
@@ -356,14 +381,16 @@ class HindsightAblation:
             "err_batch_mean"    : err_batch_mean,
             "err_batch_std"     : err_batch_std,
             "err_ema"           : float(self._err_ema),
+            "beta_effective"    : float(beta_effective),  # ⑥ 实际使用的 β（自适应时与 hindsight_beta 不同）
             "c_mc"              : c_mc,
             "alpha_last"        : float(alpha_last),
             # 数学量
             "bias_proxy"        : bias_proxy,
             "variance_proxy"    : variance_proxy,
             "adv_snr"           : snr,
-            "V_correction_norm" : float(np.mean(np.abs(V_corrected - V))),  # ||ΔV||_1
-            "mc_gae_diff"       : float(np.mean(np.abs(G - (adv + V)))),    # MC vs GAE returns 差异
+            "V_correction_norm" : float(np.mean(np.abs(V_corrected - V))),   # ||ΔV||_1
+            # 修正后的诊断：使用 std_gae_returns（原始V路径）而非 adv+V（V_corrected路径）
+            "mc_gae_diff"       : float(np.mean(np.abs(G - std_gae_returns))), # MC vs Critic目标差异
             # SCR 诊断
             "scr_current"       : scr_current,           # 当次 rollout SCR
             "scr_ema"           : float(self._scr_ema),  # 平滑后 SCR EMA
@@ -593,12 +620,17 @@ _ABLATION_CONFIGS = {
     "HCGAE_Imp124":(True,  True,  False, True ),  # ①+②+④（不含末端）
     "HCGAE_Full":  (True,  True,  True,  True ),  # 全量 v2
     # SCR 自适应变体（⑤）
-    "HCGAE_Imp12_SCR": (True,  True,  False, False),  # ①+②+⑤(SCR 自适应)
-    "HCGAE_Full_SCR":  (True,  True,  True,  True ),  # 全量 v2 + SCR 自适应
+    "HCGAE_Imp12_SCR":      (True,  True,  False, False),  # ①+②+⑤(SCR 自适应)
+    "HCGAE_Full_SCR":       (True,  True,  True,  True ),  # 全量 v2 + SCR 自适应
+    # 自适应 β 变体（⑥）—— 与ICML 改进4 对应
+    "HCGAE_Imp12_AdaptBeta":(True,  True,  False, False),  # ①+②+⑥(自适应β)
+    "HCGAE_Full_AdaptBeta": (True,  True,  True,  True ),  # 全量 v2 + 自适应β
 }
 
 # SCR 自适应开关（仅 SCR 变体启用）
 _SCR_ADAPT_VARIANTS = {"HCGAE_Imp12_SCR", "HCGAE_Full_SCR"}
+# 自适应 β 开关（仅 AdaptBeta 变体启用）
+_ADAPT_BETA_VARIANTS = {"HCGAE_Imp12_AdaptBeta", "HCGAE_Full_AdaptBeta"}
 
 
 def build_ablation_agent(
@@ -621,6 +653,9 @@ def build_ablation_agent(
     # SCR 自适应变体自动启用 use_scr_adapt
     if variant_name in _SCR_ADAPT_VARIANTS:
         kwargs.setdefault("use_scr_adapt", True)
+    # 自适应 β 变体自动启用 use_adapt_beta
+    if variant_name in _ADAPT_BETA_VARIANTS:
+        kwargs.setdefault("use_adapt_beta", True)
     return HindsightAblation(
         env=env,
         use_imp1=imp1,

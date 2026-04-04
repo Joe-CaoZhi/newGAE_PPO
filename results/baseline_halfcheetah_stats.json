@@ -1,0 +1,82 @@
+{
+  "env": "HalfCheetah-v4",
+  "data_source": "results/BaselineComparison/HalfCheetah-v4/",
+  "hcgae_mean": 828.1266463252634,
+  "hcgae_std": 282.9885535136748,
+  "std_ppo_mean": 902.1765742873913,
+  "std_ppo_std": 223.76872599544802,
+  "comparisons": [
+    {
+      "baseline": "Standard PPO",
+      "u": 10.0,
+      "p": 0.6904761904761905,
+      "d": -0.29027475671902686,
+      "d_label": "small",
+      "sig": "n.s.",
+      "hcgae_mean": 828.1266463252634,
+      "hcgae_std": 282.9885535136748,
+      "other_mean": 902.1765742873913,
+      "other_std": 223.76872599544802
+    },
+    {
+      "baseline": "PPO-KLPEN",
+      "u": 16.0,
+      "p": 0.5476190476190477,
+      "d": 0.4116379822623343,
+      "d_label": "small",
+      "sig": "n.s.",
+      "hcgae_mean": 828.1266463252634,
+      "hcgae_std": 282.9885535136748,
+      "other_mean": 744.0428782710005,
+      "other_std": 58.02518557096971
+    },
+    {
+      "baseline": "PPO-Anneal",
+      "u": 10.0,
+      "p": 0.6904761904761905,
+      "d": -0.3397457838720188,
+      "d_label": "small",
+      "sig": "n.s.",
+      "hcgae_mean": 828.1266463252634,
+      "hcgae_std": 282.9885535136748,
+      "other_mean": 896.8845554165715,
+      "other_std": 42.81567826344621
+    },
+    {
+      "baseline": "PPO-EntDecay",
+      "u": 13.0,
+      "p": 1.0,
+      "d": 0.05925097582076516,
+      "d_label": "negligible",
+      "sig": "n.s.",
+      "hcgae_mean": 828.1266463252634,
+      "hcgae_std": 282.9885535136748,
+      "other_mean": 813.2466720477926,
+      "other_std": 214.60364356113226
+    },
+    {
+      "baseline": "PPO-VClip",
+      "u": 6.0,
+      "p": 0.2222222222222222,
+      "d": -0.8753818622304088,
+      "d_label": "large",
+      "sig": "n.s.",
+      "hcgae_mean": 828.1266463252634,
+      "hcgae_std": 282.9885535136748,
+      "other_mean": 1005.9334366355899,
+      "other_std": 49.317638023071794
+    },
+    {
+      "baseline": "PPO-Full",
+      "u": 17.0,
+      "p": 0.42063492063492064,
+      "d": 0.7115068917595264,
+      "d_label": "medium",
+      "sig": "n.s.",
+      "hcgae_mean": 828.1266463252634,
+      "hcgae_std": 282.9885535136748,
+      "other_mean": 641.1086692495511,
+      "other_std": 241.02976026108865
+    }
+  ]
+}

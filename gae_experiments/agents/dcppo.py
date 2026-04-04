@@ -193,9 +193,10 @@ class DCPPO:
         beta_loose: float = 1.4,     # 安全方向 clip 系数（> 1.0，更宽松）
         eps_max: float = 0.4,        # ε_loose 的绝对上界（安全护栏）
         # ── S: SNR 梯度缩放超参 ──
-        snr_target: float = 0.3,     # 目标 SNR（SNR 达到此值时 w→1）
-        snr_gamma: float = 0.5,      # 缩放指数（0.5 = 软缩放）
+        snr_target: float = 0.3,     # ev_power 模式：目标 SNR（SNR 达到此值时 w→1）
+        snr_gamma: float = 0.5,      # ev_power 模式：缩放指数（0.5 = 软缩放）
         snr_min_weight: float = 0.2, # 最低权重（防止梯度完全消失）
+        snr_mode: str = "ev_linear", # ev_power | ev_linear
         # ── HCGAE（继承 Imp12 的 GAE，即①+②）──
         use_hcgae: bool = True,
         hindsight_beta: float = 3.0,
@@ -239,6 +240,7 @@ class DCPPO:
         self.snr_target = snr_target
         self.snr_gamma = snr_gamma
         self.snr_min_weight = snr_min_weight
+        self.snr_mode = snr_mode
 
         # HCGAE 超参（批内归一化 + EV 驱动混合）
         self.hindsight_beta = hindsight_beta
@@ -467,33 +469,38 @@ class DCPPO:
         advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
         # ── 改进 S：计算批级 SNR，用于后续梯度缩放 ────────────────────
-        # SNR 改进说明：
-        # 原始定义 E[|A|] / std(A) 在零均值优势下，对称分布时 ≈ sqrt(2/π) ≈ 0.798（常数），
-        # 缺乏对 Critic 精度的区分度。
+        # 诊断量保留原始 E[|A|]/std(A)，但主要控制信号改为 EV。
         #
-        # 改进方案：SNR_eff = EV_ema^{gamma_s} 作为主要缩放信号。
-        # 理由：EV = 1 - Var[G-V]/Var[G] 直接衡量 Critic 对 MC 回报的拟合程度；
-        # EV 高 → Critic 准 → 优势估计准 → SNR 高 → 应该用完整梯度。
-        # 这消除了原始 SNR 对分布形状的依赖，并且 EV_ema 已经由 HCGAE 跟踪维护。
-        #
-        # 同时保留原始 E[|A|]/std(A) 作为诊断统计量，便于分析对比。
+        # 两种模式：
+        # 1) ev_power  : 启发式幂律门控，w = clip((EV/tau)^gamma, w_min, 1)
+        # 2) ev_linear : 线性收缩，w = clip(EV, w_min, 1)
+        #    在 A_hat = A_true + noise, E[noise|s]=0, noise ⟂ A_true 的模型下，
+        #    最优线性收缩系数满足
+        #      argmin_w E[(w A_hat - A_true)^2] = Cov(A_hat, A_true)/Var(A_hat)
+        #                                      = Var(A_true)/Var(A_hat)
+        #                                      ≈ EV.
+        #    因此 ev_linear 比 ev_power 更接近“最小化梯度信号 MSE”的理论最优。
         if self.use_imp_s:
             # 原始 E[|A|]/std(A) 统计量（保留用于诊断）
             adv_mean_abs = float(advantages.abs().mean().item())
             adv_std      = float(advantages.std().item()) + 1e-8
             snr_ratio    = adv_mean_abs / adv_std   # 原始比值，约 ≈ 0.798 for Gaussian
-            # EV 驱动的有效 SNR：直接用 Critic 精度作为信号质量代理
-            # clip 到 [0.01, 1.0] 防止 EV 负值时权重过小
-            ev_for_snr = float(np.clip(self._ev_ema, 0.01, 1.0))
-            snr_batch   = ev_for_snr   # 用 EV 作为 SNR 的无偏代理
-            # w = min(1, (SNR/SNR_target)^γ)，且 w >= snr_min_weight
-            snr_weight = float(
-                np.clip(
-                    (snr_batch / (self.snr_target + 1e-8)) ** self.snr_gamma,
-                    self.snr_min_weight,
-                    1.0,
+
+            ev_for_snr = float(np.clip(self._ev_ema, 0.0, 1.0))
+            snr_batch = ev_for_snr
+
+            if self.snr_mode == "ev_linear":
+                snr_weight = float(np.clip(ev_for_snr, self.snr_min_weight, 1.0))
+            elif self.snr_mode == "ev_power":
+                snr_weight = float(
+                    np.clip(
+                        (max(ev_for_snr, 0.01) / (self.snr_target + 1e-8)) ** self.snr_gamma,
+                        self.snr_min_weight,
+                        1.0,
+                    )
                 )
-            )
+            else:
+                raise ValueError(f"Unknown snr_mode: {self.snr_mode}")
         else:
             adv_mean_abs = 0.0
             adv_std      = 1.0
@@ -709,7 +716,7 @@ class DCPPO:
             print(f"  DCPPO  {imp_str}")
             print(f"  Env: {self.env.spec.id if self.env.spec else 'unknown'}  "
                   f"D={self.action_dim}  β_strict={self.beta_strict}  "
-                  f"β_loose={self.beta_loose}  SNR_target={self.snr_target}")
+                  f"β_loose={self.beta_loose}  S_mode={self.snr_mode}  SNR_target={self.snr_target}")
             print(f"  {'─'*70}")
 
         while self.total_steps < total_timesteps:
@@ -807,14 +814,28 @@ class DCPPO:
 # 工厂函数
 # ──────────────────────────────────────────────────────────────────────
 DCPPO_VARIANTS = {
-    "DCPPO_Base": dict(use_imp_g=False, use_imp_a=False, use_imp_s=False),
-    "DCPPO_ImpG": dict(use_imp_g=True,  use_imp_a=False, use_imp_s=False),
-    "DCPPO_ImpA": dict(use_imp_g=False, use_imp_a=True,  use_imp_s=False),
-    "DCPPO_ImpS": dict(use_imp_g=False, use_imp_a=False, use_imp_s=True),
-    "DCPPO_ImpGA":dict(use_imp_g=True,  use_imp_a=True,  use_imp_s=False),
-    "DCPPO_ImpGS":dict(use_imp_g=True,  use_imp_a=False, use_imp_s=True),
-    "DCPPO_ImpAS":dict(use_imp_g=False, use_imp_a=True,  use_imp_s=True),
-    "DCPPO_Full": dict(use_imp_g=True,  use_imp_a=True,  use_imp_s=True),
+    # ── 原有变体（单项 + 三项组合） ────────────────────────────────────────
+"DCPPO_Base": dict(use_imp_g=False, use_imp_a=False, use_imp_s=False),
+"DCPPO_ImpG": dict(use_imp_g=True,  use_imp_a=False, use_imp_s=False),
+"DCPPO_ImpA": dict(use_imp_g=False, use_imp_a=True,  use_imp_s=False),
+"DCPPO_ImpS": dict(use_imp_g=False, use_imp_a=False, use_imp_s=True, snr_mode="ev_linear"),
+"DCPPO_ImpS_Power": dict(use_imp_g=False, use_imp_a=False, use_imp_s=True, snr_mode="ev_power"),
+"DCPPO_ImpS_Linear": dict(use_imp_g=False, use_imp_a=False, use_imp_s=True, snr_mode="ev_linear"),
+"DCPPO_ImpGA":dict(use_imp_g=True,  use_imp_a=True,  use_imp_s=False),
+"DCPPO_ImpGS":dict(use_imp_g=True,  use_imp_a=False, use_imp_s=True, snr_mode="ev_linear"),
+"DCPPO_ImpAS":dict(use_imp_g=False, use_imp_a=True,  use_imp_s=True, snr_mode="ev_linear"),
+"DCPPO_Full": dict(use_imp_g=True,  use_imp_a=True,  use_imp_s=True, snr_mode="ev_linear"),
+"DCPPO_Full_Power": dict(use_imp_g=True,  use_imp_a=True,  use_imp_s=True, snr_mode="ev_power"),
+
+    # ── 改进5：DCPPO_Full 失效机制精确定位（成对消融）─────────────────────
+    # 问题：DCPPO_Full(G+A+S) 相比 DCPPO_ImpS 下降 -61%（p=0.008, d=-4.23）
+    # 以下变体通过成对消融精确定位干扰源：
+    # "HCGAE+X" 系列：在 HCGAE_Imp12 基础上逐项叠加 DCPPO 改进
+    # 若 DCPPO_Base(=HCGAE_Imp12) 单独好，而 +G 或 +A 引起下降，则可定位干扰源
+    # ── 与 DCPPO_ImpS 对比的两项组合（定位 G、A 对 S 的干扰）─────────────
+    # DCPPO_ImpS 已是上面定义，此处别名供分析脚本清晰引用（无需重复）
+    # 注：DCPPO_Base 相当于纯 HCGAE_Imp12 + 标准 PPO update（无 G/A/S）
+    # 注：以下变体可用于 run_dcppo_ablation_multiseed.py 精确分析失效原因
 }
 
 

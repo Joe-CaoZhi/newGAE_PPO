@@ -4,11 +4,12 @@
 利用已有的 n=5 种子实验数据 + 当前运行中的 n=10 种子实验数据
 进行全面的统计分析
 """
-import json
-import os
 import glob
-import numpy as np
+import json
 from pathlib import Path
+from typing import cast
+
+import numpy as np
 from scipy import stats
 
 
@@ -49,8 +50,9 @@ def compute_statistics(scores_a, scores_b, name_a, name_b):
 
     # Power analysis
     try:
-        from statsmodels.stats.power import TTestIndPower
-        analysis = TTestIndPower()
+        import importlib
+        power_mod = importlib.import_module("statsmodels.stats.power")
+        analysis = power_mod.TTestIndPower()
         power = analysis.solve_power(
             effect_size=abs(cohens_d), nobs1=n_a, ratio=n_b/n_a, alpha=0.05
         )
@@ -90,6 +92,114 @@ def collect_from_metrics_files(env, algo, base_dir="results/BaselineComparison")
         if r is not None:
             scores.append(r)
     return scores
+
+
+def collect_variant_scores(env, variant, base_dir="results/MultiEnv_DCPPO", min_evals=5):
+    """收集 DCPPO 变体分数，并返回完成状态。"""
+    pattern = f"{base_dir}/{env}/{variant}/{variant}_s*_metrics.json"
+    files = sorted(glob.glob(pattern))
+    results = []
+    for fp in files:
+        with open(fp) as f:
+            d = json.load(f)
+        eval_rewards = d.get("eval_rewards", [])
+        if len(eval_rewards) < min_evals:
+            continue
+        results.append({
+            "file": fp,
+            "final_reward": float(np.mean(eval_rewards[-5:])),
+            "n_evals": len(eval_rewards),
+            "metrics": d,
+        })
+    return results
+
+
+def extract_saturation_diagnostics(metrics):
+    """提取 power/linear 门控的饱和诊断信息。"""
+    ev_hist = metrics.get("ev_ema_history", [])
+    w_hist = metrics.get("snr_weight_history", [])
+    clip_hist = metrics.get("clip_fracs", [])
+    if not ev_hist or not w_hist:
+        return None
+
+    n_hist = min(len(ev_hist), len(w_hist))
+    total_steps = metrics.get("total_steps", 0)
+    if isinstance(total_steps, list):
+        total_steps = total_steps[-1] if total_steps else 0
+    stride = max(1, int(float(total_steps) / max(1, n_hist)))
+
+    sat_idx = None
+    for i, w in enumerate(w_hist[:n_hist]):
+        if w >= 0.999:
+            sat_idx = i
+            break
+
+    result = {
+        "final_ev": float(ev_hist[n_hist - 1]),
+        "final_w": float(w_hist[n_hist - 1]),
+        "first_sat_step": None,
+        "ev_at_first_sat": None,
+        "clip_at_first_sat": None,
+    }
+    if sat_idx is not None:
+        result["first_sat_step"] = int((sat_idx + 1) * stride)
+        result["ev_at_first_sat"] = float(ev_hist[sat_idx])
+        if sat_idx < len(clip_hist):
+            result["clip_at_first_sat"] = float(clip_hist[sat_idx])
+    return result
+
+
+def analyze_power_vs_linear(envs, base_dir="results/MultiEnv_DCPPO"):
+    """分析正式 DCPPO_ImpS_Power vs DCPPO_ImpS_Linear 对比。"""
+    print(f"\n\n{'='*80}")
+    print("  DCPPO_ImpS_Power vs DCPPO_ImpS_Linear")
+    print(f"{'='*80}")
+
+    summary = {}
+    for env in envs:
+        power_runs = collect_variant_scores(env, "DCPPO_ImpS_Power", base_dir=base_dir)
+        linear_runs = collect_variant_scores(env, "DCPPO_ImpS_Linear", base_dir=base_dir)
+        power_scores = [r["final_reward"] for r in power_runs]
+        linear_scores = [r["final_reward"] for r in linear_runs]
+
+        summary[env] = {
+            "power_scores": power_scores,
+            "linear_scores": linear_scores,
+            "n_power": len(power_scores),
+            "n_linear": len(linear_scores),
+        }
+
+        if not power_scores and not linear_scores:
+            continue
+
+        print(f"\n  {env}:")
+        print(f"    Power  n={len(power_scores)}  scores={[round(x, 1) for x in power_scores]}")
+        print(f"    Linear n={len(linear_scores)}  scores={[round(x, 1) for x in linear_scores]}")
+
+        if power_scores:
+            print(f"    Power  mean±std: {np.mean(power_scores):.1f} ± {np.std(power_scores, ddof=1) if len(power_scores) > 1 else 0.0:.1f}")
+        if linear_scores:
+            print(f"    Linear mean±std: {np.mean(linear_scores):.1f} ± {np.std(linear_scores, ddof=1) if len(linear_scores) > 1 else 0.0:.1f}")
+
+        if len(power_scores) >= 2 and len(linear_scores) >= 2:
+            stat = compute_statistics(linear_scores, power_scores, "Linear", "Power")
+            summary[env]["stats"] = stat
+            print(f"    Linear vs Power: {stat['pct_improvement']:+.1f}%  p={stat['p_value']:.4f}  d={stat['cohens_d']:+.3f}")
+            print(f"    95% CI: [{stat['ci_low']:.1f}, {stat['ci_high']:.1f}]  power={stat['power_estimate']:.3f}")
+
+        if power_runs:
+            sat_stats = [extract_saturation_diagnostics(r["metrics"]) for r in power_runs]
+            sat_stats = [s for s in sat_stats if s is not None and s["first_sat_step"] is not None]
+            if sat_stats:
+                summary[env]["power_saturation"] = {
+                    "median_first_sat_step": float(np.median([s["first_sat_step"] for s in sat_stats])),
+                    "median_ev_at_first_sat": float(np.median([s["ev_at_first_sat"] for s in sat_stats])),
+                    "median_clip_at_first_sat": float(np.median([s["clip_at_first_sat"] for s in sat_stats if s["clip_at_first_sat"] is not None])) if any(s["clip_at_first_sat"] is not None for s in sat_stats) else None,
+                }
+                ps = summary[env]["power_saturation"]
+                print(f"    Power first saturates near step {ps['median_first_sat_step']:.0f}, EV≈{ps['median_ev_at_first_sat']:.3f}, clip≈{ps['median_clip_at_first_sat'] if ps['median_clip_at_first_sat'] is not None else float('nan'):.3f}")
+
+    return summary
 
 
 def collect_from_ablation_multiseed(env="Hopper-v4", algo="HCGAE_Imp12"):
@@ -215,6 +325,8 @@ def main():
         n_req_90 = max(5, int(np.ceil(2 * (1.96 + 1.282)**2 / d**2)))
         print(f"  {env}: d={d:.3f}  →  80%功效需 n≥{n_req_80}  |  90%功效需 n≥{n_req_90}")
 
+    power_linear_summary = analyze_power_vs_linear(envs)
+
     # 保存分析结果
     out = {
         "summary": {env: {
@@ -222,9 +334,10 @@ def main():
             "Standard_PPO_mean": all_results[env]['stats']['mean_Standard_PPO'],
             "stats": all_results[env]['stats'],
         } for env in envs if env in all_results},
+        "power_vs_linear": power_linear_summary,
     }
-    with open("results/existing_data_analysis.json", "w") as f:
-        json.dump(out, f, indent=2)
+    with open("results/existing_data_analysis.json", "w", encoding="utf-8") as f:
+        json.dump(out, cast(object, f), indent=2)
     print(f"\n  分析结果已保存到 results/existing_data_analysis.json")
 
 

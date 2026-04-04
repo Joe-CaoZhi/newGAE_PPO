@@ -1,0 +1,86 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment HalfCheetah-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment HalfCheetah-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+
+================================================================================
+  ICML PPO Experiment
+  Envs:   ['HalfCheetah-v4']
+  Algos:  ['Standard_PPO', 'Optimal_PPO', 'Optimal_HCGAE', 'Optimal_HCGAE_SCR']
+  Seeds:  [0, 1, 2, 3, 4]
+  Steps:  500,000
+  Total runs: 20
+================================================================================
+
+
+[1/20] HalfCheetah-v4 | Standard_PPO | seed=0
+    Done: Standard_PPO HalfCheetah-v4 s0 → final=1121.3 (239s)
+
+[2/20] HalfCheetah-v4 | Standard_PPO | seed=1
+    Done: Standard_PPO HalfCheetah-v4 s1 → final=1113.4 (237s)
+
+[3/20] HalfCheetah-v4 | Standard_PPO | seed=2
+    Done: Standard_PPO HalfCheetah-v4 s2 → final=1135.1 (238s)
+
+[4/20] HalfCheetah-v4 | Standard_PPO | seed=3
+    Done: Standard_PPO HalfCheetah-v4 s3 → final=814.7 (239s)
+
+[5/20] HalfCheetah-v4 | Standard_PPO | seed=4
+    Done: Standard_PPO HalfCheetah-v4 s4 → final=1069.8 (238s)
+
+[6/20] HalfCheetah-v4 | Optimal_PPO | seed=0
+    Done: Optimal_PPO HalfCheetah-v4 s0 → final=1400.9 (239s)
+
+[7/20] HalfCheetah-v4 | Optimal_PPO | seed=1
+    Done: Optimal_PPO HalfCheetah-v4 s1 → final=1472.5 (250s)
+
+[8/20] HalfCheetah-v4 | Optimal_PPO | seed=2
+    Done: Optimal_PPO HalfCheetah-v4 s2 → final=1572.0 (254s)
+
+[9/20] HalfCheetah-v4 | Optimal_PPO | seed=3
+    Done: Optimal_PPO HalfCheetah-v4 s3 → final=1489.8 (256s)
+
+[10/20] HalfCheetah-v4 | Optimal_PPO | seed=4
+    Done: Optimal_PPO HalfCheetah-v4 s4 → final=1498.9 (257s)
+
+[11/20] HalfCheetah-v4 | Optimal_HCGAE | seed=0
+    Done: Optimal_HCGAE HalfCheetah-v4 s0 → final=1295.3 (247s)
+
+[12/20] HalfCheetah-v4 | Optimal_HCGAE | seed=1
+    Done: Optimal_HCGAE HalfCheetah-v4 s1 → final=1233.6 (243s)
+
+[13/20] HalfCheetah-v4 | Optimal_HCGAE | seed=2
+    Done: Optimal_HCGAE HalfCheetah-v4 s2 → final=1315.1 (247s)
+
+[14/20] HalfCheetah-v4 | Optimal_HCGAE | seed=3
+    Done: Optimal_HCGAE HalfCheetah-v4 s3 → final=1210.4 (242s)
+
+[15/20] HalfCheetah-v4 | Optimal_HCGAE | seed=4
+    Done: Optimal_HCGAE HalfCheetah-v4 s4 → final=1193.4 (251s)
+
+[16/20] HalfCheetah-v4 | Optimal_HCGAE_SCR | seed=0
+    Done: Optimal_HCGAE_SCR HalfCheetah-v4 s0 → final=1318.3 (238s)
+
+[17/20] HalfCheetah-v4 | Optimal_HCGAE_SCR | seed=1
+    Done: Optimal_HCGAE_SCR HalfCheetah-v4 s1 → final=1154.6 (227s)
+
+[18/20] HalfCheetah-v4 | Optimal_HCGAE_SCR | seed=2
+    Done: Optimal_HCGAE_SCR HalfCheetah-v4 s2 → final=1335.2 (229s)
+
+[19/20] HalfCheetah-v4 | Optimal_HCGAE_SCR | seed=3
+    Done: Optimal_HCGAE_SCR HalfCheetah-v4 s3 → final=1266.7 (224s)
+
+[20/20] HalfCheetah-v4 | Optimal_HCGAE_SCR | seed=4
+    Done: Optimal_HCGAE_SCR HalfCheetah-v4 s4 → final=1194.5 (222s)
+
+
+Total elapsed: 4818s
+
+Algorithm                         HalfCheetah
+─────────────────────────  ──────────────────
+Standard_PPO                   1051±   54(n=5)
+Optimal_PPO                    1487±   24(n=5)
+Optimal_HCGAE                  1250±   21(n=5) ◄ OURS
+Optimal_HCGAE_SCR              1254±   31(n=5) ◄ OURS
+
+Saved: results/ICMLExperiment/icml_summary.json

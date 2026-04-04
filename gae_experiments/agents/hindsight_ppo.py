@@ -256,11 +256,14 @@ class HindsightPPO:
         buf.advantages = adv
 
         # ── 改进②：EV 驱动的 Critic 目标混合系数
-        # c_mc = clip(1 - EV, 0, 1)：EV 低 → 多用 MC（低偏差）；EV 高 → 多用 GAE returns（低方差）
+        # 关键设计：Critic 目标使用【未校正原始 V】计算的标准 GAE returns
+        # R_t^{Critic} = A_t^{std}(V_orig) + V_orig(s_t)
+        # 这确保 Critic 训练目标不受优势估计校正路径的污染（两个更新通道完全分离）。
+        # _compute_standard_returns 内部使用 buf.values（原始 V），不受 V_corrected 影响。
         ev_current = max(0.0, min(1.0, self._ev_ema))
         c_mc = float(np.clip(1.0 - ev_current, 0.1, 1.0))  # 至少保留 10% MC（防止完全丢弃无偏性）
-        gae_returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
-        buf.returns = c_mc * G + (1.0 - c_mc) * gae_returns
+        std_gae_returns = buf._compute_standard_returns(last_value, self.gamma, self.lam)
+        buf.returns = c_mc * G + (1.0 - c_mc) * std_gae_returns
 
         # ── 改进④：冻结归一化统计量（在 compute_gae 阶段计算，update 阶段直接使用）
         self._adv_mean_frozen = float(adv.mean())
@@ -279,6 +282,8 @@ class HindsightPPO:
             "err_batch_std"      : err_batch_std,
             "c_mc"               : c_mc,
             "alpha_last"         : float(alpha_last),
+            # 诊断：使用 std_gae_returns（原始V路径）计算 MC vs Critic目标差异
+            "mc_gae_diff"        : float(np.mean(np.abs(G - std_gae_returns))),
         }
 
     def update(self) -> dict:
