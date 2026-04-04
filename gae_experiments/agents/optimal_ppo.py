@@ -394,8 +394,9 @@ class OptimalHCGAE(OptimalPPO):
 
         # Step 8: Compute critic targets
         # Use EV-driven MC mixing for critic target
-        # c_mc = clip(1 - EV, 0, 1): EV low → more MC; EV high → more GAE returns
-        c_mc = float(np.clip(1.0 - self._ev_ema, 0.0, 1.0))
+        # c_mc = clip(1 - EV, 0.1, 1): EV low → more MC; EV high → more GAE returns
+        # Lower bound 0.1 ensures we always retain at least 10% MC (matches paper §2.2 and hindsight_ppo.py)
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
         gae_returns = advantages + values  # standard GAE returns
         critic_returns = c_mc * returns_mc + (1 - c_mc) * gae_returns
 
@@ -410,6 +411,173 @@ class OptimalHCGAE(OptimalPPO):
 
     def compute_gae(self, last_value: float):
         """Override to use HCGAE instead of standard GAE."""
+        self.compute_hindsight_gae(last_value)
+
+
+class OptimalHCGAE_v2(OptimalHCGAE):
+    """
+    HCGAE v2 built on OptimalPPO — all fixes applied.
+
+    Improvements over OptimalHCGAE (v1):
+    ① Boundary bootstrap correction (from hindsight_ppo.py):
+       last_value_corrected = (1-α_last)*V(sT) + α_last*G_{T-1}
+       Eliminates the inconsistency at the rollout boundary step.
+
+    ② EV Growth-Rate Gate (new, for HalfCheetah fix):
+       Suppress HCGAE correction when EV is RISING FAST (Critic converging quickly).
+       ev_rate = (ev_now - ev_prev) / rollout_interval
+       If ev_rate > ev_rate_threshold: scale = max(1 - ev_rate / ev_rate_max, min_scale)
+       Physical: if EV jumps >0.05/rollout, Critic is already learning rapidly;
+       HCGAE's MC correction adds noise without benefit.
+
+    ③ c_mc lower bound = 0.1 (not 0.0, matches paper §2.2).
+
+    All three improvements are individually switchable for ablation.
+    """
+
+    NAME = "Optimal_HCGAE_v2"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Optimal_HCGAE_v2",
+        # v2-specific: boundary bootstrap correction
+        use_boundary_correction: bool = True,
+        # v2-specific: EV growth rate gate
+        use_ev_rate_gate: bool = True,
+        ev_rate_threshold: float = 0.05,   # suppress if EV grows > 5%/rollout
+        ev_rate_max: float = 0.15,         # full suppression at 15%/rollout
+        ev_gate_min_scale: float = 0.1,    # minimum scale (never fully zero)
+        # All OptimalHCGAE parameters
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.use_boundary_correction = use_boundary_correction
+        self.use_ev_rate_gate = use_ev_rate_gate
+        self.ev_rate_threshold = ev_rate_threshold
+        self.ev_rate_max = ev_rate_max
+        self.ev_gate_min_scale = ev_gate_min_scale
+
+        # EV growth rate tracking
+        self._ev_prev = 0.0
+        self._ev_rate_ema = 0.0
+        self._ev_rate_ema_alpha = 0.2
+
+    def compute_hindsight_gae(self, last_value: float):
+        """HCGAE v2: all fixes applied."""
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # Step 1: MC returns
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # Step 2: Per-step error (batch-centred sigmoid)
+        errors = np.abs(values - returns_mc)
+        mu_e = errors.mean()
+        sigma_e = errors.std() + 1e-8
+
+        # Step 3: EV-gated adaptive alpha_max (cosine annealing)
+        self._total_rollouts += 1
+        K = max(1, self._total_timesteps // self.n_steps)
+        k = self._total_rollouts
+        cosine_factor = 0.5 * (1 + np.cos(np.pi * k / K))
+        ev_gate = max(1.0 - self._ev_ema, 0.2)
+        alpha_max_k = (
+            self.hindsight_alpha_min
+            + (self.hindsight_alpha_max - self.hindsight_alpha_min)
+            * cosine_factor * ev_gate
+        )
+
+        # ── v2 FIX ②: EV growth-rate gate
+        # If the Critic is converging rapidly, suppress MC correction.
+        # Physical: fast EV growth → Critic already learning → MC adds noise.
+        if self.use_ev_rate_gate:
+            var_y_tmp = np.var(returns_mc) + 1e-8
+            ev_now_tmp = float(1.0 - np.var(returns_mc - values) / var_y_tmp)
+            ev_rate_raw = ev_now_tmp - self._ev_prev  # per-rollout EV increase
+            self._ev_rate_ema = ((1 - self._ev_rate_ema_alpha) * self._ev_rate_ema
+                                 + self._ev_rate_ema_alpha * max(ev_rate_raw, 0.0))
+            # Scale: 1.0 if ev_rate <= threshold; decreasing to min_scale if rate >= max
+            if self._ev_rate_ema > self.ev_rate_threshold:
+                excess = min(self._ev_rate_ema - self.ev_rate_threshold,
+                             self.ev_rate_max - self.ev_rate_threshold)
+                suppression_frac = excess / max(self.ev_rate_max - self.ev_rate_threshold, 1e-8)
+                ev_rate_scale = max(1.0 - suppression_frac * (1.0 - self.ev_gate_min_scale),
+                                    self.ev_gate_min_scale)
+            else:
+                ev_rate_scale = 1.0
+            alpha_max_k *= ev_rate_scale
+        else:
+            ev_now_tmp = None
+            ev_rate_scale = 1.0
+
+        # SCR-based scaling (optional, from v1)
+        if self.use_scr_adapt:
+            bias_est = np.abs(values - returns_mc).mean()
+            var_G = np.var(returns_mc) + 1e-8
+            scr_raw = bias_est / (var_G ** 0.5)
+            self._scr_ema = (1 - self._scr_ema_alpha) * self._scr_ema + self._scr_ema_alpha * scr_raw
+            scr_scale = np.clip(self._scr_ema / self.scr_threshold, self.scr_min_scale, 1.0)
+            alpha_max_k *= scr_scale
+
+        # Step 4: Per-step alpha (batch-centred sigmoid)
+        z = self.hindsight_beta * (errors - mu_e) / sigma_e
+        sigmoid_z = 1.0 / (1.0 + np.exp(-np.clip(z, -20, 20)))
+        alpha = alpha_max_k * sigmoid_z
+
+        # Step 5: Corrected V^c
+        v_corrected = (1 - alpha) * values + alpha * returns_mc
+
+        # ── v2 FIX ①: Boundary bootstrap correction
+        # Instead of using raw last_value, apply error-gated blend at boundary.
+        if self.use_boundary_correction:
+            tail_n = min(10, T)
+            approx_err_last = float(errors[-tail_n:].mean())
+            alpha_last = alpha_max_k * (1.0 / (1.0 + np.exp(
+                -self.hindsight_beta * (approx_err_last - mu_e) / sigma_e
+            )))
+            approx_G_last = returns_mc[-1]  # last MC return as conservative estimate
+            last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+        else:
+            last_value_corrected = last_value
+
+        # Step 6: Corrected GAE (using v2 boundary)
+        advantages = np.zeros(T, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(T)):
+            if t == T - 1:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = last_value_corrected if next_non_terminal > 0 else 0.0
+            else:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = v_corrected[t + 1] if next_non_terminal > 0 else 0.0
+            delta = rewards[t] + self.gamma * next_v_c - v_corrected[t]
+            last_gae = delta + self.gamma * self.lam * next_non_terminal * last_gae
+            advantages[t] = last_gae
+
+        # Step 7: Critic targets (EV-driven, c_mc lower bound = 0.1)
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        gae_returns = advantages + values
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns
+
+        # Update EV EMA
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_prev = self._ev_ema  # track previous EV for rate gate
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
+
+    def compute_gae(self, last_value: float):
         self.compute_hindsight_gae(last_value)
 
 
@@ -480,6 +648,54 @@ def build_optimal_agent(
             use_scr_adapt=True,
             scr_threshold=1.0,
             scr_min_scale=0.1,
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_v2":
+        # v2: boundary bootstrap correction + EV growth-rate gate (all fixes)
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v2(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_v2_NoBdry":
+        # Ablation: v2 without boundary correction (EV gate only)
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v2(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=False,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_v2_NoGate":
+        # Ablation: v2 without EV rate gate (boundary correction only)
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v2(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=False,
             **hcgae_kwargs
         )
 
