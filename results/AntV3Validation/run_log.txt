@@ -1,0 +1,478 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Ant-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Ant-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+======================================================================
+  Ant-v4 v3 快速验证: 7 算法 × 3 种子 × 200K 步
+======================================================================
+
+── Standard_PPO ──
+  [Standard_PPO s0] 开始训练 …
+    step=  10240  eval_reward=-130.5
+    step=  20480  eval_reward=-344.5
+    step=  30720  eval_reward=-279.0
+    step=  40960  eval_reward=-68.8
+    step=  51200  eval_reward=-214.6
+    step=  61440  eval_reward=-46.4
+    step=  71680  eval_reward=-153.1
+    step=  81920  eval_reward=-43.4
+    step=  92160  eval_reward=-33.3
+    step= 102400  eval_reward=-29.6
+    step= 112640  eval_reward=-21.6
+    step= 122880  eval_reward=-81.4
+    step= 133120  eval_reward=-14.2
+    step= 143360  eval_reward=-18.8
+    step= 153600  eval_reward=9.7
+    step= 163840  eval_reward=16.8
+    step= 174080  eval_reward=66.8
+    step= 184320  eval_reward=39.5
+    step= 194560  eval_reward=98.5
+  [Standard_PPO s0] 完成 → 最终奖励=56.9  耗时=104s
+  [Standard_PPO s1] 开始训练 …
+    step=  10240  eval_reward=-384.8
+    step=  20480  eval_reward=-307.1
+    step=  30720  eval_reward=-290.0
+    step=  40960  eval_reward=-76.0
+    step=  51200  eval_reward=-190.2
+    step=  61440  eval_reward=-33.7
+    step=  71680  eval_reward=-170.3
+    step=  81920  eval_reward=-16.5
+    step=  92160  eval_reward=-29.7
+    step= 102400  eval_reward=-180.2
+    step= 112640  eval_reward=-29.6
+    step= 122880  eval_reward=-12.1
+    step= 133120  eval_reward=-13.0
+    step= 143360  eval_reward=-13.6
+    step= 153600  eval_reward=-23.7
+    step= 163840  eval_reward=0.3
+    step= 174080  eval_reward=7.2
+    step= 184320  eval_reward=28.5
+    step= 194560  eval_reward=71.2
+  [Standard_PPO s1] 完成 → 最终奖励=37.0  耗时=101s
+  [Standard_PPO s2] 开始训练 …
+    step=  10240  eval_reward=-378.7
+    step=  20480  eval_reward=-340.2
+    step=  30720  eval_reward=-295.2
+    step=  40960  eval_reward=-519.1
+    step=  51200  eval_reward=-335.0
+    step=  61440  eval_reward=-153.8
+    step=  71680  eval_reward=-172.1
+    step=  81920  eval_reward=-205.3
+    step=  92160  eval_reward=-105.6
+    step= 102400  eval_reward=-100.9
+    step= 112640  eval_reward=-110.0
+    step= 122880  eval_reward=-53.2
+    step= 133120  eval_reward=-35.5
+    step= 143360  eval_reward=-20.4
+    step= 153600  eval_reward=10.1
+    step= 163840  eval_reward=24.1
+    step= 174080  eval_reward=38.7
+    step= 184320  eval_reward=55.0
+    step= 194560  eval_reward=66.6
+  [Standard_PPO s2] 完成 → 最终奖励=51.2  耗时=104s
+
+── Optimal_PPO ──
+  [Optimal_PPO s0] 开始训练 …
+    step=  10240  eval_reward=-129.2
+    step=  20480  eval_reward=-335.4
+    step=  30720  eval_reward=-425.2
+    step=  40960  eval_reward=-70.1
+    step=  51200  eval_reward=-57.5
+    step=  61440  eval_reward=-186.5
+    step=  71680  eval_reward=-27.2
+    step=  81920  eval_reward=-136.1
+    step=  92160  eval_reward=-51.6
+    step= 102400  eval_reward=-37.9
+    step= 112640  eval_reward=-20.4
+    step= 122880  eval_reward=-17.3
+    step= 133120  eval_reward=-11.9
+    step= 143360  eval_reward=-16.5
+    step= 153600  eval_reward=-33.6
+    step= 163840  eval_reward=-3.4
+    step= 174080  eval_reward=5.5
+    step= 184320  eval_reward=-24.7
+    step= 194560  eval_reward=3.9
+  [Optimal_PPO s0] 完成 → 最终奖励=-5.7  耗时=102s
+  [Optimal_PPO s1] 开始训练 …
+    step=  10240  eval_reward=-361.5
+    step=  20480  eval_reward=-101.2
+    step=  30720  eval_reward=-433.1
+    step=  40960  eval_reward=-66.7
+    step=  51200  eval_reward=-58.9
+    step=  61440  eval_reward=-392.0
+    step=  71680  eval_reward=-70.7
+    step=  81920  eval_reward=-147.8
+    step=  92160  eval_reward=-34.3
+    step= 102400  eval_reward=-77.5
+    step= 112640  eval_reward=-24.0
+    step= 122880  eval_reward=-8.1
+    step= 133120  eval_reward=-3.9
+    step= 143360  eval_reward=0.3
+    step= 153600  eval_reward=-23.6
+    step= 163840  eval_reward=6.1
+    step= 174080  eval_reward=-12.6
+    step= 184320  eval_reward=43.0
+    step= 194560  eval_reward=23.1
+  [Optimal_PPO s1] 完成 → 最终奖励=19.9  耗时=104s
+  [Optimal_PPO s2] 开始训练 …
+    step=  10240  eval_reward=-595.8
+    step=  20480  eval_reward=-108.0
+    step=  30720  eval_reward=-254.8
+    step=  40960  eval_reward=-138.3
+    step=  51200  eval_reward=-30.1
+    step=  61440  eval_reward=-159.8
+    step=  71680  eval_reward=-151.2
+    step=  81920  eval_reward=-52.7
+    step=  92160  eval_reward=-94.9
+    step= 102400  eval_reward=-164.6
+    step= 112640  eval_reward=-24.9
+    step= 122880  eval_reward=-74.9
+    step= 133120  eval_reward=-93.7
+    step= 143360  eval_reward=-13.0
+    step= 153600  eval_reward=-27.0
+    step= 163840  eval_reward=-8.1
+    step= 174080  eval_reward=-25.8
+    step= 184320  eval_reward=5.0
+    step= 194560  eval_reward=-3.9
+  [Optimal_PPO s2] 完成 → 最终奖励=-7.8  耗时=104s
+
+── Optimal_HCGAE_v2 ──
+  [Optimal_HCGAE_v2 s0] 开始训练 …
+    step=  10240  eval_reward=-96.8
+    step=  20480  eval_reward=-638.4
+    step=  30720  eval_reward=-651.8
+    step=  40960  eval_reward=-414.5
+    step=  51200  eval_reward=-293.9
+    step=  61440  eval_reward=-101.4
+    step=  71680  eval_reward=-64.6
+    step=  81920  eval_reward=-93.8
+    step=  92160  eval_reward=-201.1
+    step= 102400  eval_reward=-70.6
+    step= 112640  eval_reward=-148.1
+    step= 122880  eval_reward=-37.7
+    step= 133120  eval_reward=-49.3
+    step= 143360  eval_reward=-25.6
+    step= 153600  eval_reward=-86.1
+    step= 163840  eval_reward=-105.3
+    step= 174080  eval_reward=-129.9
+    step= 184320  eval_reward=-95.8
+    step= 194560  eval_reward=-133.1
+  [Optimal_HCGAE_v2 s0] 完成 → 最终奖励=-103.2  耗时=103s
+  [Optimal_HCGAE_v2 s1] 开始训练 …
+    step=  10240  eval_reward=-155.6
+    step=  20480  eval_reward=-427.1
+    step=  30720  eval_reward=-99.7
+    step=  40960  eval_reward=-95.3
+    step=  51200  eval_reward=-58.1
+    step=  61440  eval_reward=-246.3
+    step=  71680  eval_reward=-80.9
+    step=  81920  eval_reward=-62.9
+    step=  92160  eval_reward=-75.9
+    step= 102400  eval_reward=-58.1
+    step= 112640  eval_reward=-54.9
+    step= 122880  eval_reward=-21.2
+    step= 133120  eval_reward=-103.3
+    step= 143360  eval_reward=-10.5
+    step= 153600  eval_reward=-87.7
+    step= 163840  eval_reward=-25.1
+    step= 174080  eval_reward=-17.7
+    step= 184320  eval_reward=-15.0
+    step= 194560  eval_reward=-69.6
+  [Optimal_HCGAE_v2 s1] 完成 → 最终奖励=-30.4  耗时=100s
+  [Optimal_HCGAE_v2 s2] 开始训练 …
+    step=  10240  eval_reward=-118.3
+    step=  20480  eval_reward=-407.1
+    step=  30720  eval_reward=-217.9
+    step=  40960  eval_reward=-142.3
+    step=  51200  eval_reward=-107.5
+    step=  61440  eval_reward=-111.7
+    step=  71680  eval_reward=-392.4
+    step=  81920  eval_reward=-55.8
+    step=  92160  eval_reward=-50.8
+    step= 102400  eval_reward=-161.4
+    step= 112640  eval_reward=-157.8
+    step= 122880  eval_reward=-41.7
+    step= 133120  eval_reward=-30.0
+    step= 143360  eval_reward=-195.8
+    step= 153600  eval_reward=-10.2
+    step= 163840  eval_reward=-28.3
+    step= 174080  eval_reward=-54.9
+    step= 184320  eval_reward=-18.4
+    step= 194560  eval_reward=-22.2
+  [Optimal_HCGAE_v2 s2] 完成 → 最终奖励=-41.9  耗时=100s
+
+── Optimal_HCGAE_v3 ──
+  [Optimal_HCGAE_v3 s0] 开始训练 …
+    step=  10240  eval_reward=-111.7
+    step=  20480  eval_reward=-132.3
+    step=  30720  eval_reward=-107.8
+    step=  40960  eval_reward=-91.0
+    step=  51200  eval_reward=-72.9
+    step=  61440  eval_reward=-230.8
+    step=  71680  eval_reward=-230.8
+    step=  81920  eval_reward=-154.6
+    step=  92160  eval_reward=-24.8
+    step= 102400  eval_reward=-101.4
+    step= 112640  eval_reward=-22.6
+    step= 122880  eval_reward=-15.1
+    step= 133120  eval_reward=-78.4
+    step= 143360  eval_reward=-29.3
+    step= 153600  eval_reward=-5.2
+    step= 163840  eval_reward=-3.5
+    step= 174080  eval_reward=11.3
+    step= 184320  eval_reward=4.2
+    step= 194560  eval_reward=-0.8
+  [Optimal_HCGAE_v3 s0] 完成 → 最终奖励=5.4  耗时=103s
+  [Optimal_HCGAE_v3 s1] 开始训练 …
+    step=  10240  eval_reward=-647.8
+    step=  20480  eval_reward=-124.3
+    step=  30720  eval_reward=-189.8
+    step=  40960  eval_reward=-82.0
+    step=  51200  eval_reward=-70.0
+    step=  61440  eval_reward=-116.4
+    step=  71680  eval_reward=-46.2
+    step=  81920  eval_reward=-193.0
+    step=  92160  eval_reward=-40.5
+    step= 102400  eval_reward=-44.4
+    step= 112640  eval_reward=-35.0
+    step= 122880  eval_reward=-39.0
+    step= 133120  eval_reward=-31.2
+    step= 143360  eval_reward=-27.7
+    step= 153600  eval_reward=-15.7
+    step= 163840  eval_reward=-46.0
+    step= 174080  eval_reward=-33.5
+    step= 184320  eval_reward=-81.1
+    step= 194560  eval_reward=-22.7
+  [Optimal_HCGAE_v3 s1] 完成 → 最终奖励=-38.6  耗时=100s
+  [Optimal_HCGAE_v3 s2] 开始训练 …
+    step=  10240  eval_reward=-134.8
+    step=  20480  eval_reward=-617.6
+    step=  30720  eval_reward=-107.7
+    step=  40960  eval_reward=-105.9
+    step=  51200  eval_reward=-312.8
+    step=  61440  eval_reward=-657.5
+    step=  71680  eval_reward=-242.7
+    step=  81920  eval_reward=-50.5
+    step=  92160  eval_reward=-195.3
+    step= 102400  eval_reward=-124.0
+    step= 112640  eval_reward=-53.3
+    step= 122880  eval_reward=-31.1
+    step= 133120  eval_reward=-125.0
+    step= 143360  eval_reward=-31.7
+    step= 153600  eval_reward=-101.3
+    step= 163840  eval_reward=-23.5
+    step= 174080  eval_reward=-6.7
+    step= 184320  eval_reward=-11.6
+    step= 194560  eval_reward=-12.2
+  [Optimal_HCGAE_v3 s2] 完成 → 最终奖励=-21.7  耗时=102s
+
+── Optimal_HCGAE_v3_NoClamp ──
+  [Optimal_HCGAE_v3_NoClamp s0] 开始训练 …
+    step=  10240  eval_reward=-630.4
+    step=  20480  eval_reward=-434.3
+    step=  30720  eval_reward=-332.2
+    step=  40960  eval_reward=-111.7
+    step=  51200  eval_reward=-313.5
+    step=  61440  eval_reward=-63.1
+    step=  71680  eval_reward=-239.6
+    step=  81920  eval_reward=-94.8
+    step=  92160  eval_reward=-193.2
+    step= 102400  eval_reward=-153.2
+    step= 112640  eval_reward=-27.0
+    step= 122880  eval_reward=-145.3
+    step= 133120  eval_reward=-213.7
+    step= 143360  eval_reward=-27.2
+    step= 153600  eval_reward=-53.5
+    step= 163840  eval_reward=-19.1
+    step= 174080  eval_reward=-39.8
+    step= 184320  eval_reward=-19.6
+    step= 194560  eval_reward=-20.3
+  [Optimal_HCGAE_v3_NoClamp s0] 完成 → 最终奖励=-24.0  耗时=102s
+  [Optimal_HCGAE_v3_NoClamp s1] 开始训练 …
+    step=  10240  eval_reward=-140.9
+    step=  20480  eval_reward=-422.5
+    step=  30720  eval_reward=-581.8
+    step=  40960  eval_reward=-134.7
+    step=  51200  eval_reward=-79.3
+    step=  61440  eval_reward=-91.9
+    step=  71680  eval_reward=-110.4
+    step=  81920  eval_reward=-73.1
+    step=  92160  eval_reward=-180.6
+    step= 102400  eval_reward=-34.1
+    step= 112640  eval_reward=-256.6
+    step= 122880  eval_reward=-62.4
+    step= 133120  eval_reward=-18.0
+    step= 143360  eval_reward=-20.8
+    step= 153600  eval_reward=-111.3
+    step= 163840  eval_reward=-18.5
+    step= 174080  eval_reward=-45.2
+    step= 184320  eval_reward=-79.8
+    step= 194560  eval_reward=-9.8
+  [Optimal_HCGAE_v3_NoClamp s1] 完成 → 最终奖励=-47.1  耗时=101s
+  [Optimal_HCGAE_v3_NoClamp s2] 开始训练 …
+    step=  10240  eval_reward=-409.8
+    step=  20480  eval_reward=-95.9
+    step=  30720  eval_reward=-160.6
+    step=  40960  eval_reward=-371.4
+    step=  51200  eval_reward=-100.8
+    step=  61440  eval_reward=-101.2
+    step=  71680  eval_reward=-86.1
+    step=  81920  eval_reward=-82.7
+    step=  92160  eval_reward=-46.5
+    step= 102400  eval_reward=-46.5
+    step= 112640  eval_reward=-32.4
+    step= 122880  eval_reward=-200.8
+    step= 133120  eval_reward=-252.6
+    step= 143360  eval_reward=-32.7
+    step= 153600  eval_reward=-33.4
+    step= 163840  eval_reward=-23.0
+    step= 174080  eval_reward=-20.0
+    step= 184320  eval_reward=-33.7
+    step= 194560  eval_reward=-91.2
+  [Optimal_HCGAE_v3_NoClamp s2] 完成 → 最终奖励=-36.9  耗时=100s
+
+── Optimal_HCGAE_v3_NoVWGate ──
+  [Optimal_HCGAE_v3_NoVWGate s0] 开始训练 …
+    step=  10240  eval_reward=-111.7
+    step=  20480  eval_reward=-132.3
+    step=  30720  eval_reward=-107.8
+    step=  40960  eval_reward=-91.0
+    step=  51200  eval_reward=-72.9
+    step=  61440  eval_reward=-230.8
+    step=  71680  eval_reward=-230.8
+    step=  81920  eval_reward=-154.6
+    step=  92160  eval_reward=-24.8
+    step= 102400  eval_reward=-31.3
+    step= 112640  eval_reward=-72.5
+    step= 122880  eval_reward=-95.8
+    step= 133120  eval_reward=-49.9
+    step= 143360  eval_reward=-43.4
+    step= 153600  eval_reward=-65.5
+    step= 163840  eval_reward=-16.9
+    step= 174080  eval_reward=-26.7
+    step= 184320  eval_reward=5.1
+    step= 194560  eval_reward=-7.1
+  [Optimal_HCGAE_v3_NoVWGate s0] 完成 → 最终奖励=-12.1  耗时=106s
+  [Optimal_HCGAE_v3_NoVWGate s1] 开始训练 …
+    step=  10240  eval_reward=-647.8
+    step=  20480  eval_reward=-124.3
+    step=  30720  eval_reward=-189.8
+    step=  40960  eval_reward=-82.0
+    step=  51200  eval_reward=-70.0
+    step=  61440  eval_reward=-116.4
+    step=  71680  eval_reward=-46.2
+    step=  81920  eval_reward=-193.0
+    step=  92160  eval_reward=-40.5
+    step= 102400  eval_reward=-44.4
+    step= 112640  eval_reward=-35.0
+    step= 122880  eval_reward=-39.0
+    step= 133120  eval_reward=-31.2
+    step= 143360  eval_reward=-23.5
+    step= 153600  eval_reward=-15.3
+    step= 163840  eval_reward=-39.8
+    step= 174080  eval_reward=-20.5
+    step= 184320  eval_reward=-20.1
+    step= 194560  eval_reward=-81.6
+  [Optimal_HCGAE_v3_NoVWGate s1] 完成 → 最终奖励=-38.5  耗时=100s
+  [Optimal_HCGAE_v3_NoVWGate s2] 开始训练 …
+    step=  10240  eval_reward=-134.8
+    step=  20480  eval_reward=-617.6
+    step=  30720  eval_reward=-107.7
+    step=  40960  eval_reward=-105.9
+    step=  51200  eval_reward=-312.8
+    step=  61440  eval_reward=-657.5
+    step=  71680  eval_reward=-242.7
+    step=  81920  eval_reward=-50.5
+    step=  92160  eval_reward=-195.3
+    step= 102400  eval_reward=-124.0
+    step= 112640  eval_reward=-53.3
+    step= 122880  eval_reward=-190.5
+    step= 133120  eval_reward=-36.6
+    step= 143360  eval_reward=-103.4
+    step= 153600  eval_reward=-85.0
+    step= 163840  eval_reward=-23.8
+    step= 174080  eval_reward=-25.1
+    step= 184320  eval_reward=-32.8
+    step= 194560  eval_reward=-23.9
+  [Optimal_HCGAE_v3_NoVWGate s2] 完成 → 最终奖励=-37.5  耗时=102s
+
+── Optimal_HCGAE_v3_NoBdryPrior ──
+  [Optimal_HCGAE_v3_NoBdryPrior s0] 开始训练 …
+    step=  10240  eval_reward=-116.4
+    step=  20480  eval_reward=-340.0
+    step=  30720  eval_reward=-485.5
+    step=  40960  eval_reward=-459.0
+    step=  51200  eval_reward=-55.5
+    step=  61440  eval_reward=-206.0
+    step=  71680  eval_reward=-82.7
+    step=  81920  eval_reward=-77.0
+    step=  92160  eval_reward=-32.3
+    step= 102400  eval_reward=-36.2
+    step= 112640  eval_reward=-20.8
+    step= 122880  eval_reward=-135.6
+    step= 133120  eval_reward=-62.7
+    step= 143360  eval_reward=-24.4
+    step= 153600  eval_reward=-13.4
+    step= 163840  eval_reward=-2.3
+    step= 174080  eval_reward=-7.9
+    step= 184320  eval_reward=-0.3
+    step= 194560  eval_reward=-9.8
+  [Optimal_HCGAE_v3_NoBdryPrior s0] 完成 → 最终奖励=-7.5  耗时=101s
+  [Optimal_HCGAE_v3_NoBdryPrior s1] 开始训练 …
+    step=  10240  eval_reward=-872.4
+    step=  20480  eval_reward=-385.0
+    step=  30720  eval_reward=-127.2
+    step=  40960  eval_reward=-142.2
+    step=  51200  eval_reward=-87.7
+    step=  61440  eval_reward=-84.4
+    step=  71680  eval_reward=-66.0
+    step=  81920  eval_reward=-75.1
+    step=  92160  eval_reward=-212.1
+    step= 102400  eval_reward=-160.8
+    step= 112640  eval_reward=-182.7
+    step= 122880  eval_reward=-24.1
+    step= 133120  eval_reward=-24.4
+    step= 143360  eval_reward=-47.3
+    step= 153600  eval_reward=-199.3
+    step= 163840  eval_reward=-34.3
+    step= 174080  eval_reward=-38.7
+    step= 184320  eval_reward=-83.9
+    step= 194560  eval_reward=-32.3
+  [Optimal_HCGAE_v3_NoBdryPrior s1] 完成 → 最终奖励=-43.2  耗时=104s
+  [Optimal_HCGAE_v3_NoBdryPrior s2] 开始训练 …
+    step=  10240  eval_reward=-398.8
+    step=  20480  eval_reward=-385.0
+    step=  30720  eval_reward=-337.9
+    step=  40960  eval_reward=-101.1
+    step=  51200  eval_reward=-86.9
+    step=  61440  eval_reward=-80.2
+    step=  71680  eval_reward=-78.1
+    step=  81920  eval_reward=-75.3
+    step=  92160  eval_reward=-176.4
+    step= 102400  eval_reward=-41.1
+    step= 112640  eval_reward=-44.9
+    step= 122880  eval_reward=-28.9
+    step= 133120  eval_reward=-92.9
+    step= 143360  eval_reward=-26.1
+    step= 153600  eval_reward=-14.1
+    step= 163840  eval_reward=-12.0
+    step= 174080  eval_reward=-11.4
+    step= 184320  eval_reward=-77.6
+    step= 194560  eval_reward=-8.9
+  [Optimal_HCGAE_v3_NoBdryPrior s2] 完成 → 最终奖励=-27.6  耗时=100s
+
+======================================================================
+  Ant-v4 快速验证结果汇总 (200K steps, 3 seeds)
+======================================================================
+  算法                                        均值       标准差  各种子奖励
+----------------------------------------------------------------------
+  Standard_PPO                            48.3       8.4  [57 | 37 | 51]
+  Optimal_PPO                              2.1      12.6  [-6 | 20 | -8]
+  Optimal_HCGAE_v2                       -58.5      32.0  [-103 | -30 | -42]
+  Optimal_HCGAE_v3                       -18.3      18.1  [5 | -39 | -22]
+  Optimal_HCGAE_v3_NoClamp               -36.0       9.5  [-24 | -47 | -37]
+  Optimal_HCGAE_v3_NoVWGate              -29.3      12.2  [-12 | -38 | -37]
+  Optimal_HCGAE_v3_NoBdryPrior           -26.1      14.6  [-7 | -43 | -28]
+======================================================================
+
+验证完成！
