@@ -81,7 +81,7 @@ class OptimalPPO:
         env: gym.Env,
         name: str = "Optimal_PPO",
         # ── Network ──
-        hidden_dim: int = 64,
+        hidden_dim: int = 256,
         # ── Optimizer ──
         lr: float = 3e-4,           # shared LR for actor & critic
         # ── PPO core ──
@@ -1124,7 +1124,7 @@ def build_optimal_agent(
 
     # Common kwargs for OptimalPPO
     opt_defaults = dict(
-        hidden_dim=64,
+        hidden_dim=256,
         lr=3e-4,
         gamma=0.99,
         lam=0.95,

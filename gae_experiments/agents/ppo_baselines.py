@@ -43,6 +43,7 @@ import torch.nn as nn
 from ..utils.logger import MetricLogger
 from ..utils.networks import ActorNetwork, CriticNetwork
 from ..utils.rollout_buffer import RolloutBuffer
+from .optimal_ppo import RunningMeanStd
 
 
 class PPOBaseline:
@@ -61,8 +62,11 @@ class PPOBaseline:
         use_ent_decay: bool = False,   # Entropy bonus with annealing
         use_vclip: bool = False,       # Value function clipping
         use_dual_lr: bool = False,     # Dual optimizer with separate LR schedule
+        # ── Normalization tricks (aligned with literature) ──
+        use_obs_norm: bool = True,     # ★ Obs normalization (running mean/std)
+        use_adv_norm: bool = True,     # ★ Per-minibatch advantage normalization
         # ── Standard PPO hyperparams ──
-        hidden_dim: int = 64,
+        hidden_dim: int = 256,
         lr_actor: float = 3e-4,
         lr_critic: float = 1e-3,
         gamma: float = 0.99,
@@ -96,6 +100,8 @@ class PPOBaseline:
         self.use_ent_decay = use_ent_decay
         self.use_vclip = use_vclip
         self.use_dual_lr = use_dual_lr
+        self.use_obs_norm = use_obs_norm
+        self.use_adv_norm = use_adv_norm
 
         self.env = env
         self.gamma = gamma
@@ -149,8 +155,25 @@ class PPOBaseline:
 
         self.buffer = RolloutBuffer(n_steps, obs_dim, action_dim, self.device, self.continuous)
 
+        # Running stats for observation normalization
+        if use_obs_norm:
+            self.obs_rms = RunningMeanStd(shape=(obs_dim,))
+        else:
+            self.obs_rms = None
+
         self.logger = MetricLogger(self.NAME, save_dir)
         self.total_steps = 0
+
+    def normalize_obs(self, obs: np.ndarray) -> np.ndarray:
+        """Normalize observation using running stats."""
+        if self.obs_rms is None:
+            return obs
+        return self.obs_rms.normalize(obs).astype(np.float32)
+
+    def update_obs_rms(self, obs: np.ndarray):
+        """Update running stats for observation normalization."""
+        if self.obs_rms is not None:
+            self.obs_rms.update(obs.reshape(1, -1) if obs.ndim == 1 else obs)
 
     # ────────────────────────────────────────────────────────────────
     # Data collection (same as HCGAE for fair comparison)
@@ -162,7 +185,11 @@ class PPOBaseline:
         episode_length = 0
 
         for step in range(self.n_steps):
-            obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            # Obs normalization: update stats & normalize
+            self.update_obs_rms(obs)
+            obs_normalized = self.normalize_obs(obs)
+
+            obs_tensor = torch.FloatTensor(obs_normalized).unsqueeze(0).to(self.device)
             with torch.no_grad():
                 action, log_prob = self.actor.get_action_and_logprob(obs_tensor)
                 value = self.critic(obs_tensor)
@@ -178,7 +205,7 @@ class PPOBaseline:
 
             episode_reward += reward
             episode_length += 1
-            self.buffer.add(obs, action_np, reward, float(terminated), log_prob_np, value_np)
+            self.buffer.add(obs_normalized, action_np, reward, float(terminated), log_prob_np, value_np)
             done = terminated or truncated
             obs = next_obs
             self.total_steps += 1
@@ -190,7 +217,8 @@ class PPOBaseline:
                 episode_length = 0
 
         with torch.no_grad():
-            last_obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            last_obs_normalized = self.normalize_obs(obs)
+            last_obs_tensor = torch.FloatTensor(last_obs_normalized).unsqueeze(0).to(self.device)
             last_value = self.critic(last_obs_tensor).item()
 
         return last_value
@@ -207,8 +235,9 @@ class PPOBaseline:
     def update(self) -> dict:
         obs, actions, old_log_probs, advantages, returns, old_values = self.buffer.get_batch()
 
-        # Normalize advantages
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        # 全局优势归一化（仅在 use_adv_norm=False 时使用）
+        if not self.use_adv_norm:
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
         # Compute current entropy coef (with annealing if enabled)
         if self.use_ent_decay:
@@ -258,6 +287,10 @@ class PPOBaseline:
                 batch_adv = advantages[batch_idx]
                 batch_ret = returns[batch_idx]
                 batch_old_val = old_values[batch_idx]
+
+                # Per-minibatch advantage normalization (★ key trick)
+                if self.use_adv_norm:
+                    batch_adv = (batch_adv - batch_adv.mean()) / (batch_adv.std() + 1e-8)
 
                 new_log_probs, entropy = self.actor.evaluate_actions(batch_obs, batch_actions)
                 new_values = self.critic(batch_obs)
@@ -414,7 +447,8 @@ class PPOBaseline:
             done = False
             ep_r = 0.0
             while not done:
-                obs_t = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+                obs_normalized = self.normalize_obs(obs)
+                obs_t = torch.FloatTensor(obs_normalized).unsqueeze(0).to(self.device)
                 with torch.no_grad():
                     dist = self.actor(obs_t)
                     action = dist.mean if self.continuous else dist.probs.argmax(dim=-1)

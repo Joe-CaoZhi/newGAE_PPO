@@ -79,7 +79,7 @@ def run_single(env_name: str, algo_name: str, seed: int) -> float:
     eval_env.reset(seed=seed + 10000)
 
     kwargs = dict(
-        hidden_dim=64,
+        hidden_dim=256,       # ★ 256x256 MLP (literature alignment)
         lr_actor=3e-4,
         lr_critic=1e-3,
         gamma=0.99,
@@ -91,6 +91,8 @@ def run_single(env_name: str, algo_name: str, seed: int) -> float:
         ent_coef=0.0,
         vf_coef=0.5,
         max_grad_norm=0.5,
+        use_obs_norm=True,    # ★ Obs normalization
+        use_adv_norm=True,    # ★ Per-minibatch advantage normalization
         device="cpu",
         save_dir=save_dir,
     )

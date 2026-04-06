@@ -1,4 +1,4 @@
-lij """
+"""
 Unified ICML-ready Comparison Experiment
 ==========================================
 
@@ -50,9 +50,9 @@ ALGORITHMS = [
 RESULTS_DIR = Path("results/UnifiedComparison")
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Shared hyperparameters (identical for all algorithms)
+# Shared hyperparameters (identical for all algorithms, aligned with literature)
 SHARED_KWARGS = dict(
-    hidden_dim=64,
+    hidden_dim=256,       # ★ Updated: 256x256 MLP (literature alignment)
     lr_actor=3e-4,
     lr_critic=1e-3,
     gamma=0.99,
@@ -64,6 +64,8 @@ SHARED_KWARGS = dict(
     ent_coef=0.0,
     vf_coef=0.5,
     max_grad_norm=0.5,
+    use_obs_norm=True,    # ★ Obs normalization
+    use_adv_norm=True,    # ★ Per-minibatch advantage normalization
     device="cpu",
 )
 

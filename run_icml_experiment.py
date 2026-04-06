@@ -54,9 +54,9 @@ ALGORITHMS = [
     "Optimal_HCGAE_SCR",   # HCGAE-SCR on top of Optimal_PPO
 ]
 
-# Shared hyperparameters for legacy Standard_PPO (same as before, for continuity)
+# Shared hyperparameters for Standard_PPO (aligned with literature)
 STANDARD_PPO_KWARGS = dict(
-    hidden_dim=64,
+    hidden_dim=256,       # ★ Updated: 64➒56×56→256×256 MLP (aligned with literature)
     lr_actor=3e-4,
     lr_critic=1e-3,
     gamma=0.99,
@@ -68,12 +68,14 @@ STANDARD_PPO_KWARGS = dict(
     ent_coef=0.0,
     vf_coef=0.5,
     max_grad_norm=0.5,
+    use_obs_norm=True,    # ★ Obs normalization (running mean/std)
+    use_adv_norm=True,    # ★ Per-minibatch advantage normalization
     device="cpu",
 )
 
 # Optimal PPO kwargs
 OPTIMAL_PPO_KWARGS = dict(
-    hidden_dim=64,
+    hidden_dim=256,       # ★ Updated: 64➒56×56→256×256 MLP (aligned with literature)
     lr=3e-4,
     gamma=0.99,
     lam=0.95,
@@ -96,7 +98,7 @@ OPTIMAL_PPO_KWARGS = dict(
 # Evaluation
 # ─────────────────────────────────────────────────────────────────────────────
 def evaluate_policy(agent, eval_env, n_episodes=10):
-    """Deterministic evaluation (no exploration noise)."""
+    """Deterministic evaluation using policy mean (no stochastic sampling)."""
     rewards = []
     for _ in range(n_episodes):
         obs, _ = eval_env.reset()
@@ -108,11 +110,12 @@ def evaluate_policy(agent, eval_env, n_episodes=10):
         while not done:
             obs_t = torch.FloatTensor(obs).unsqueeze(0)
             with torch.no_grad():
-                action, _ = agent.actor.get_action_and_logprob(obs_t)
+                dist = agent.actor.forward(obs_t)
+                # Deterministic: use mean for continuous, argmax for discrete
                 if agent.continuous:
-                    action_np = action.squeeze(0).cpu().numpy()
+                    action_np = dist.mean.squeeze(0).detach().cpu().numpy()
                 else:
-                    action_np = int(action.squeeze(0).cpu().numpy())
+                    action_np = int(dist.probs.argmax(dim=-1).squeeze(0).detach().cpu().numpy())
             obs, r, terminated, truncated, _ = eval_env.step(action_np)
             if hasattr(agent, 'normalize_obs'):
                 obs = agent.normalize_obs(obs)

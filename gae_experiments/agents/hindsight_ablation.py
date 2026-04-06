@@ -47,6 +47,7 @@ import torch.nn as nn
 from ..utils.logger import MetricLogger
 from ..utils.networks import ActorNetwork, CriticNetwork
 from ..utils.rollout_buffer import RolloutBuffer
+from .optimal_ppo import RunningMeanStd
 
 
 class HindsightAblation:
@@ -72,8 +73,11 @@ class HindsightAblation:
         # 自适应 β（⑥ 基于 err 分布峰度的自动 β 调整）
         use_adapt_beta: bool = False,  # ⑥ 自适应 β：根据 err 峰度自动调整 sigmoid 陡峭度
         adapt_beta_gamma: float = 0.5, # β_t = β₀ / max(Kurt[e]^γ, 1.0)，γ 控制调整幅度
+        # 标准化开关（与文献对齐）
+        use_obs_norm: bool = True,     # ★ Obs normalization (running mean/std)
+        use_adv_norm: bool = True,     # ★ Per-minibatch advantage normalization
         # 标准 PPO 超参
-        hidden_dim: int = 64,
+        hidden_dim: int = 256,
         lr_actor: float = 3e-4,
         lr_critic: float = 1e-3,
         gamma: float = 0.99,
@@ -119,6 +123,8 @@ class HindsightAblation:
         self.hindsight_beta = hindsight_beta
         self.hindsight_alpha_max = hindsight_alpha_max
         self.hindsight_alpha_min = hindsight_alpha_min
+        self.use_obs_norm = use_obs_norm
+        self.use_adv_norm = use_adv_norm
         self.device = torch.device(device)
         self._total_timesteps = 1
 
@@ -141,6 +147,12 @@ class HindsightAblation:
 
         self.buffer = RolloutBuffer(n_steps, obs_dim, action_dim, self.device, self.continuous)
 
+        # Running stats for observation normalization
+        if use_obs_norm:
+            self.obs_rms = RunningMeanStd(shape=(obs_dim,))
+        else:
+            self.obs_rms = None
+
         # 慢速 EMA（v1 基线使用）
         self._err_ema = 1.0
         self._err_ema_alpha = 0.05
@@ -158,6 +170,17 @@ class HindsightAblation:
         self.logger = MetricLogger(self.NAME, save_dir)
         self.total_steps = 0
 
+    def normalize_obs(self, obs: np.ndarray) -> np.ndarray:
+        """Normalize observation using running stats."""
+        if self.obs_rms is None:
+            return obs
+        return self.obs_rms.normalize(obs).astype(np.float32)
+
+    def update_obs_rms(self, obs: np.ndarray):
+        """Update running stats for observation normalization."""
+        if self.obs_rms is not None:
+            self.obs_rms.update(obs.reshape(1, -1) if obs.ndim == 1 else obs)
+
     # ──────────────────────────────────────────────────────────────
     # 数据收集
     # ──────────────────────────────────────────────────────────────
@@ -168,7 +191,11 @@ class HindsightAblation:
         episode_length = 0
 
         for step in range(self.n_steps):
-            obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            # Obs normalization: update stats & normalize
+            self.update_obs_rms(obs)
+            obs_normalized = self.normalize_obs(obs)
+
+            obs_tensor = torch.FloatTensor(obs_normalized).unsqueeze(0).to(self.device)
             with torch.no_grad():
                 action, log_prob = self.actor.get_action_and_logprob(obs_tensor)
                 value = self.critic(obs_tensor)
@@ -184,7 +211,7 @@ class HindsightAblation:
 
             episode_reward += reward
             episode_length += 1
-            self.buffer.add(obs, action_np, reward, float(terminated), log_prob_np, value_np)
+            self.buffer.add(obs_normalized, action_np, reward, float(terminated), log_prob_np, value_np)
             done = terminated or truncated
             obs = next_obs
             self.total_steps += 1
@@ -196,7 +223,8 @@ class HindsightAblation:
                 episode_length = 0
 
         with torch.no_grad():
-            last_obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            last_obs_normalized = self.normalize_obs(obs)
+            last_obs_tensor = torch.FloatTensor(last_obs_normalized).unsqueeze(0).to(self.device)
             last_value = self.critic(last_obs_tensor).item()
 
         return last_value
@@ -408,9 +436,10 @@ class HindsightAblation:
         if self.use_imp4:
             # 改进④：使用预先冻结的统计量
             advantages = (advantages - self._adv_mean_frozen) / self._adv_std_frozen
-        else:
-            # v1 基线：当场计算归一化统计量
+        elif not self.use_adv_norm:
+            # 全局归一化（仅在 use_adv_norm=False 时使用）
             advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        # 否则：per-minibatch normalization 在 minibatch 循环中处理
 
         T = self.buffer.pos
         indices = np.arange(T)
@@ -432,6 +461,10 @@ class HindsightAblation:
                 batch_advantages = advantages[batch_idx]
                 batch_returns    = returns[batch_idx]
                 batch_old_values = old_values[batch_idx]
+
+                # Per-minibatch advantage normalization (★ key trick, when not use_imp4)
+                if self.use_adv_norm and not self.use_imp4:
+                    batch_advantages = (batch_advantages - batch_advantages.mean()) / (batch_advantages.std() + 1e-8)
 
                 new_log_probs, entropy = self.actor.evaluate_actions(batch_obs, batch_actions)
                 new_values = self.critic(batch_obs)
@@ -587,7 +620,8 @@ class HindsightAblation:
             done   = False
             ep_r   = 0.0
             while not done:
-                obs_t = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+                obs_normalized = self.normalize_obs(obs)
+                obs_t = torch.FloatTensor(obs_normalized).unsqueeze(0).to(self.device)
                 with torch.no_grad():
                     dist = self.actor(obs_t)
                     action = dist.mean if self.continuous else dist.probs.argmax(dim=-1)

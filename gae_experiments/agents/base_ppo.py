@@ -11,6 +11,7 @@ import torch.nn as nn
 from ..utils.logger import MetricLogger
 from ..utils.networks import ActorNetwork, CriticNetwork
 from ..utils.rollout_buffer import RolloutBuffer
+from .optimal_ppo import RunningMeanStd
 
 
 class BasePPO:
@@ -25,7 +26,7 @@ class BasePPO:
         self,
         env: gym.Env,
         # 网络结构
-        hidden_dim: int = 64,
+        hidden_dim: int = 256,
         # PPO 超参数
         lr_actor: float = 3e-4,
         lr_critic: float = 1e-3,
@@ -40,6 +41,9 @@ class BasePPO:
         ent_coef: float = 0.0,
         vf_coef: float = 0.5,
         max_grad_norm: float = 0.5,
+        # 标准化开关
+        use_obs_norm: bool = True,   # ★ Obs normalization
+        use_adv_norm: bool = True,   # ★ Per-minibatch advantage normalization
         # 设备
         device: str = "cpu",
         # 日志
@@ -55,6 +59,8 @@ class BasePPO:
         self.ent_coef = ent_coef
         self.vf_coef = vf_coef
         self.max_grad_norm = max_grad_norm
+        self.use_obs_norm = use_obs_norm
+        self.use_adv_norm = use_adv_norm
         self.device = torch.device(device)
 
         # 环境信息
@@ -80,9 +86,26 @@ class BasePPO:
         # Rollout Buffer
         self.buffer = RolloutBuffer(n_steps, obs_dim, action_dim, self.device, self.continuous)
 
+        # Running stats for observation normalization
+        if use_obs_norm:
+            self.obs_rms = RunningMeanStd(shape=(obs_dim,))
+        else:
+            self.obs_rms = None
+
         # 日志
         self.logger = MetricLogger(self.NAME, save_dir)
         self.total_steps = 0
+
+    def normalize_obs(self, obs: np.ndarray) -> np.ndarray:
+        """Normalize observation using running stats."""
+        if self.obs_rms is None:
+            return obs
+        return self.obs_rms.normalize(obs).astype(np.float32)
+
+    def update_obs_rms(self, obs: np.ndarray):
+        """Update running stats for observation normalization."""
+        if self.obs_rms is not None:
+            self.obs_rms.update(obs.reshape(1, -1) if obs.ndim == 1 else obs)
 
     def collect_rollout(self) -> float:
         """收集 n_steps 步的交互数据，返回最后状态的价值"""
@@ -92,7 +115,11 @@ class BasePPO:
         episode_length = 0
 
         for step in range(self.n_steps):
-            obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            # Obs normalization: update stats & normalize
+            self.update_obs_rms(obs)
+            obs_normalized = self.normalize_obs(obs)
+
+            obs_tensor = torch.FloatTensor(obs_normalized).unsqueeze(0).to(self.device)
 
             with torch.no_grad():
                 action, log_prob = self.actor.get_action_and_logprob(obs_tensor)
@@ -111,7 +138,8 @@ class BasePPO:
             episode_length += 1
 
             # ★ 存 terminated（非 done），truncated 时下一状态仍有价值
-            self.buffer.add(obs, action_np, reward, float(terminated), log_prob_np, value_np)
+            # 存储归一化后的 obs
+            self.buffer.add(obs_normalized, action_np, reward, float(terminated), log_prob_np, value_np)
             done = terminated or truncated
             obs = next_obs
             self.total_steps += 1
@@ -124,7 +152,8 @@ class BasePPO:
 
         # 最后一个状态的价值（用于 GAE 边界条件）
         with torch.no_grad():
-            last_obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+            last_obs_normalized = self.normalize_obs(obs)
+            last_obs_tensor = torch.FloatTensor(last_obs_normalized).unsqueeze(0).to(self.device)
             last_value = self.critic(last_obs_tensor).item()
 
         return last_value
@@ -149,8 +178,9 @@ class BasePPO:
         """PPO 更新步骤，返回训练指标"""
         obs, actions, old_log_probs, advantages, returns, old_values = self.buffer.get_batch()
 
-        # 归一化优势
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        # 全局优势归一化（仅在 use_adv_norm=False 时使用）
+        if not self.use_adv_norm:
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
         T = self.buffer.pos
         indices = np.arange(T)
@@ -177,6 +207,10 @@ class BasePPO:
                 batch_advantages = advantages[batch_idx]
                 batch_returns = returns[batch_idx]
                 batch_old_values = old_values[batch_idx]
+
+                # Per-minibatch advantage normalization (★ key trick)
+                if self.use_adv_norm:
+                    batch_advantages = (batch_advantages - batch_advantages.mean()) / (batch_advantages.std() + 1e-8)
 
                 # 计算新的 log prob 和熵
                 new_log_probs, entropy = self.actor.evaluate_actions(batch_obs, batch_actions)
@@ -347,7 +381,8 @@ class BasePPO:
             done = False
             ep_reward = 0.0
             while not done:
-                obs_tensor = torch.FloatTensor(obs).unsqueeze(0).to(self.device)
+                obs_normalized = self.normalize_obs(obs)
+                obs_tensor = torch.FloatTensor(obs_normalized).unsqueeze(0).to(self.device)
                 with torch.no_grad():
                     dist = self.actor(obs_tensor)
                     if self.continuous:

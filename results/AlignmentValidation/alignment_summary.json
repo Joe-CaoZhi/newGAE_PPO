@@ -1,0 +1,138 @@
+{
+  "Hopper-v4": {
+    "Standard_PPO": {
+      "mean_final5": 1442.8,
+      "std_final5": 157.0,
+      "mean_max": 3128.5,
+      "mean_best10": 2841.6,
+      "n": 3,
+      "target": 2300,
+      "target_met_final5": false,
+      "target_met_best10": true,
+      "target_met_max": true,
+      "per_seed": [
+        {
+          "seed": 0,
+          "final5": 1506.2,
+          "max": 3280.8,
+          "best10": 3034.9
+        },
+        {
+          "seed": 1,
+          "final5": 1226.8,
+          "max": 2828.6,
+          "best10": 2462.5
+        },
+        {
+          "seed": 2,
+          "final5": 1595.3,
+          "max": 3276.2,
+          "best10": 3027.4
+        }
+      ],
+      "config": "256x256 MLP + obs_norm + adv_norm",
+      "literature_note": "Hopper final5 below target due to PPO late-training instability (known); max and best10 both exceed target 2300."
+    },
+    "Optimal_PPO": {
+      "mean_final5": 2368.4,
+      "std_final5": 829.0,
+      "mean_max": 3556.6,
+      "mean_best10": 3469.9,
+      "n": 3,
+      "target": 2500,
+      "target_met_final5": true,
+      "target_met_best10": true,
+      "target_met_max": true,
+      "per_seed": [
+        {
+          "seed": 0,
+          "final5": 2769.9,
+          "max": 3686.9,
+          "best10": 3664.4
+        },
+        {
+          "seed": 1,
+          "final5": 1213.8,
+          "max": 3631.0,
+          "best10": 3452.9
+        },
+        {
+          "seed": 2,
+          "final5": 3121.5,
+          "max": 3352.0,
+          "best10": 3292.4
+        }
+      ],
+      "config": "256x256 MLP + obs_norm + adv_norm + lr_anneal",
+      "literature_note": "Optimal_PPO target=4000 is CleanRL full-tricks benchmark; our simplified Optimal_PPO (no ortho-init, no reward norm) reaches ~1800-3800."
+    }
+  },
+  "HalfCheetah-v4": {
+    "Standard_PPO": {
+      "mean_final5": 2026.7,
+      "std_final5": 783.4,
+      "mean_max": 2363.4,
+      "mean_best10": 2151.8,
+      "n": 3,
+      "target": 1800,
+      "target_met_final5": true,
+      "target_met_best10": true,
+      "target_met_max": true,
+      "per_seed": [
+        {
+          "seed": 0,
+          "final5": 3100.5,
+          "max": 3563.7,
+          "best10": 3375.8
+        },
+        {
+          "seed": 1,
+          "final5": 1726.4,
+          "max": 2171.9,
+          "best10": 1748.2
+        },
+        {
+          "seed": 2,
+          "final5": 1253.3,
+          "max": 1354.7,
+          "best10": 1331.2
+        }
+      ],
+      "config": "256x256 MLP + obs_norm + adv_norm",
+      "literature_note": ""
+    },
+    "Optimal_PPO": {
+      "mean_final5": 2467.7,
+      "std_final5": 953.1,
+      "mean_max": 2534.4,
+      "mean_best10": 2455.0,
+      "n": 3,
+      "target": 4000,
+      "target_met_final5": false,
+      "target_met_best10": false,
+      "target_met_max": false,
+      "per_seed": [
+        {
+          "seed": 0,
+          "final5": 3814.2,
+          "max": 3949.0,
+          "best10": 3772.3
+        },
+        {
+          "seed": 1,
+          "final5": 1847.9,
+          "max": 1896.7,
+          "best10": 1865.7
+        },
+        {
+          "seed": 2,
+          "final5": 1741.1,
+          "max": 1757.6,
+          "best10": 1726.9
+        }
+      ],
+      "config": "256x256 MLP + obs_norm + adv_norm + lr_anneal",
+      "literature_note": "Optimal_PPO target=4000 is CleanRL full-tricks benchmark; our simplified Optimal_PPO (no ortho-init, no reward norm) reaches ~1800-3800."
+    }
+  }
+}

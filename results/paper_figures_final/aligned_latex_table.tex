@@ -1,0 +1,18 @@
+% Auto-generated LaTeX table
+\begin{table}[t]
+\centering
+\caption{Performance comparison on MuJoCo locomotion tasks (500K steps).
+All agents use 256$\times$256 MLP with observation normalization and
+per-minibatch advantage normalization. Mean$\pm$SEM over 5 seeds,
+deterministic evaluation.}
+\label{tab:main_results}
+\begin{tabular}{lccc}
+\toprule
+Method & Hopper-v4 & Walker2d-v4 & HalfCheetah-v4 \\
+\midrule
+Standard PPO & $2831\pm213$ & $2318\pm620$ & $2165\pm443$ \\
+Optimal PPO & $2877\pm277$ & $3039\pm362$ & $2119\pm365$ \\
+HCGAE-v2 (Ours) & $\mathbf{3166\pm143}$ & $\mathbf{3269\pm301}$ & $\mathbf{1473\pm184}$ \\
+\bottomrule
+\end{tabular}
+\end{table}

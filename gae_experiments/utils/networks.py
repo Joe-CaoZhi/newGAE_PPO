@@ -18,7 +18,7 @@ def layer_init(layer: nn.Linear, std: float = np.sqrt(2), bias_const: float = 0.
 class ActorNetwork(nn.Module):
     """策略网络（Actor）"""
 
-    def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int = 64, continuous: bool = False):
+    def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int = 256, continuous: bool = False):
         super().__init__()
         self.continuous = continuous
 
@@ -68,7 +68,7 @@ class ActorNetwork(nn.Module):
 class CriticNetwork(nn.Module):
     """价值网络（Critic）"""
 
-    def __init__(self, obs_dim: int, hidden_dim: int = 64):
+    def __init__(self, obs_dim: int, hidden_dim: int = 256):
         super().__init__()
         self.net = nn.Sequential(
             layer_init(nn.Linear(obs_dim, hidden_dim)),

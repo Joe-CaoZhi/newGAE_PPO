@@ -57,16 +57,17 @@ N_SEEDS = 30
 RESULTS_DIR = Path("results/HighPowerExperiment")
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Hyperparameters
+# Hyperparameters (aligned with literature: 256x256 MLP + obs/adv norm)
 STANDARD_PPO_KWARGS = dict(
-    hidden_dim=64, lr_actor=3e-4, lr_critic=1e-3,
+    hidden_dim=256, lr_actor=3e-4, lr_critic=1e-3,  # ★ 256x256 MLP
     gamma=0.99, lam=0.95, eps_clip=0.2,
     n_epochs=10, batch_size=64, n_steps=2048,
     ent_coef=0.0, vf_coef=0.5, max_grad_norm=0.5,
+    use_obs_norm=True, use_adv_norm=True,  # ★ Obs norm + adv norm
     device="cpu",
 )
 OPTIMAL_PPO_KWARGS = dict(
-    hidden_dim=64, lr=3e-4,
+    hidden_dim=256, lr=3e-4,  # ★ 256x256 MLP
     gamma=0.99, lam=0.95, eps_clip=0.2,
     n_epochs=10, batch_size=64, n_steps=2048,
     ent_coef=0.0, vf_coef=0.5, max_grad_norm=0.5,

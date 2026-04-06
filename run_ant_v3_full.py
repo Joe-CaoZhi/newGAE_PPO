@@ -46,12 +46,14 @@ ALGORITHMS = [
 # ALGORITHMS = ["Standard_PPO", "Optimal_PPO", "Optimal_HCGAE_v2", "Optimal_HCGAE_v3"]
 
 STANDARD_PPO_KWARGS = dict(
-    hidden_dim=64, lr_actor=3e-4, lr_critic=1e-3, gamma=0.99, lam=0.95,
+    hidden_dim=256, lr_actor=3e-4, lr_critic=1e-3, gamma=0.99, lam=0.95,  # ★ 256x256 MLP
     eps_clip=0.2, n_epochs=10, batch_size=64, n_steps=2048,
-    ent_coef=0.0, vf_coef=0.5, max_grad_norm=0.5, device="cpu",
+    ent_coef=0.0, vf_coef=0.5, max_grad_norm=0.5,
+    use_obs_norm=True, use_adv_norm=True,  # ★ Obs norm + adv norm
+    device="cpu",
 )
 OPTIMAL_PPO_KWARGS = dict(
-    hidden_dim=64, lr=3e-4, gamma=0.99, lam=0.95, eps_clip=0.2,
+    hidden_dim=256, lr=3e-4, gamma=0.99, lam=0.95, eps_clip=0.2,  # ★ 256x256 MLP
     n_epochs=10, batch_size=64, n_steps=2048, ent_coef=0.0, vf_coef=0.5,
     max_grad_norm=0.5, use_obs_norm=True, use_adv_norm=True,
     use_lr_anneal=True, use_vclip=False, device="cpu",

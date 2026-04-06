@@ -49,9 +49,9 @@ SEEDS = list(range(N_SEEDS))  # 0..4
 RESULTS_DIR = Path("results/AutoSCRExperiment")
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Optimal PPO hyperparameters (identical to ICMLExperiment)
+# Optimal PPO hyperparameters (aligned with literature: 256x256 MLP)
 OPTIMAL_PPO_KWARGS = dict(
-    hidden_dim=64,
+    hidden_dim=256,  # ★ 256x256 MLP (literature alignment)
     lr=3e-4,
     gamma=0.99,
     lam=0.95,
