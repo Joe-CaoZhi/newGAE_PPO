@@ -1,0 +1,160 @@
+{
+  "Hopper-v4": {
+    "Standard_PPO": {
+      "mean": 262.30003877615513,
+      "std": 8.668467051953025,
+      "median": 262.30003877615513,
+      "n": 2
+    },
+    "Optimal_PPO": {
+      "mean": 290.41282982575245,
+      "std": 37.07353619954809,
+      "median": 290.41282982575245,
+      "n": 2
+    },
+    "Heuristic_HCGAE": {
+      "mean": 292.50009002321514,
+      "std": 58.10213389812792,
+      "median": 292.50009002321514,
+      "n": 2
+    },
+    "BHVF": {
+      "mean": 294.8512798715779,
+      "std": 28.831136085706593,
+      "median": 294.8512798715779,
+      "n": 2
+    },
+    "BHVF_DCPPO": {
+      "mean": 343.07992152419604,
+      "std": 66.49474377902571,
+      "median": 343.07992152419604,
+      "n": 2
+    }
+  },
+  "Walker2d-v4": {
+    "Standard_PPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "Optimal_PPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "Heuristic_HCGAE": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "BHVF": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "BHVF_DCPPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    }
+  },
+  "HalfCheetah-v4": {
+    "Standard_PPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "Optimal_PPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "Heuristic_HCGAE": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "BHVF": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "BHVF_DCPPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    }
+  },
+  "Ant-v4": {
+    "Standard_PPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "Optimal_PPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "Heuristic_HCGAE": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "BHVF": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    },
+    "BHVF_DCPPO": {
+      "mean": null,
+      "std": null,
+      "median": null,
+      "n": 0
+    }
+  },
+  "_relative_improvement_vs_OptimalPPO": {
+    "Hopper-v4": {
+      "Standard_PPO": -9.68,
+      "Optimal_PPO": 0.0,
+      "Heuristic_HCGAE": 0.72,
+      "BHVF": 1.53,
+      "BHVF_DCPPO": 18.14
+    },
+    "Walker2d-v4": {
+      "Standard_PPO": null,
+      "Optimal_PPO": null,
+      "Heuristic_HCGAE": null,
+      "BHVF": null,
+      "BHVF_DCPPO": null
+    },
+    "HalfCheetah-v4": {
+      "Standard_PPO": null,
+      "Optimal_PPO": null,
+      "Heuristic_HCGAE": null,
+      "BHVF": null,
+      "BHVF_DCPPO": null
+    },
+    "Ant-v4": {
+      "Standard_PPO": null,
+      "Optimal_PPO": null,
+      "Heuristic_HCGAE": null,
+      "BHVF": null,
+      "BHVF_DCPPO": null
+    }
+  }
+}

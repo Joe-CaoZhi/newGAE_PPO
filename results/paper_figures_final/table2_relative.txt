@@ -1,0 +1,9 @@
+
+=== Relative Improvement vs Optimal_PPO ===
+
+  Algorithm               Hopper          Walker2d        HalfCheetah     Ant           
+----------------------------------------------------------------------------------------------------
+  PPO (Standard)            -9.7%                 [TBD]           [TBD]           [TBD]  
+  HCGAE-v2 (Heuristic)    +   0.7%                 [TBD]           [TBD]           [TBD]  
+  BHVF (Ours)             +   1.5%                 [TBD]           [TBD]           [TBD]  
+  BHVF+DCPPO-S (Ours)     +  18.1%                 [TBD]           [TBD]           [TBD]  
