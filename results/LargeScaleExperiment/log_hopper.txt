@@ -1,0 +1,204 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Hopper-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Hopper-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+
+================================================================================
+  Large-Scale HCGAE Experiment
+  Steps: 1,000,000   Seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]   Total runs: 24
+================================================================================
+
+
+[1/24] Hopper-v4 | Optimal_PPO | seed=0
+      [204K/1000K] eval=948.3 (115s)
+      [409K/1000K] eval=2092.5 (244s)
+      [614K/1000K] eval=3436.8 (403s)
+      [819K/1000K] eval=3271.4 (531s)
+    Done: Hopper-v4/Optimal_PPO/s0 → final10=2993.3 max=3462.5 (644s)
+
+[2/24] Hopper-v4 | Optimal_PPO | seed=1
+      [204K/1000K] eval=3136.4 (120s)
+      [409K/1000K] eval=3249.3 (251s)
+      [614K/1000K] eval=3276.4 (380s)
+      [819K/1000K] eval=3296.2 (509s)
+    Done: Hopper-v4/Optimal_PPO/s1 → final10=3308.4 max=3320.9 (624s)
+
+[3/24] Hopper-v4 | Optimal_PPO | seed=2
+      [204K/1000K] eval=1911.2 (125s)
+      [409K/1000K] eval=3475.3 (246s)
+      [614K/1000K] eval=3616.8 (363s)
+      [819K/1000K] eval=1853.5 (475s)
+    Done: Hopper-v4/Optimal_PPO/s2 → final10=1589.9 max=3638.8 (587s)
+
+[4/24] Hopper-v4 | Optimal_PPO | seed=3
+      [204K/1000K] eval=3148.0 (119s)
+      [409K/1000K] eval=3487.8 (242s)
+      [614K/1000K] eval=3681.7 (365s)
+      [819K/1000K] eval=3555.4 (488s)
+    Done: Hopper-v4/Optimal_PPO/s3 → final10=3595.1 max=3754.0 (598s)
+
+[5/24] Hopper-v4 | Optimal_PPO | seed=4
+      [204K/1000K] eval=3327.1 (126s)
+      [409K/1000K] eval=3217.3 (266s)
+      [614K/1000K] eval=3511.0 (392s)
+      [819K/1000K] eval=2421.2 (513s)
+    Done: Hopper-v4/Optimal_PPO/s4 → final10=2944.8 max=3627.8 (620s)
+
+[6/24] Hopper-v4 | Optimal_PPO | seed=5
+      [204K/1000K] eval=3235.5 (119s)
+      [409K/1000K] eval=3244.7 (245s)
+      [614K/1000K] eval=3199.2 (371s)
+      [819K/1000K] eval=3320.2 (498s)
+    Done: Hopper-v4/Optimal_PPO/s5 → final10=3142.3 max=3320.2 (609s)
+
+[7/24] Hopper-v4 | Optimal_PPO | seed=6
+      [204K/1000K] eval=1063.1 (122s)
+      [409K/1000K] eval=3294.5 (251s)
+      [614K/1000K] eval=3319.8 (382s)
+      [819K/1000K] eval=2728.9 (513s)
+    Done: Hopper-v4/Optimal_PPO/s6 → final10=3254.4 max=3394.3 (629s)
+
+[8/24] Hopper-v4 | Optimal_PPO | seed=7
+      [204K/1000K] eval=1028.9 (121s)
+      [409K/1000K] eval=3625.7 (248s)
+      [614K/1000K] eval=2574.1 (376s)
+      [819K/1000K] eval=3642.2 (503s)
+    Done: Hopper-v4/Optimal_PPO/s7 → final10=3294.6 max=3721.3 (616s)
+
+[9/24] Hopper-v4 | Optimal_PPO | seed=8
+      [204K/1000K] eval=1589.6 (119s)
+      [409K/1000K] eval=3061.5 (242s)
+      [614K/1000K] eval=3241.4 (367s)
+      [819K/1000K] eval=3595.9 (490s)
+    Done: Hopper-v4/Optimal_PPO/s8 → final10=3382.8 max=3606.0 (601s)
+
+[10/24] Hopper-v4 | Optimal_PPO | seed=9
+      [204K/1000K] eval=772.0 (116s)
+      [409K/1000K] eval=2704.1 (237s)
+      [614K/1000K] eval=3185.5 (358s)
+      [819K/1000K] eval=1722.2 (478s)
+    Done: Hopper-v4/Optimal_PPO/s9 → final10=2493.0 max=3684.2 (585s)
+
+[11/24] Hopper-v4 | Optimal_PPO | seed=10
+      [204K/1000K] eval=3400.2 (123s)
+      [409K/1000K] eval=1991.4 (249s)
+      [614K/1000K] eval=3429.5 (373s)
+      [819K/1000K] eval=1197.9 (495s)
+    Done: Hopper-v4/Optimal_PPO/s10 → final10=1359.1 max=3530.1 (605s)
+
+[12/24] Hopper-v4 | Optimal_PPO | seed=11
+      [204K/1000K] eval=3600.6 (122s)
+      [409K/1000K] eval=3626.8 (250s)
+      [614K/1000K] eval=3568.6 (377s)
+      [819K/1000K] eval=3455.2 (503s)
+    Done: Hopper-v4/Optimal_PPO/s11 → final10=2828.5 max=3670.1 (612s)
+
+[13/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=0
+      [204K/1000K] eval=2216.4 (123s)
+      [409K/1000K] eval=3589.6 (253s)
+      [614K/1000K] eval=3100.3 (381s)
+      [819K/1000K] eval=3647.4 (509s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s0 → final10=3380.8 max=3647.4 (622s)
+
+[14/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=1
+      [204K/1000K] eval=1217.2 (121s)
+      [409K/1000K] eval=3573.6 (249s)
+      [614K/1000K] eval=3025.4 (376s)
+      [819K/1000K] eval=2396.4 (503s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s1 → final10=2524.7 max=3705.1 (615s)
+
+[15/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=2
+      [204K/1000K] eval=1733.4 (127s)
+      [409K/1000K] eval=2620.6 (260s)
+      [614K/1000K] eval=3390.6 (414s)
+      [819K/1000K] eval=3566.6 (1069s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s2 → final10=3611.5 max=3644.6 (64939s)
+
+[16/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=3
+      [204K/1000K] eval=3132.6 (157s)
+      [409K/1000K] eval=2919.4 (315s)
+      [614K/1000K] eval=3024.3 (451s)
+      [819K/1000K] eval=3621.7 (587s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s3 → final10=2854.1 max=3636.6 (704s)
+
+[17/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=4
+      [204K/1000K] eval=3338.6 (134s)
+      [409K/1000K] eval=3280.2 (269s)
+      [614K/1000K] eval=3085.2 (407s)
+      [819K/1000K] eval=3510.1 (534s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s4 → final10=3448.9 max=3698.7 (648s)
+
+[18/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=5
+      [204K/1000K] eval=856.1 (118s)
+      [409K/1000K] eval=3292.6 (245s)
+      [614K/1000K] eval=3357.3 (375s)
+      [819K/1000K] eval=3510.7 (503s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s5 → final10=3560.0 max=3605.2 (615s)
+
+[19/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=6
+      [204K/1000K] eval=1505.5 (116s)
+      [409K/1000K] eval=3148.6 (238s)
+      [614K/1000K] eval=2892.5 (365s)
+      [819K/1000K] eval=3349.2 (489s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s6 → final10=3027.6 max=3378.7 (598s)
+
+[20/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=7
+      [204K/1000K] eval=1443.9 (120s)
+      [409K/1000K] eval=1858.0 (240s)
+      [614K/1000K] eval=1681.9 (362s)
+      [819K/1000K] eval=2433.4 (487s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s7 → final10=2992.3 max=3468.3 (596s)
+
+[21/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=8
+      [204K/1000K] eval=1429.8 (116s)
+      [409K/1000K] eval=1499.0 (234s)
+      [614K/1000K] eval=1923.8 (351s)
+      [819K/1000K] eval=1524.8 (468s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s8 → final10=1572.3 max=2271.6 (575s)
+
+[22/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=9
+      [204K/1000K] eval=3350.9 (118s)
+      [409K/1000K] eval=3166.4 (241s)
+      [614K/1000K] eval=3414.7 (365s)
+      [819K/1000K] eval=3577.9 (490s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s9 → final10=3577.3 max=3595.8 (601s)
+
+[23/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=10
+      [204K/1000K] eval=3405.6 (120s)
+      [409K/1000K] eval=2905.0 (251s)
+      [614K/1000K] eval=2998.9 (376s)
+      [819K/1000K] eval=2988.6 (500s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s10 → final10=2374.8 max=3652.5 (607s)
+
+[24/24] Hopper-v4 | Optimal_HCGAE_v4 | seed=11
+      [204K/1000K] eval=968.5 (120s)
+      [409K/1000K] eval=3365.3 (252s)
+      [614K/1000K] eval=3548.7 (390s)
+      [819K/1000K] eval=3332.1 (520s)
+    Done: Hopper-v4/Optimal_HCGAE_v4/s11 → final10=2890.3 max=3569.7 (646s)
+
+
+Total elapsed: 79099s (21.97h)
+
+===================================================================================================================
+  LARGE-SCALE RESULTS  (n=12 seeds, 1M steps, deterministic eval)
+===================================================================================================================
+Env                          Method                           Mean±SEM       Δ%         p       d             95% CI    n
+-------------------------------------------------------------------------------------------------------------------
+Hopper-v4                    Optimal_PPO                  2848.9±194.8 baseline         —       —                  —   12
+Hopper-v4                    Optimal_HCGAE_v4             2984.6±167.8    +4.8%     0.665   +0.22         [-362,652]   12
+Walker2d-v4                  Optimal_PPO                  4089.0±168.1 baseline         —       —                  —   12
+Walker2d-v4                  Optimal_HCGAE_v4             4210.6±111.8    +3.0%     0.601   +0.25         [-271,499]   11
+HalfCheetah-v4               Optimal_PPO                  2859.1±367.2 baseline         —       —                  —   12
+HalfCheetah-v4               Optimal_HCGAE_v4             2990.0±384.5    +4.6%     0.751   +0.10        [-908,1188]   12
+HalfCheetah-v4               Optimal_HCGAE_v6               1887.8±0.0        —         —       —                  —    1
+Ant-v4                       Optimal_PPO                  2667.9±169.2 baseline         —       —                  —   12
+Ant-v4                       Optimal_HCGAE_v2_NoBdry      2050.9±161.0   -23.1%    0.041*   -1.24       [-1082,-180]    6
+Ant-v4                       Optimal_HCGAE_v5                  pending
+Swimmer-v4                   Optimal_PPO                       pending
+Swimmer-v4                   Optimal_HCGAE_v4                  pending
+Swimmer-v4                   Optimal_HCGAE_v6                  pending
+===================================================================================================================
+  * p<0.05  ** p<0.01  *** p<0.001  (Mann-Whitney U, two-sided, n=10000 bootstrap)
+
+Saved: results/LargeScaleExperiment/large_scale_summary.json

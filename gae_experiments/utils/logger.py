@@ -40,6 +40,15 @@ class MetricLogger:
         self.alpha_mean_history: List[float] = [] # HCGAE α 均值轨迹
         self.c_mc_history:    List[float] = []   # MC 混合系数轨迹
 
+        # ── BHVF-specific diagnostics（用于验证贝叶斯理论有效性）──
+        self.scr_history:       List[float] = []   # SCR_ema = sigma_V / sigma_G
+        self.sigma_V_history:   List[float] = []   # 批内 sigma_V (MAE)
+        self.sigma_G_history:   List[float] = []   # 批内 sigma_G (std of G)
+        self.sigma_e_history:   List[float] = []   # sigma_e EMA (std of delta)
+        self.alpha_star_history: List[float] = []  # alpha* (Kalman gain per rollout)
+        self.ev_now_history:    List[float] = []   # 当次 rollout 的原始 EV
+        self.clip_ratio_history: List[float] = []  # 被截断的新息比例
+
         # 步骤计数
         self.total_steps: List[int] = []
         self._current_total_steps = 0
@@ -68,6 +77,14 @@ class MetricLogger:
         snr_weight: Optional[float] = None,
         alpha_mean: Optional[float] = None,
         c_mc: Optional[float] = None,
+        # BHVF-specific diagnostics
+        scr: Optional[float] = None,
+        sigma_V: Optional[float] = None,
+        sigma_G: Optional[float] = None,
+        sigma_e: Optional[float] = None,
+        alpha_star: Optional[float] = None,
+        ev_now: Optional[float] = None,
+        clip_ratio: Optional[float] = None,
     ):
         self.value_losses.append(value_loss)
         self.policy_losses.append(policy_loss)
@@ -89,6 +106,21 @@ class MetricLogger:
             self.alpha_mean_history.append(alpha_mean)
         if c_mc is not None:
             self.c_mc_history.append(c_mc)
+        # BHVF-specific diagnostics
+        if scr is not None:
+            self.scr_history.append(scr)
+        if sigma_V is not None:
+            self.sigma_V_history.append(sigma_V)
+        if sigma_G is not None:
+            self.sigma_G_history.append(sigma_G)
+        if sigma_e is not None:
+            self.sigma_e_history.append(sigma_e)
+        if alpha_star is not None:
+            self.alpha_star_history.append(alpha_star)
+        if ev_now is not None:
+            self.ev_now_history.append(ev_now)
+        if clip_ratio is not None:
+            self.clip_ratio_history.append(clip_ratio)
 
     def get_recent_reward(self, window: int = 20) -> float:
         if len(self.episode_rewards) == 0:
@@ -117,6 +149,14 @@ class MetricLogger:
             "snr_weight_history":   self.snr_weight_history,
             "alpha_mean_history":   self.alpha_mean_history,
             "c_mc_history":         self.c_mc_history,
+            # BHVF diagnostics
+            "scr_history":          self.scr_history,
+            "sigma_V_history":      self.sigma_V_history,
+            "sigma_G_history":      self.sigma_G_history,
+            "sigma_e_history":      self.sigma_e_history,
+            "alpha_star_history":   self.alpha_star_history,
+            "ev_now_history":       self.ev_now_history,
+            "clip_ratio_history":   self.clip_ratio_history,
         }
         path = os.path.join(self.save_dir, f"{self.agent_name}_metrics.json")
         with open(path, "w") as f:
@@ -146,5 +186,13 @@ class MetricLogger:
         logger.snr_weight_history  = data.get("snr_weight_history", [])
         logger.alpha_mean_history  = data.get("alpha_mean_history", [])
         logger.c_mc_history        = data.get("c_mc_history", [])
+        # BHVF diagnostics
+        logger.scr_history         = data.get("scr_history", [])
+        logger.sigma_V_history     = data.get("sigma_V_history", [])
+        logger.sigma_G_history     = data.get("sigma_G_history", [])
+        logger.sigma_e_history     = data.get("sigma_e_history", [])
+        logger.alpha_star_history  = data.get("alpha_star_history", [])
+        logger.ev_now_history      = data.get("ev_now_history", [])
+        logger.clip_ratio_history  = data.get("clip_ratio_history", [])
         return logger
 

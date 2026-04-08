@@ -1,0 +1,204 @@
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+/Users/joe-caozhi/Library/Python/3.9/lib/python/site-packages/gymnasium/envs/registration.py:519: DeprecationWarning: [33mWARN: The environment Walker2d-v4 is out of date. You should consider upgrading to version `v5`.[0m
+  logger.deprecation(
+
+================================================================================
+  Large-Scale HCGAE Experiment
+  Steps: 1,000,000   Seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]   Total runs: 24
+================================================================================
+
+
+[1/24] Walker2d-v4 | Optimal_PPO | seed=0
+      [204K/1000K] eval=1907.5 (122s)
+      [409K/1000K] eval=2661.9 (252s)
+      [614K/1000K] eval=4446.3 (414s)
+      [819K/1000K] eval=4658.2 (544s)
+    Done: Walker2d-v4/Optimal_PPO/s0 → final10=3618.6 max=4658.2 (659s)
+
+[2/24] Walker2d-v4 | Optimal_PPO | seed=1
+      [204K/1000K] eval=514.8 (124s)
+      [409K/1000K] eval=2622.8 (254s)
+      [614K/1000K] eval=2725.3 (384s)
+      [819K/1000K] eval=3698.0 (514s)
+    Done: Walker2d-v4/Optimal_PPO/s1 → final10=3901.3 max=4113.3 (631s)
+
+[3/24] Walker2d-v4 | Optimal_PPO | seed=2
+      [204K/1000K] eval=1282.8 (131s)
+      [409K/1000K] eval=1048.0 (243s)
+      [614K/1000K] eval=4473.2 (362s)
+      [819K/1000K] eval=4870.2 (488s)
+    Done: Walker2d-v4/Optimal_PPO/s2 → final10=4868.6 max=5035.6 (606s)
+
+[4/24] Walker2d-v4 | Optimal_PPO | seed=3
+      [204K/1000K] eval=862.5 (124s)
+      [409K/1000K] eval=3275.1 (253s)
+      [614K/1000K] eval=4965.1 (387s)
+      [819K/1000K] eval=4669.9 (521s)
+    Done: Walker2d-v4/Optimal_PPO/s3 → final10=4829.9 max=5376.8 (639s)
+
+[5/24] Walker2d-v4 | Optimal_PPO | seed=4
+      [204K/1000K] eval=436.2 (143s)
+      [409K/1000K] eval=2967.3 (269s)
+      [614K/1000K] eval=3167.1 (400s)
+      [819K/1000K] eval=3616.3 (532s)
+    Done: Walker2d-v4/Optimal_PPO/s4 → final10=3372.5 max=3661.5 (651s)
+
+[6/24] Walker2d-v4 | Optimal_PPO | seed=5
+      [204K/1000K] eval=797.9 (119s)
+      [409K/1000K] eval=4341.2 (243s)
+      [614K/1000K] eval=4747.2 (370s)
+      [819K/1000K] eval=4542.6 (498s)
+    Done: Walker2d-v4/Optimal_PPO/s5 → final10=4615.7 max=4921.0 (611s)
+
+[7/24] Walker2d-v4 | Optimal_PPO | seed=6
+      [204K/1000K] eval=892.3 (117s)
+      [409K/1000K] eval=1051.5 (236s)
+      [614K/1000K] eval=3168.6 (359s)
+      [819K/1000K] eval=4238.7 (485s)
+    Done: Walker2d-v4/Optimal_PPO/s6 → final10=4107.3 max=4344.9 (598s)
+
+[8/24] Walker2d-v4 | Optimal_PPO | seed=7
+      [204K/1000K] eval=701.3 (123s)
+      [409K/1000K] eval=4616.1 (255s)
+      [614K/1000K] eval=4561.3 (388s)
+      [819K/1000K] eval=4990.6 (519s)
+    Done: Walker2d-v4/Optimal_PPO/s7 → final10=4957.8 max=5192.6 (637s)
+
+[9/24] Walker2d-v4 | Optimal_PPO | seed=8
+      [204K/1000K] eval=1142.2 (123s)
+      [409K/1000K] eval=1862.1 (250s)
+      [614K/1000K] eval=3523.9 (379s)
+      [819K/1000K] eval=3144.2 (513s)
+    Done: Walker2d-v4/Optimal_PPO/s8 → final10=3440.4 max=3971.4 (629s)
+
+[10/24] Walker2d-v4 | Optimal_PPO | seed=9
+      [204K/1000K] eval=717.6 (123s)
+      [409K/1000K] eval=2527.2 (248s)
+      [614K/1000K] eval=4224.7 (379s)
+      [819K/1000K] eval=3844.6 (512s)
+    Done: Walker2d-v4/Optimal_PPO/s9 → final10=4226.7 max=4795.0 (628s)
+
+[11/24] Walker2d-v4 | Optimal_PPO | seed=10
+      [204K/1000K] eval=455.7 (122s)
+      [409K/1000K] eval=571.6 (242s)
+      [614K/1000K] eval=2331.0 (364s)
+      [819K/1000K] eval=3025.7 (495s)
+    Done: Walker2d-v4/Optimal_PPO/s10 → final10=3808.2 max=4179.3 (609s)
+
+[12/24] Walker2d-v4 | Optimal_PPO | seed=11
+      [204K/1000K] eval=893.1 (121s)
+      [409K/1000K] eval=2766.1 (246s)
+      [614K/1000K] eval=3743.6 (374s)
+      [819K/1000K] eval=4720.4 (503s)
+    Done: Walker2d-v4/Optimal_PPO/s11 → final10=3321.3 max=4720.4 (616s)
+
+[13/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=0
+      [204K/1000K] eval=1464.5 (121s)
+      [409K/1000K] eval=3574.1 (248s)
+      [614K/1000K] eval=3555.2 (375s)
+      [819K/1000K] eval=4085.3 (504s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s0 → final10=4038.6 max=4297.1 (619s)
+
+[14/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=1
+      [204K/1000K] eval=1235.6 (120s)
+      [409K/1000K] eval=1085.9 (241s)
+      [614K/1000K] eval=1184.1 (366s)
+      [819K/1000K] eval=3715.7 (499s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s1 → final10=3841.5 max=4048.4 (618s)
+
+[15/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=2
+      [204K/1000K] eval=562.5 (124s)
+      [409K/1000K] eval=898.8 (483s)
+      [614K/1000K] eval=3882.9 (1236s)
+      [819K/1000K] eval=4073.0 (64875s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s2 → final10=4193.6 max=4300.1 (65017s)
+
+[16/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=3
+      [204K/1000K] eval=1400.6 (147s)
+      [409K/1000K] eval=1449.2 (286s)
+      [614K/1000K] eval=3344.9 (429s)
+      [819K/1000K] eval=4040.7 (580s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s3 → final10=3741.9 max=4339.4 (709s)
+
+[17/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=4
+      [204K/1000K] eval=1261.7 (139s)
+      [409K/1000K] eval=3357.5 (279s)
+      [614K/1000K] eval=3987.8 (418s)
+      [819K/1000K] eval=4311.2 (559s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s4 → final10=4213.3 max=4508.7 (683s)
+
+[18/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=5
+      [204K/1000K] eval=3184.8 (131s)
+      [409K/1000K] eval=4167.9 (272s)
+      [614K/1000K] eval=4354.3 (411s)
+      [819K/1000K] eval=4669.6 (552s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s5 → final10=4645.1 max=4786.6 (679s)
+
+[19/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=6
+      [204K/1000K] eval=534.3 (125s)
+      [409K/1000K] eval=2077.2 (251s)
+      [614K/1000K] eval=4522.3 (385s)
+      [819K/1000K] eval=4769.8 (519s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s6 → final10=4731.6 max=4769.8 (641s)
+
+[20/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=7
+      [204K/1000K] eval=1263.0 (129s)
+      [409K/1000K] eval=4522.7 (265s)
+      [614K/1000K] eval=1464.5 (399s)
+      [819K/1000K] eval=3694.7 (534s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s7 → final10=4263.1 max=4840.8 (655s)
+
+[21/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=8
+      [204K/1000K] eval=702.2 (119s)
+      [409K/1000K] eval=1251.4 (238s)
+      [614K/1000K] eval=1093.3 (359s)
+      [819K/1000K] eval=4328.1 (485s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s8 → final10=3586.4 max=4438.7 (594s)
+
+[22/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=9
+      [204K/1000K] eval=503.5 (124s)
+      [409K/1000K] eval=1801.7 (248s)
+      [614K/1000K] eval=3278.1 (384s)
+      [819K/1000K] eval=3807.0 (517s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s9 → final10=4347.0 max=4474.9 (635s)
+
+[23/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=10
+      [204K/1000K] eval=2579.3 (123s)
+      [409K/1000K] eval=4330.1 (264s)
+      [614K/1000K] eval=4088.1 (393s)
+      [819K/1000K] eval=4972.2 (540s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s10 → final10=4714.9 max=5145.8 (658s)
+
+[24/24] Walker2d-v4 | Optimal_HCGAE_v4 | seed=11
+      [204K/1000K] eval=1231.3 (136s)
+      [409K/1000K] eval=3740.5 (270s)
+      [614K/1000K] eval=4830.8 (410s)
+      [819K/1000K] eval=5234.4 (540s)
+    Done: Walker2d-v4/Optimal_HCGAE_v4/s11 → final10=4990.7 max=5236.7 (649s)
+
+
+Total elapsed: 79673s (22.13h)
+
+===================================================================================================================
+  LARGE-SCALE RESULTS  (n=12 seeds, 1M steps, deterministic eval)
+===================================================================================================================
+Env                          Method                           Mean±SEM       Δ%         p       d             95% CI    n
+-------------------------------------------------------------------------------------------------------------------
+Hopper-v4                    Optimal_PPO                  2848.9±194.8 baseline         —       —                  —   12
+Hopper-v4                    Optimal_HCGAE_v4             2984.6±167.8    +4.8%     0.665   +0.22         [-362,652]   12
+Walker2d-v4                  Optimal_PPO                  4089.0±168.1 baseline         —       —                  —   12
+Walker2d-v4                  Optimal_HCGAE_v4             4275.6±119.9    +4.6%     0.403   +0.37         [-220,579]   12
+HalfCheetah-v4               Optimal_PPO                  2859.1±367.2 baseline         —       —                  —   12
+HalfCheetah-v4               Optimal_HCGAE_v4             2990.0±384.5    +4.6%     0.751   +0.10        [-908,1188]   12
+HalfCheetah-v4               Optimal_HCGAE_v6             2797.8±643.4    -2.1%     0.791   -0.06       [-1447,1304]    2
+Ant-v4                       Optimal_PPO                  2667.9±169.2 baseline         —       —                  —   12
+Ant-v4                       Optimal_HCGAE_v2_NoBdry      2178.3±181.5   -18.4%     0.142   -0.91         [-988,-15]    7
+Ant-v4                       Optimal_HCGAE_v5                  pending
+Swimmer-v4                   Optimal_PPO                       pending
+Swimmer-v4                   Optimal_HCGAE_v4                  pending
+Swimmer-v4                   Optimal_HCGAE_v6                  pending
+===================================================================================================================
+  * p<0.05  ** p<0.01  *** p<0.001  (Mann-Whitney U, two-sided, n=10000 bootstrap)
+
+Saved: results/LargeScaleExperiment/large_scale_summary.json

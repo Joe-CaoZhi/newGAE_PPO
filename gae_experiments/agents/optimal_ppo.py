@@ -393,12 +393,15 @@ class OptimalHCGAE(OptimalPPO):
             advantages[t] = last_gae
 
         # Step 8: Compute critic targets
-        # Use EV-driven MC mixing for critic target
+        # Use EV-driven MC mixing for critic target.
+        # CRITICAL: Critic target must use standard GAE returns computed from the
+        # ORIGINAL (uncorrected) V, not advantages (computed from V_corrected) + values.
+        # Using advantages + values would mix V_corrected-based deltas with V(s_t),
+        # which is mathematically inconsistent.
         # c_mc = clip(1 - EV, 0.1, 1): EV low → more MC; EV high → more GAE returns
-        # Lower bound 0.1 ensures we always retain at least 10% MC (matches paper §2.2 and hindsight_ppo.py)
         c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
-        gae_returns = advantages + values  # standard GAE returns
-        critic_returns = c_mc * returns_mc + (1 - c_mc) * gae_returns
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
 
         # Store in buffer
         self.buffer.advantages[:T] = advantages
@@ -564,9 +567,13 @@ class OptimalHCGAE_v2(OptimalHCGAE):
             advantages[t] = last_gae
 
         # Step 7: Critic targets (EV-driven, c_mc lower bound = 0.1)
+        # CRITICAL: Use standard GAE returns from ORIGINAL (uncorrected) V,
+        # not advantages (V_corrected-based) + values (original V).
+        # This ensures the two update paths (advantage estimation vs critic training)
+        # remain fully decoupled, as required by the paper §2.4.
         c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
-        gae_returns = advantages + values
-        critic_returns = c_mc * returns_mc + (1 - c_mc) * gae_returns
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
 
         self.buffer.advantages[:T] = advantages
         self.buffer.returns[:T] = critic_returns
@@ -799,9 +806,11 @@ class OptimalHCGAE_v2_AutoSCR(OptimalHCGAE_v2):
             advantages[t] = last_gae
 
         # Step 7: Critic targets (EV-driven, c_mc lower bound = 0.1)
+        # Use standard GAE returns from ORIGINAL (uncorrected) V, to keep
+        # advantage estimation and critic training paths fully decoupled.
         c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
-        gae_returns = advantages + values
-        critic_returns = c_mc * returns_mc + (1 - c_mc) * gae_returns
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
 
         self.buffer.advantages[:T] = advantages
         self.buffer.returns[:T] = critic_returns
@@ -1095,10 +1104,12 @@ class OptimalHCGAE_v3(OptimalHCGAE_v2):
             advantages[t] = last_gae
 
         # Step 7: Critic targets (EV-driven, c_mc lower bound = 0.1)
-        # Use clamped MC returns for critic target too (avoids large negative targets)
+        # Use clamped MC returns for MC component (avoids large negative targets in high-var envs).
+        # Use standard GAE returns from ORIGINAL (uncorrected) V for GAE component,
+        # to keep advantage estimation and critic training paths fully decoupled.
         c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
-        gae_returns = advantages + values
-        critic_returns = c_mc * returns_mc_clamped + (1 - c_mc) * gae_returns
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc_clamped + (1 - c_mc) * std_gae_returns
 
         self.buffer.advantages[:T] = advantages
         self.buffer.returns[:T] = critic_returns
@@ -1108,6 +1119,868 @@ class OptimalHCGAE_v3(OptimalHCGAE_v2):
         ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
         self._ev_prev = self._ev_ema
         self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
+
+    def compute_gae(self, last_value: float):
+        self.compute_hindsight_gae(last_value)
+
+
+class OptimalHCGAE_v4(OptimalHCGAE_v2):
+    """
+    HCGAE v4: SCR-Adaptive Optimal Correction Strength.
+
+    Single targeted fix on top of v2: cap α_max at the MSE-optimal upper bound
+    derived from the online Signal-Correction Ratio (SCR) estimate.
+
+    Root cause analysis
+    ───────────────────
+    In v2, the EV growth-rate gate can suppress α_max down to s_min=0.1.
+    But on large networks (256×256 MLP) where the Critic converges quickly,
+    SCR = |Bias[V]| / Std[G] drops below 1.0 within ~50K steps.
+    At that point even the residual α ≈ 0.05–0.10 adds MC noise that outweighs
+    the bias reduction, causing the observed −30% on HalfCheetah.
+
+    Mathematical Derivation of Optimal α*
+    ──────────────────────────────────────
+    Minimise MSE(α) = (1−α)²·B² + α²·σ_G²  w.r.t. α ∈ [0,1]:
+
+        dMSE/dα = 0  →  α*(SCR) = SCR² / (1 + SCR²)
+
+    where  SCR = |B| / σ_G = |mean(G−V)| / std(G).
+
+    α*(SCR) is monotone increasing in SCR:
+        SCR = 0.5 → α* = 0.20   (moderate)
+        SCR = 1.0 → α* = 0.50   (balanced)
+        SCR = 2.0 → α* = 0.80   (strong)
+
+    v2's effective α_max ≈ 0.40–0.58 grossly exceeds α*(SCR) when SCR < 0.7.
+
+    The Fix (one line of core logic)
+    ─────────────────────────────────
+    After the v2 EV-rate gate has computed α_max_k, apply one extra cap:
+
+        α_max_v4(k) = min(α_max_v2(k),  SCR_ema²/(1+SCR_ema²) + scr_relax)
+
+    where scr_relax=0.05 adds a small slack for estimation noise.
+    Everything else (EV gate, boundary correction, critic mixing) is unchanged.
+
+    Parameters
+    ──────────────────────────────────────────────────────────────────────────
+    scr_ema_alpha : float
+        EMA smoothing rate for the online SCR estimate. Default 0.1.
+    scr_relax : float
+        Additive slack above the theoretical α* bound (estimation noise buffer).
+        Default 0.05.  Set to 0 for the strict theoretical bound.
+    """
+
+    NAME = "Optimal_HCGAE_v4"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Optimal_HCGAE_v4",
+        scr_ema_alpha: float = 0.1,
+        scr_relax: float = 0.05,
+        # All OptimalHCGAE_v2 parameters (EV rate gate + boundary correction)
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.scr_ema_alpha = scr_ema_alpha
+        self.scr_relax = scr_relax
+
+        # Online SCR tracking (EMA); initialise at 1.0 → α* = 0.50 (neutral)
+        self._scr_ema = 1.0
+        self._scr_history = []          # diagnostics
+
+    def _scr_alpha_cap(self, values: np.ndarray, returns_mc: np.ndarray) -> float:
+        """
+        Compute the MSE-optimal α* cap from current rollout data.
+
+        SCR_hat = |mean(G − V)| / (std(G) + ε)
+        α*_cap  = SCR_ema² / (1 + SCR_ema²) + scr_relax
+        """
+        delta = returns_mc - values
+        scr_hat = float(np.abs(np.mean(delta))) / (float(np.std(returns_mc)) + 1e-8)
+        # EMA update
+        self._scr_ema = (1 - self.scr_ema_alpha) * self._scr_ema + self.scr_ema_alpha * scr_hat
+        self._scr_history.append(self._scr_ema)
+        alpha_cap = (self._scr_ema ** 2) / (1.0 + self._scr_ema ** 2) + self.scr_relax
+        return float(np.clip(alpha_cap, 0.0, 1.0))
+
+    def compute_hindsight_gae(self, last_value: float):
+        """HCGAE v4 = HCGAE v2 + one SCR-based α_max cap."""
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # Step 1: MC returns (identical to v2)
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # Step 2: Per-step error (identical to v2)
+        errors = np.abs(values - returns_mc)
+        mu_e = errors.mean()
+        sigma_e = errors.std() + 1e-8
+
+        # Step 3a: EV-gated cosine α_max (identical to v2)
+        self._total_rollouts += 1
+        K = max(1, self._total_timesteps // self.n_steps)
+        k = self._total_rollouts
+        cosine_factor = 0.5 * (1 + np.cos(np.pi * k / K))
+        ev_gate = max(1.0 - self._ev_ema, 0.2)
+        alpha_max_k = (
+            self.hindsight_alpha_min
+            + (self.hindsight_alpha_max - self.hindsight_alpha_min)
+            * cosine_factor * ev_gate
+        )
+
+        # Step 3b: EV growth-rate gate (identical to v2)
+        if self.use_ev_rate_gate:
+            var_y_tmp = np.var(returns_mc) + 1e-8
+            ev_now_tmp = float(1.0 - np.var(returns_mc - values) / var_y_tmp)
+            ev_rate_raw = ev_now_tmp - self._ev_prev
+            self._ev_rate_ema = ((1 - self._ev_rate_ema_alpha) * self._ev_rate_ema
+                                 + self._ev_rate_ema_alpha * max(ev_rate_raw, 0.0))
+            if self._ev_rate_ema > self.ev_rate_threshold:
+                excess = min(self._ev_rate_ema - self.ev_rate_threshold,
+                             self.ev_rate_max - self.ev_rate_threshold)
+                suppression_frac = excess / max(self.ev_rate_max - self.ev_rate_threshold, 1e-8)
+                ev_rate_scale = max(1.0 - suppression_frac * (1.0 - self.ev_gate_min_scale),
+                                    self.ev_gate_min_scale)
+            else:
+                ev_rate_scale = 1.0
+            alpha_max_k *= ev_rate_scale
+
+        # ── v4 ADDITION: one SCR-based α_max cap ──────────────────────────────
+        alpha_max_k = min(alpha_max_k, self._scr_alpha_cap(values, returns_mc))
+        # ──────────────────────────────────────────────────────────────────────
+
+        # Step 4: Per-step alpha (batch-centred sigmoid)
+        z = self.hindsight_beta * (errors - mu_e) / sigma_e
+        sigmoid_z = 1.0 / (1.0 + np.exp(-np.clip(z, -20, 20)))
+        alpha = alpha_max_k * sigmoid_z
+
+        # Step 5: Corrected V^c
+        v_corrected = (1 - alpha) * values + alpha * returns_mc
+
+        # Step 6: Boundary bootstrap correction (from v2)
+        if self.use_boundary_correction:
+            tail_n = min(10, T)
+            approx_err_last = float(errors[-tail_n:].mean())
+            alpha_last = alpha_max_k * (1.0 / (1.0 + np.exp(
+                -self.hindsight_beta * (approx_err_last - mu_e) / sigma_e
+            )))
+            approx_G_last = returns_mc[-1]
+            last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+        else:
+            last_value_corrected = last_value
+
+        # Step 7: Corrected GAE
+        advantages = np.zeros(T, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(T)):
+            if t == T - 1:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = last_value_corrected if next_non_terminal > 0 else 0.0
+            else:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = v_corrected[t + 1] if next_non_terminal > 0 else 0.0
+            delta_td = rewards[t] + self.gamma * next_v_c - v_corrected[t]
+            last_gae = delta_td + self.gamma * self.lam * next_non_terminal * last_gae
+            advantages[t] = last_gae
+
+        # Step 8: Critic targets (EV-driven mixing, c_mc lower bound = 0.1)
+        # Use standard GAE returns from ORIGINAL (uncorrected) V to decouple
+        # advantage estimation from critic training.
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns
+
+        # Update EV EMA
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_prev = self._ev_ema
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
+
+    def compute_gae(self, last_value: float):
+        self.compute_hindsight_gae(last_value)
+
+
+class OptimalHCGAE_v5(OptimalHCGAE_v3):
+    """
+    HCGAE v5: Universal Adaptive Correction (v3 + v4 combined).
+
+    Combines ALL fixes from v3 (G-Clamping, VW-Gate, Boundary Prior) with
+    v4's SCR-adaptive α_max cap, creating a unified agent that handles both
+    episodic (Hopper/Walker2d) and dense/high-variance (HalfCheetah, Ant-v4)
+    environments under a single configuration.
+
+    Architecture
+    ────────────
+    Gate hierarchy (applied in order, α_max_k reduced by each):
+      1. EV level gate  (from v1):  ev_gate = max(1 - EV_ema, 0.2)
+      2. Cosine decay   (from v1):  cosine_factor(k)
+      3. EV rate gate   (from v2):  suppress when ΔEV > τ_rate
+      4. VW (SNR) gate  (from v3):  suppress when SNR << snr_target
+      5. SCR-α* cap     (from v4):  cap at α*(SCR_ema) = SCR²/(1+SCR²) + ε
+
+    Plus:
+      - G Clamping      (from v3):  prevents pessimism injection
+      - Boundary Prior  (from v3):  positive-return-weighted boundary bootstrap
+
+    Design intent
+    ────────────────────────────────────────────────────────────────────────
+    • On Hopper/Walker2d (episodic, high Critic bias, moderate SNR):
+      Gates 1-3 are active; gate 4 gives ~full scale; gate 5 gives α* ≈ 0.5.
+      G-clamping rarely fires (G > 0 most of the time).
+      → Behaviour ≈ v2 (mild reduction from SCR cap on low-SNR episodes)
+
+    • On HalfCheetah (dense, fast-converging Critic):
+      Gate 3 (EV rate) suppresses strongly in phase 1.
+      Gate 5 (SCR cap) further caps α* once bias falls.
+      → Behaviour ≈ v4 (safe correction)
+
+    • On Ant-v4 (dense, extreme variance, SNR ≈ 0.06):
+      Gate 4 (VW/SNR) dominates: strong suppression via vw_scale ≪ 1.
+      Gate 5 (SCR cap): α* small due to low SCR.
+      G-clamping prevents negative-G pessimism injection.
+      Boundary prior guards against large-negative last return.
+      → Behaviour ≈ v3 with extra α* cap (safest config for Ant)
+
+    Parameters
+    ────────────────────────────────────────────────────────────────────────
+    Inherits all from OptimalHCGAE_v3, plus:
+    scr_ema_alpha : float
+        EMA smoothing for SCR cap estimate. Default 0.1.
+    scr_relax : float
+        Additive slack above theoretical α* bound. Default 0.05.
+    use_scr_cap : bool
+        Toggle the SCR-α* cap (for ablation). Default True.
+    """
+
+    NAME = "Optimal_HCGAE_v5"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Optimal_HCGAE_v5",
+        # v4-style SCR α* cap
+        scr_ema_alpha: float = 0.1,
+        scr_relax: float = 0.05,
+        use_scr_cap: bool = True,
+        # All v3 parameters
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.scr_ema_alpha = scr_ema_alpha
+        self.scr_relax = scr_relax
+        self.use_scr_cap = use_scr_cap
+        # Online SCR tracking (initialise at 1.0 → α* = 0.50, neutral)
+        self._scr_v5_ema = 1.0
+
+    def _scr_alpha_cap_v5(self, values: np.ndarray, returns_mc: np.ndarray) -> float:
+        """
+        MSE-optimal α* cap (same formula as v4):
+            SCR_hat = |mean(G − V)| / (std(G) + ε)
+            α*_cap  = SCR_ema² / (1 + SCR_ema²) + scr_relax
+        """
+        delta = returns_mc - values
+        scr_hat = float(np.abs(np.mean(delta))) / (float(np.std(returns_mc)) + 1e-8)
+        self._scr_v5_ema = (1 - self.scr_ema_alpha) * self._scr_v5_ema + self.scr_ema_alpha * scr_hat
+        alpha_cap = (self._scr_v5_ema ** 2) / (1.0 + self._scr_v5_ema ** 2) + self.scr_relax
+        return float(np.clip(alpha_cap, 0.0, 1.0))
+
+    def compute_hindsight_gae(self, last_value: float):
+        """HCGAE v5 = v3 (G-clamp + VW-gate + BdryPrior) + v4 (SCR α* cap)."""
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # Step 1: MC returns
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # Step 2: Per-step error
+        errors = np.abs(values - returns_mc)
+        mu_e = errors.mean()
+        sigma_e = errors.std() + 1e-8
+
+        # ── FIX ②: Online SNR / VW gate (from v3) ──────────────────────────
+        deltas = returns_mc - values
+        delta_mean = float(np.mean(deltas))
+        delta_std = float(np.std(deltas)) + 1e-8
+        snr_now = abs(delta_mean) / delta_std
+        self._snr_ema = ((1 - self.snr_ema_alpha) * self._snr_ema
+                         + self.snr_ema_alpha * snr_now)
+        vw_scale = float(np.clip(self._snr_ema / self.snr_target,
+                                 self.snr_min_scale, 1.0)) if self.use_vw_gate else 1.0
+
+        # ── Online positive-G statistics (needed for FIX ① and FIX ③) ──────
+        pos_mask = returns_mc > 0
+        pos_frac = float(pos_mask.mean())
+        if pos_mask.sum() > 1:
+            g_pos_std = float(np.std(returns_mc[pos_mask]))
+            g_pos_mean = float(np.mean(returns_mc[pos_mask]))
+        else:
+            g_pos_std = float(np.std(np.abs(returns_mc))) + 1e-8
+            g_pos_mean = float(np.mean(returns_mc))
+        ema_a = 0.1
+        self._g_pos_std_ema = (1 - ema_a) * self._g_pos_std_ema + ema_a * g_pos_std
+        self._g_pos_mean_ema = (1 - ema_a) * self._g_pos_mean_ema + ema_a * g_pos_mean
+        self._g_pos_frac_ema = (1 - ema_a) * self._g_pos_frac_ema + ema_a * pos_frac
+
+        # Step 3: EV-gated cosine α_max
+        self._total_rollouts += 1
+        K = max(1, self._total_timesteps // self.n_steps)
+        k = self._total_rollouts
+        cosine_factor = 0.5 * (1 + np.cos(np.pi * k / K))
+        ev_gate = max(1.0 - self._ev_ema, 0.2)
+        alpha_max_k = (
+            self.hindsight_alpha_min
+            + (self.hindsight_alpha_max - self.hindsight_alpha_min)
+            * cosine_factor * ev_gate
+        )
+
+        # ── EV growth-rate gate (from v2) ────────────────────────────────────
+        if self.use_ev_rate_gate:
+            var_y_tmp = np.var(returns_mc) + 1e-8
+            ev_now_tmp = float(1.0 - np.var(returns_mc - values) / var_y_tmp)
+            ev_rate_raw = ev_now_tmp - self._ev_prev
+            self._ev_rate_ema = ((1 - self._ev_rate_ema_alpha) * self._ev_rate_ema
+                                 + self._ev_rate_ema_alpha * max(ev_rate_raw, 0.0))
+            if self._ev_rate_ema > self.ev_rate_threshold:
+                excess = min(self._ev_rate_ema - self.ev_rate_threshold,
+                             self.ev_rate_max - self.ev_rate_threshold)
+                suppression_frac = excess / max(self.ev_rate_max - self.ev_rate_threshold, 1e-8)
+                ev_rate_scale = max(1.0 - suppression_frac * (1.0 - self.ev_gate_min_scale),
+                                    self.ev_gate_min_scale)
+            else:
+                ev_rate_scale = 1.0
+            alpha_max_k *= ev_rate_scale
+
+        # ── Apply VW gate (FIX ② from v3) ───────────────────────────────────
+        alpha_max_k *= vw_scale
+
+        # ── Apply SCR α* cap (FIX from v4) ──────────────────────────────────
+        if self.use_scr_cap:
+            alpha_max_k = min(alpha_max_k, self._scr_alpha_cap_v5(values, returns_mc))
+
+        # Step 4: Per-step alpha (batch-centred sigmoid)
+        z = self.hindsight_beta * (errors - mu_e) / sigma_e
+        sigmoid_z = 1.0 / (1.0 + np.exp(-np.clip(z, -20, 20)))
+        alpha = alpha_max_k * sigmoid_z
+
+        # ── FIX ①: G Clamping (from v3) ──────────────────────────────────────
+        if self.use_g_clamp:
+            margin = self.g_clamp_margin_k * (self._g_pos_std_ema + 1e-8)
+            returns_mc_clamped = np.maximum(returns_mc, values - margin)
+        else:
+            returns_mc_clamped = returns_mc
+
+        # Step 5: Corrected V^c (with clamped G)
+        v_corrected = (1 - alpha) * values + alpha * returns_mc_clamped
+
+        # ── FIX ③: Boundary correction with positive-return prior (from v3) ──
+        if self.use_boundary_correction:
+            tail_n = min(10, T)
+            approx_err_last = float(errors[-tail_n:].mean())
+            alpha_last = alpha_max_k * (1.0 / (1.0 + np.exp(
+                -self.hindsight_beta * (approx_err_last - mu_e) / sigma_e
+            )))
+            raw_G_last = returns_mc[-1]
+            if self.use_boundary_prior and self._g_pos_frac_ema > 0.1:
+                pos_w = self._g_pos_frac_ema
+                approx_G_last = (pos_w * raw_G_last
+                                 + (1 - pos_w) * self._g_pos_mean_ema)
+            else:
+                approx_G_last = raw_G_last
+            last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+        else:
+            last_value_corrected = last_value
+
+        # Step 6: Corrected GAE
+        advantages = np.zeros(T, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(T)):
+            if t == T - 1:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = last_value_corrected if next_non_terminal > 0 else 0.0
+            else:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = v_corrected[t + 1] if next_non_terminal > 0 else 0.0
+            delta = rewards[t] + self.gamma * next_v_c - v_corrected[t]
+            last_gae = delta + self.gamma * self.lam * next_non_terminal * last_gae
+            advantages[t] = last_gae
+
+        # Step 7: Critic targets (EV-driven, clamped MC, c_mc lower bound = 0.1)
+        # Use clamped MC returns for MC component; standard GAE returns (original V)
+        # for GAE component to keep advantage and critic update paths decoupled.
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc_clamped + (1 - c_mc) * std_gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns
+
+        # Update EV EMA (use original returns_mc for EV)
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_prev = self._ev_ema
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
+
+    def compute_gae(self, last_value: float):
+        self.compute_hindsight_gae(last_value)
+
+
+class OptimalHCGAE_v6(OptimalHCGAE_v4):
+    """
+    HCGAE v6: Variance-Normalized Boundary + Relative EV Gate.
+
+    Targeted fix for "dense-reward, no-catastrophic-failure" environments
+    such as HalfCheetah-v4, Swimmer-v4, etc., where:
+
+      (a) G_0 ≈ 0 but V(s_0) quickly rises to 2000+
+          → The absolute boundary prior δ_boundary = G_0 − V(s_0) is always
+            very negative, flooring α to ~0 and blocking all correction.
+
+      (b) EV grows slowly (EV_0 ≈ 0.05 → final ≈ 0.15) due to high reward
+          variance (CV ≈ 2.8), so the raw EV growth-rate gate rarely fires
+          or fires only after the critic has already committed to a sub-optimal
+          local minimum.
+
+    Root-cause (from ablation data on HC):
+      • v2_NoBdry  vs v2: +15.7pp  →  boundary prior is primary source of harm
+      • v2_NoGate  vs v2: +8.6pp   →  EV rate gate is secondary source of harm
+      • v4 (SCR cap alone): +5.8%  →  SCR cap helps but insufficient alone
+
+    Fixes on top of v4 (= v2 + SCR cap):
+    ─────────────────────────────────────────────────────────────────────────
+    FIX A: Variance-Normalised Boundary Prior
+        v2 boundary check uses raw δ_boundary = G_last − V_last
+        v6 normalises by online critic std σ_V:
+
+            δ_boundary_norm = (G_last − V_last) / (σ_V + ε)
+
+        boundary_ok = δ_boundary_norm > boundary_norm_threshold  (default −3.0)
+
+        Physical meaning: only suppress boundary correction when G deviates
+        more than 3 sigma from V, relative to the critic's own uncertainty.
+        In HC, σ_V is large early (critic uncertain) → threshold is loose →
+        boundary correction is NOT suppressed. As critic converges, σ_V falls
+        and the boundary check becomes more stringent. This is the correct
+        behaviour: trust boundary correction early (when critic is most biased)
+        and become cautious later.
+
+    FIX B: Relative EV Saturation Gate (Critic-Headroom-Normalised)
+        Core HCGAE principle: when Critic is POOR (EV low) → apply MORE MC
+        correction to reduce bias; when Critic is GOOD (EV high) → apply LESS
+        correction because bias is already small and MC noise dominates.
+
+        v2's EV-level gate already embeds this: ev_gate = max(1−EV_ema, 0.2).
+        Fix B adds an additional SATURATION gate that suppresses correction
+        once the Critic has captured a large fraction β of its EV headroom,
+        i.e. when EV has improved substantially from its initial level.
+
+            ev_threshold = EV_initial + β * (1 − EV_initial)
+
+        If EV_current > ev_threshold → Critic has made large gains, bias is
+        falling → begin to ramp down correction strength additively.
+        If EV_current ≤ ev_threshold → Critic still improving or stuck →
+        do NOT suppress (the existing ev_gate = max(1−EV, 0.2) already
+        handles the level-based control).
+
+        Environment behaviour (β=0.7 default):
+          - Hopper  (EV_0≈0.3, final≈0.7): threshold = 0.3+0.7*0.7 = 0.79
+            → fires only near convergence when correction is least needed ✓
+          - Walker2d (EV_0≈0.3, final≈0.7): same as Hopper ✓
+          - HC      (EV_0≈0.05, final≈0.15): threshold = 0.05+0.7*0.95 = 0.715
+            → EV never reaches threshold → gate never fires → no change ✓
+          - Ant-v4  (EV_0≈0.05, final≈0.2): threshold ≈ 0.715 → gate silent ✓
+
+        This is universal: gate is silent on low-EV environments (HC, Ant)
+        and only activates near the end of training on high-EV environments
+        (Hopper, Walker) where it provides a gentle final suppression.
+
+    Parameters (v6-specific, on top of v4):
+    ─────────────────────────────────────────────────────────────────────────
+    use_norm_boundary : bool
+        Enable FIX A (variance-normalised boundary). Default True.
+    boundary_norm_threshold : float
+        Normalised deviation below which boundary correction is applied.
+        Default −3.0 (suppress only when G < V − 3σ_V).
+    use_relative_ev_gate : bool
+        Enable FIX B (relative EV saturation gate). Default True.
+    ev_headroom_frac : float
+        Fraction of EV headroom after which saturation suppression begins.
+        Default 0.7. Set higher (→1) to delay gate; lower (→0) to trigger
+        earlier. Environments where EV never reaches the threshold are
+        unaffected regardless of this value.
+    v_std_ema_alpha : float
+        EMA smoothing rate for critic value standard deviation. Default 0.05.
+    """
+
+    NAME = "Optimal_HCGAE_v6"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Optimal_HCGAE_v6",
+        # FIX A: variance-normalised boundary
+        use_norm_boundary: bool = True,
+        boundary_norm_threshold: float = -3.0,
+        v_std_ema_alpha: float = 0.05,
+        # FIX B: relative EV saturation gate (suppress only when EV >> EV_initial)
+        use_relative_ev_gate: bool = True,
+        ev_headroom_frac: float = 0.7,
+        # All v4 parameters (v2 + SCR cap)
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.use_norm_boundary = use_norm_boundary
+        self.boundary_norm_threshold = boundary_norm_threshold
+        self.v_std_ema_alpha = v_std_ema_alpha
+        self.use_relative_ev_gate = use_relative_ev_gate
+        self.ev_headroom_frac = ev_headroom_frac
+
+        # Online critic std tracking (for FIX A)
+        self._v_std_ema = 1.0        # initialise at 1 (neutral)
+        self._ev_initial = None      # set on first rollout (for FIX B)
+
+    def compute_hindsight_gae(self, last_value: float):
+        """HCGAE v6 = v4 (v2 + SCR-cap) + Norm-Boundary (FIX A) + Relative-EV-Gate (FIX B)."""
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # Step 1: MC returns (identical to v2/v4)
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # Step 2: Per-step error
+        errors = np.abs(values - returns_mc)
+        mu_e = errors.mean()
+        sigma_e = errors.std() + 1e-8
+
+        # ── FIX A: Track critic std σ_V ────────────────────────────────────
+        v_std_now = float(np.std(values)) + 1e-8
+        self._v_std_ema = ((1 - self.v_std_ema_alpha) * self._v_std_ema
+                           + self.v_std_ema_alpha * v_std_now)
+
+        # ── FIX B: Initialise EV baseline on first rollout ──────────────────
+        var_y_base = np.var(returns_mc) + 1e-8
+        ev_now_base = float(1.0 - np.var(returns_mc - values) / var_y_base)
+        if self._ev_initial is None:
+            self._ev_initial = max(ev_now_base, 0.0)
+
+        # Step 3a: EV-gated cosine α_max (same as v2)
+        self._total_rollouts += 1
+        K = max(1, self._total_timesteps // self.n_steps)
+        k = self._total_rollouts
+        cosine_factor = 0.5 * (1 + np.cos(np.pi * k / K))
+        ev_gate = max(1.0 - self._ev_ema, 0.2)
+        alpha_max_k = (
+            self.hindsight_alpha_min
+            + (self.hindsight_alpha_max - self.hindsight_alpha_min)
+            * cosine_factor * ev_gate
+        )
+
+        # Step 3b: EV growth-rate gate (same as v2)
+        if self.use_ev_rate_gate:
+            ev_rate_raw = ev_now_base - self._ev_prev
+            self._ev_rate_ema = ((1 - self._ev_rate_ema_alpha) * self._ev_rate_ema
+                                 + self._ev_rate_ema_alpha * max(ev_rate_raw, 0.0))
+            if self._ev_rate_ema > self.ev_rate_threshold:
+                excess = min(self._ev_rate_ema - self.ev_rate_threshold,
+                             self.ev_rate_max - self.ev_rate_threshold)
+                suppression_frac = excess / max(self.ev_rate_max - self.ev_rate_threshold, 1e-8)
+                ev_rate_scale = max(1.0 - suppression_frac * (1.0 - self.ev_gate_min_scale),
+                                    self.ev_gate_min_scale)
+            else:
+                ev_rate_scale = 1.0
+            alpha_max_k *= ev_rate_scale
+
+        # ── FIX B: Relative EV saturation gate ─────────────────────────────
+        # HCGAE principle: low EV → Critic is poor → keep correction strong.
+        #                  high EV → Critic has improved greatly → reduce correction.
+        # This gate adds suppression ONLY when EV has risen substantially above
+        # its initial level (i.e. Critic has captured ev_headroom_frac of its
+        # remaining headroom). On low-EV environments (HC, Ant) where EV never
+        # reaches the threshold, this gate is completely silent → no change.
+        if self.use_relative_ev_gate and self._ev_initial is not None:
+            ev_threshold = self._ev_initial + self.ev_headroom_frac * (1.0 - self._ev_initial)
+            # Only suppress once EV exceeds the saturation threshold
+            if ev_now_base > ev_threshold:
+                # Ramp down smoothly: the further past threshold, the more suppression
+                # excess ∈ [0, 1-ev_threshold]; suppression_frac ∈ [0, 1]
+                excess = ev_now_base - ev_threshold
+                max_excess = max(1.0 - ev_threshold, 1e-8)
+                suppression_frac = min(excess / max_excess, 1.0)
+                # Scale: 1.0 at threshold → 0.2 at EV=1.0  (never fully suppress)
+                sat_scale = max(1.0 - suppression_frac * 0.8, 0.2)
+                alpha_max_k *= sat_scale
+
+        # ── v4: SCR-based α* cap ─────────────────────────────────────────────
+        alpha_max_k = min(alpha_max_k, self._scr_alpha_cap(values, returns_mc))
+
+        # Step 4: Per-step alpha (batch-centred sigmoid)
+        z = self.hindsight_beta * (errors - mu_e) / sigma_e
+        sigmoid_z = 1.0 / (1.0 + np.exp(-np.clip(z, -20, 20)))
+        alpha = alpha_max_k * sigmoid_z
+
+        # Step 5: Corrected V^c
+        v_corrected = (1 - alpha) * values + alpha * returns_mc
+
+        # Step 6: Boundary bootstrap correction (FIX A applied here)
+        if self.use_boundary_correction:
+            tail_n = min(10, T)
+            approx_err_last = float(errors[-tail_n:].mean())
+            alpha_last = alpha_max_k * (1.0 / (1.0 + np.exp(
+                -self.hindsight_beta * (approx_err_last - mu_e) / sigma_e
+            )))
+            raw_G_last = float(returns_mc[-1])
+
+            if self.use_norm_boundary:
+                # FIX A: variance-normalised boundary check
+                # Only suppress boundary correction if G deviates > threshold sigma from V
+                delta_norm = (raw_G_last - last_value) / self._v_std_ema
+                if delta_norm < self.boundary_norm_threshold:
+                    # G is unreliably far below V → don't let it drag V down
+                    # Instead use a conservative mid-point estimate
+                    approx_G_last = last_value + self.boundary_norm_threshold * self._v_std_ema
+                else:
+                    approx_G_last = raw_G_last
+            else:
+                approx_G_last = raw_G_last
+
+            last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+        else:
+            last_value_corrected = last_value
+
+        # Step 7: Corrected GAE
+        advantages = np.zeros(T, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(T)):
+            if t == T - 1:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = last_value_corrected if next_non_terminal > 0 else 0.0
+            else:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = v_corrected[t + 1] if next_non_terminal > 0 else 0.0
+            delta_td = rewards[t] + self.gamma * next_v_c - v_corrected[t]
+            last_gae = delta_td + self.gamma * self.lam * next_non_terminal * last_gae
+            advantages[t] = last_gae
+
+        # Step 8: Critic targets (EV-driven mixing)
+        # Use standard GAE returns from ORIGINAL (uncorrected) V to decouple
+        # advantage estimation from critic training.
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns
+
+        # Update EV EMA
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_prev = self._ev_ema
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
+
+    def compute_gae(self, last_value: float):
+        self.compute_hindsight_gae(last_value)
+
+
+class OptimalHCGAE_Bayesian(OptimalPPO):
+    """
+    Unified Bayesian HCGAE (ICML Candidate) — BHVF + DCPPO-S.
+
+    Replaces all heuristic gates (EV-rate, VW, Cosine, Boundary Prior) with a
+    principled Bayesian Value Fusion (BHVF) framework derived from first principles.
+
+    Mathematical Formulation (paper §2):
+    1. Estimate Critic error (sigma_V) and MC noise (sigma_G):
+           sigma_V = mean(|G - V|)   # MAE: Critic error proxy (NOT |mean(G-V)|)
+           sigma_G = std(G)          # MC return volatility
+
+    2. Optimal Bayesian Gain (Kalman Gain), paper Theorem 1 / Corollary 1:
+           SCR = sigma_V / sigma_G
+           alpha* = SCR^2 / (SCR^2 + 1) + scr_relax
+
+    3. Robust Innovation Clipping (paper §2.3):
+           sigma_e = std(G - V)
+           innovation = clip(G - V, -c * sigma_e, +c * sigma_e)
+
+    4. Corrected Value:
+           V^c = V + alpha* * innovation
+
+    No per-sample sigmoid gates — alpha* is a global scalar per rollout.
+    This achieves the exact same goals as v5/v6 but with ~4 lines of math
+    instead of 100 lines of conditional logic, with zero heuristic parameters.
+
+    Hyperparameters (environment-agnostic):
+        scr_ema_alpha : EMA learning rate for SCR (default 0.1 = fast tracking)
+        scr_relax     : numerical floor to prevent alpha* collapsing to 0 (default 0.05)
+        clip_c        : innovation clipping multiplier (default 3.0 = 99.7% Normal)
+    """
+    NAME = "Optimal_HCGAE_Bayesian"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Optimal_HCGAE_Bayesian",
+        scr_ema_alpha: float = 0.1,
+        scr_relax: float = 0.05,
+        clip_c: float = 3.0,
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.scr_ema_alpha = scr_ema_alpha
+        self.scr_relax = scr_relax
+        self.clip_c = clip_c
+
+        self._scr_ema = 1.0
+        self._sigma_e_ema = 1.0
+        self._ev_ema = 0.0
+        self._ev_ema_alpha = 0.05
+
+        # ── Diagnostics cache (written per rollout; read by train() for logging) ──
+        # These allow the outer train loop to call logger.log_update(..., snr=..., alpha_mean=...)
+        # without needing to change the train() interface.
+        self._diag_scr: float = 1.0          # current SCR_ema (= sigma_V / sigma_G)
+        self._diag_sigma_V: float = 0.0      # batch-level sigma_V (MAE)
+        self._diag_sigma_G: float = 1.0      # batch-level sigma_G (std of G)
+        self._diag_sigma_e: float = 1.0      # batch-level sigma_e (std of delta)
+        self._diag_alpha_star: float = 0.0   # current alpha* (Kalman gain)
+        self._diag_c_mc: float = 1.0         # current c_mc for critic target
+        self._diag_ev_now: float = 0.0       # raw EV of current rollout
+        self._diag_clip_ratio: float = 0.0   # fraction of innovations that were clipped
+
+    def compute_hindsight_gae(self, last_value: float):
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # 1. MC Returns
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # 2. Global Bayesian Gain (alpha*)
+        # sigma_V = MAE(G, V) = mean(|G - V|), approximates Critic RMSE.
+        # sigma_G = std(G), captures MC return noise.
+        # SCR = sigma_V / sigma_G; alpha* = SCR^2 / (SCR^2 + 1).
+        # IMPORTANT: use mean(|G-V|) NOT |mean(G-V)|; the latter is the signed
+        # mean bias and can be near zero even when Critic error is large (errors cancel).
+        delta = returns_mc - values
+        sigma_V = float(np.mean(np.abs(delta))) + 1e-8   # MAE: Critic error proxy
+        sigma_G = float(np.std(returns_mc)) + 1e-8       # MC return noise
+        scr_now = sigma_V / sigma_G
+
+        self._scr_ema = (1 - self.scr_ema_alpha) * self._scr_ema + self.scr_ema_alpha * scr_now
+        alpha_star = (self._scr_ema ** 2) / (self._scr_ema ** 2 + 1.0) + self.scr_relax
+        alpha_star = float(np.clip(alpha_star, 0.0, 1.0))
+
+        # 3. Robust Innovation Clipping
+        # sigma_e = std(G - V): spread of innovations in the current batch.
+        # Clip innovation to [-c*sigma_e, c*sigma_e] (c=3 covers 99.7% of Normal).
+        # This replaces all complex boundary-prior rules with a single statistical clip.
+        sigma_e_now = float(np.std(delta)) + 1e-8
+        self._sigma_e_ema = (1 - self.scr_ema_alpha) * self._sigma_e_ema + self.scr_ema_alpha * sigma_e_now
+
+        innovation = np.clip(
+            delta,
+            -self.clip_c * self._sigma_e_ema,
+            self.clip_c * self._sigma_e_ema
+        )
+
+        # 4. Corrected Values: V^c = V + alpha* * clip(G - V, ±c*sigma_e)
+        # alpha_star is a global scalar — no per-sample sigmoid gate.
+        # Per-sample sigmoid gates are heuristic and contradict the principled Bayesian design.
+        v_corrected = values + alpha_star * innovation
+
+        # 5. Boundary Correction (Unified via Innovation Clipping)
+        # Apply the same clip to the last_value bootstrap, replacing ad-hoc boundary rules.
+        last_innovation = returns_mc[-1] - last_value
+        last_innovation_clipped = float(np.clip(
+            last_innovation,
+            -self.clip_c * self._sigma_e_ema,
+            self.clip_c * self._sigma_e_ema
+        ))
+        last_value_corrected = last_value + alpha_star * last_innovation_clipped
+
+        # 7. GAE Computation
+        advantages = np.zeros(T, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(T)):
+            if t == T - 1:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = last_value_corrected if next_non_terminal > 0 else 0.0
+            else:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = v_corrected[t + 1] if next_non_terminal > 0 else 0.0
+            delta_td = rewards[t] + self.gamma * next_v_c - v_corrected[t]
+            last_gae = delta_td + self.gamma * self.lam * next_non_terminal * last_gae
+            advantages[t] = last_gae
+
+        # 8. Critic Targets (EV-driven mixing)
+        # NOTE: Use OLD _ev_ema (from previous rollout) to compute c_mc,
+        # then update _ev_ema AFTER. This avoids using fresh information
+        # from the current rollout to scale its own targets.
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        # Update EV EMA with current rollout's EV
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
+
+        # For MC component: use innovation-clipped target V(s) + clip(G-V, ±c*σ_e)
+        # which equals the BHVF-corrected value; this is also the paper's "clamped MC".
+        # For GAE component: use standard GAE returns from ORIGINAL (uncorrected) V,
+        # keeping advantage estimation and critic training paths fully decoupled.
+        returns_mc_clamped = values + innovation   # = V + clip(G-V, ±c*σ_e)
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc_clamped + (1 - c_mc) * std_gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns
+
+        # ── Write diagnostics cache for train() logging ──
+        # clip_ratio: fraction of timesteps where |delta| > c*sigma_e (i.e., innovation was clipped)
+        clip_bound = self.clip_c * self._sigma_e_ema
+        clip_ratio = float(np.mean(np.abs(delta) > clip_bound))
+
+        self._diag_scr = self._scr_ema
+        self._diag_sigma_V = sigma_V
+        self._diag_sigma_G = sigma_G
+        self._diag_sigma_e = self._sigma_e_ema
+        self._diag_alpha_star = alpha_star
+        self._diag_c_mc = c_mc
+        self._diag_ev_now = ev_now
+        self._diag_clip_ratio = clip_ratio
 
     def compute_gae(self, last_value: float):
         self.compute_hindsight_gae(last_value)
@@ -1395,6 +2268,153 @@ def build_optimal_agent(
         std_cfg['use_adv_norm'] = False
         std_cfg['use_lr_anneal'] = False
         return OptimalPPO(env=env, name=name, **std_cfg)
+
+    elif algo_name == "Optimal_HCGAE_v4":
+        # v4: v2 + SCR-adaptive α_max cap (single targeted fix)
+        # α_max_v4 = min(α_max_v2,  SCR_ema²/(1+SCR_ema²) + 0.05)
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v4(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_v4_NoSCRCap":
+        # Ablation: v4 with SCR cap disabled → identical to v2
+        # (verifies that the SCR cap is the sole driver of any improvement)
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v4(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            scr_ema_alpha=0.1,
+            scr_relax=1.0,  # relax=1.0 makes cap ≥ 1.0, always inactive
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_v5":
+        # v5: Universal agent = v3 (G-Clamping + VW-Gate + Boundary Prior)
+        #                      + v4 (SCR-adaptive α_max cap)
+        # Primary agent for the large-scale 1M-step / 12-seed experiment.
+        # Single config works across episodic (Hopper/Walker2d), dense (HalfCheetah),
+        # and high-variance dense (Ant-v4) environments.
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v5(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            # v3: G-Clamping, VW-Gate, Boundary Prior
+            use_g_clamp=True,
+            g_clamp_margin_k=1.5,
+            use_vw_gate=True,
+            snr_target=0.5,
+            snr_min_scale=0.1,
+            snr_ema_alpha=0.05,
+            use_boundary_prior=True,
+            # v4: SCR α* cap
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            use_scr_cap=True,
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_v6":
+        # v6: v4 (v2 + SCR-cap) + FIX A (variance-normalised boundary)
+        #                        + FIX B (relative EV saturation gate)
+        # Universal fix: works across all environments.
+        #   FIX A: boundary suppression is now scaled by critic std σ_V,
+        #          so early-training HC boundary is no longer locked at 0.
+        #   FIX B: suppresses correction ONLY when EV >> EV_initial (Critic
+        #          already good); gate is silent on low-EV envs (HC, Ant).
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v6(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            # v4: SCR α* cap
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            # v6-specific: normalised boundary + relative EV gate
+            use_norm_boundary=True,
+            boundary_norm_threshold=-3.0,
+            v_std_ema_alpha=0.05,
+            use_relative_ev_gate=True,
+            ev_headroom_frac=0.7,   # gate silent unless EV rises 70% of headroom
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "Optimal_HCGAE_Bayesian":
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_Bayesian(
+            env=env, name=name,
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            clip_c=3.0,
+            **hcgae_kwargs
+        )
+
+    elif algo_name == "BHVF":
+        # ── BHVF: Paper proposed method (§2) ──
+        # Replaces all heuristic gates with principled Bayesian Value Fusion.
+        # Uses same 3 env-agnostic hyperparameters across ALL environments:
+        #   scr_ema_alpha=0.1, scr_relax=0.05, clip_c=3.0
+        # NO DCPPO-S (pure BHVF ablation).
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        # Disable EV-driven advantage scaling (pure BHVF, no DCPPO-S)
+        hcgae_kwargs['ev_scale_advantages'] = False
+        return OptimalHCGAE_Bayesian(
+            env=env, name=name,
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            clip_c=3.0,
+            **{k: v for k, v in hcgae_kwargs.items()
+               if k not in ('ev_scale_advantages',)}
+        )
+
+    elif algo_name == "BHVF_DCPPO":
+        # ── BHVF + DCPPO-S: Full proposed method (§2 + §3) ──
+        # BHVF value fusion + EV-based linear shrinkage on policy gradient.
+        # The EV weight w = clip(EV, 0.1, 1.0) is applied to advantages
+        # before the PPO clip objective (gradient direction preserved).
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_Bayesian(
+            env=env, name=name,
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            clip_c=3.0,
+            **hcgae_kwargs
+        )
 
     else:
         raise ValueError(f"Unknown optimal agent: {algo_name}")

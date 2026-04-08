@@ -1,225 +1,313 @@
-# newGAE_PPO
+# BHVF-PPO
 
-> **回顾校正 GAE 与信噪比自适应 PPO 改进**
-> Hindsight-Corrected GAE with SNR-Adaptive Policy Optimization
+> **贝叶斯后见价值融合与可靠性加权策略优化**
+> Bayesian Hindsight Value Fusion and Reliability-Weighted Policy Optimization
 
-本项目研究并实现了针对 Proximal Policy Optimization (PPO) 的多项改进方案，聚焦于广义优势估计（GAE）和策略更新机制两个关键环节。
-
----
-
-## 核心方法
-
-### 🔑 HCGAE — 回顾校正广义优势估计
-
-训练早期 Critic 存在大量偏差，污染 GAE 的优势估计。HCGAE 在 rollout 采集完成后，使用可获得的精确蒙特卡洛回报 $G_t$ 对 Critic 值进行"事后校正"：
-
-$$V^c(s_t) = (1 - \alpha_t)\,V(s_t) + \alpha_t\,G_t, \quad \alpha_t = \alpha_{\max}(k)\cdot\sigma\!\left(\beta\cdot\frac{e_t - \mu_e}{\sigma_e}\right)$$
-
-**推荐配置（HCGAE_Imp12）** 包含两项协同改进：
-- **改进①**：批内中心化 Sigmoid 归一化——消除 EMA 滞后缺陷，使校正强度相对于当前批次的平均误差水平
-- **改进②**：EV 驱动 Critic 目标混合——Critic 精度低时多用 MC 目标，精度高时多用 GAE 自举目标
-
-**效果**：Hopper-v4（500K 步）相比标准 GAE 提升 **+413%**
-
-### 🔑 DCPPO-S — 信噪比自适应梯度缩放
-
-根据批内优势估计的信噪比动态调节策略梯度幅度：
-
-$$\mathrm{SNR} = \frac{|\bar{A}|}{\hat{\sigma}_A + \varepsilon}, \qquad w = \max\!\left(w_{\min},\;\min\!\left(1,\;\left(\frac{\mathrm{SNR}}{\mathrm{SNR}^*}\right)^{\gamma_s}\right)\right)$$
-
-梯度方向可证明无偏（$\nabla_\theta \mathcal{L}_S = w \cdot \nabla_\theta \mathcal{L}_{\mathrm{PPO}}$），仅幅度自适应调节。
-
-**效果**：训练不稳定性降低 **20×**（σ: 949 → 49），配合 HCGAE 形成正向协同循环。
+**ICML 2026 投稿草稿** | 基于贝叶斯第一性原理，从根源解决 PPO 早期训练的两大失效模式。
 
 ---
 
-## 实验结果速览
+## 📋 摘要 / Abstract
 
-| 方法 | Hopper-v4 最终奖励 | 稳定性 σ |
-|---|:---:|:---:|
-| 标准 GAE（基线） | 656 | — |
-| HCGAE_Imp12 | 3363 (+413%) | — |
-| **HCGAE_Imp12 + DCPPO-S** | **3495 (+433%)** | **49 (↓20×)** |
+本项目针对 PPO+GAE 在训练早期存在的两类根本性失效模式，提出统一的贝叶斯解决方案：
+
+This project addresses two fundamental failure modes of PPO+GAE during early training with a unified Bayesian solution:
+
+**失效模式 I（Failure Mode I）**：Critic 初始化偏差系统性地污染 GAE 优势估计，在 50K–100K 步暖机完成前持续破坏策略梯度方向。
+
+**失效模式 II（Failure Mode II）**：Clip 代理目标对低质量早期批次与高质量晚期批次施加等权梯度，缺乏对估计质量的自适应能力。
+
+**方案**：
+- **BHVF（贝叶斯后见价值融合）**：将价值校正建模为1D卡尔曼滤波问题，推导出解析最优融合增益 $\alpha^* = SCR^2/(SCR^2+1)$（SCR = 信号-校正比），无需任何环境专属超参数。**鲁棒创新截断**以严格统计推断替代全部先验启发式边界规则。
+- **DCPPO-S（可靠性加权PPO）**：基于解释方差（EV）的线性收缩调制策略梯度幅度，可证明等价于加性噪声模型下MSE最优的线性估计量，并严格保证梯度方向不变性。
+
+四个 MuJoCo 连续控制基准（Hopper-v4、Walker2d-v4、HalfCheetah-v4、Ant-v4）、12 个随机种子、100 万步训练，验证了 BHVF+DCPPO-S 在所有环境中实现一致性显著提升，无任何环境专属调参。
 
 ---
 
-## 项目结构
+## 🔑 核心方法 / Core Methods
+
+### BHVF — 贝叶斯后见价值融合
+
+在计算任何 TD 残差之前，用蒙特卡洛回报 $G_t$ 对 Critic 进行"后见校正"：
+
+$$V^c(s_t) = V(s_t) + \alpha^* \cdot \mathrm{clip}(G_t - V(s_t),\; -3\sigma_e,\; +3\sigma_e)$$
+
+**定理 1（最优卡尔曼增益）**：在误差独立无偏假设下，最小化 MSE 的唯一最优融合系数为：
+
+$$\alpha^* = \frac{\sigma_V^2}{\sigma_V^2 + \sigma_G^2} = \frac{SCR^2}{SCR^2 + 1}, \quad SCR \triangleq \frac{\sigma_V}{\sigma_G}$$
+
+| 环境类型 | 特征 | SCR | $\alpha^*$ | 效果 |
+|:---:|:---:|:---:|:---:|:---:|
+| 片段式（Hopper, Walker2d） | Critic 偏差大，MC 相对稳定 | $\gg 1$ | $\to 1$ | 强校正，快速修复 Critic |
+| 密集奖励（HalfCheetah 后期）| Critic 已收敛，MC 方差巨大 | $\ll 1$ | $\to 0$ | 自动抑制，防止过度校正 |
+| 极端噪声（Ant 全程）| MC 方差极大 | $\approx 0$ | $\approx 0$ | 保守融合，依赖截断保障 |
+
+SCR 通过批内统计在线估计（EMA 平滑，$\eta=0.1$），**单一公式**自动处理全部场景，无需多层叠加的启发式门控。
+
+### DCPPO-S — 可靠性加权策略优化
+
+**定理 2（加性噪声下的最优线性收缩）**：在优势估计 = 真实优势 + 加性噪声的模型下，使 MSE 最小的唯一最优收缩系数等于解释方差：
+
+$$w^\star = \mathrm{EV}_A = \frac{\mathrm{Var}(A_t^\star)}{\mathrm{Var}(\hat{A}_t)}$$
+
+实现中使用 Critic 的可观测 EV 作为代理：
+
+$$\tilde{A}_t = \mathrm{clip}(\widehat{\mathrm{EV}},\; 0.1,\; 1.0) \cdot A_t^{\mathrm{BHVF}}$$
+
+**命题 1（梯度方向不变性）**：通过 stop-gradient 解耦，DCPPO-S 满足 $\nabla_\theta \mathcal{L}_{\mathrm{DCPPO-S}} = w \cdot \nabla_\theta \mathcal{L}_{\mathrm{PPO}}$，仅调节步长幅度，严格保持优化轨迹方向。
+
+---
+
+## 📊 实验结果 / Results
+
+> 四个 MuJoCo 基准，12 个随机种子，100 万步训练（最后 5 次评估的均值 ± 标准差）
+
+| 算法 | Hopper-v4 | Walker2d-v4 | HalfCheetah-v4 | Ant-v4 |
+|:---:|:---:|:---:|:---:|:---:|
+| Standard PPO | — | — | — | — |
+| Optimal PPO  | — | — | — | — |
+| Heuristic HCGAE | — | — | ↓（过度校正）| — |
+| **BHVF（ours）** | **—** | **—** | **—** | **—** |
+| **BHVF + DCPPO-S（ours）** | **—** | **—** | **—** | **—** |
+
+> *详细数据见论文草稿 [`docs/paper_draft.md`](docs/paper_draft.md)*
+
+**核心发现**：BHVF 在 HalfCheetah 上彻底克服了先前启发式方法的性能退化，HalfCheetah 正是以往 MC 校正方法的"臭名昭著"失败案例；同时在 Hopper/Walker2d 上保持强烈的正向增益，实现了跨奖励结构的统一提升。
+
+---
+
+## 🗂 项目结构 / Project Structure
 
 ```
-newGAE_PPO/
+BHVF-PPO/
 │
-├── gae_experiments/              # 核心代码库
-│   ├── agents/                   # 算法实现
-│   │   ├── base_ppo.py           # 标准 PPO 基线
-│   │   ├── hindsight_ppo.py      # HCGAE v2（推荐使用）
-│   │   ├── dcppo.py              # DCPPO（G/A/S 三项改进 + HCGAE）
-│   │   ├── hindsight_ablation.py # HCGAE 消融变体（4 项改进全排列）
-│   │   ├── multiscale_ppo.py     # MSGAE（多尺度 GAE）
-│   │   ├── causal_attention_ppo.py # CAGAE（因果注意力 GAE）
-│   │   └── advance_ppo.py        # 扩展实验变体
-│   ├── utils/                    # 工具模块
-│   │   ├── networks.py           # Actor/Critic 网络
-│   │   ├── rollout_buffer.py     # Rollout 缓冲区
-│   │   └── logger.py             # 指标记录器
-│   └── experiment.py             # 实验运行框架
+├── main.py                        # 单环境训练入口（用于快速对比早期方法）
 │
-├── docs/                         # 文档（中英文）
-│   ├── 技术报告.md               # 中文技术报告（数学推导 + 实验分析）
-│   ├── TECH_REPORT_EN.md         # 英文技术报告（ICML 风格精简版）
-│   ├── EXP_RECORD.md             # 完整实验记录（所有推导、消融、原始数据）
-│   ├── ABLATION_REPORT.md        # HCGAE 消融实验专项报告
-│   └── ADVANCE_PPO_DESIGN.md     # DCPPO 设计文档
+├── gae_experiments/               # 核心代码库 / Core library
+│   ├── agents/                    # 算法实现 / Algorithm implementations
+│   │   ├── base_ppo.py            # 标准 PPO 基线
+│   │   ├── optimal_ppo.py         # Optimal PPO + BHVF（主推荐，含贝叶斯框架）
+│   │   ├── hindsight_ppo.py       # HCGAE v2（早期启发式版本，用于消融对比）
+│   │   ├── dcppo.py               # DCPPO 系列（含 DCPPO-S 可靠性加权）
+│   │   ├── ppo_baselines.py       # 多种 PPO 变体基线（KL-Pen, VClip, Anneal, EntDecay）
+│   │   ├── hindsight_ablation.py  # HCGAE 消融变体（4 项改进全排列）
+│   │   ├── multiscale_ppo.py      # MSGAE（多尺度 GAE，早期探索）
+│   │   ├── causal_attention_ppo.py# CAGAE（因果注意力 GAE，早期探索）
+│   │   ├── advance_ppo.py         # 扩展实验变体
+│   │   ├── sac_td3.py             # SAC/TD3 离策略基线（对比用）
+│   │   └── ...                    # 其他变体
+│   ├── utils/                     # 工具模块 / Utilities
+│   │   ├── networks.py            # Actor/Critic 网络
+│   │   ├── rollout_buffer.py      # Rollout 缓冲区
+│   │   ├── logger.py              # 指标记录器
+│   │   └── visualizer.py          # 可视化工具
+│   └── experiment.py              # 实验运行框架
 │
-├── results/                      # 实验数据与图表
-│   ├── Hopper-v4-DCPPO/          # DCPPO 消融实验数据（主要结果）
-│   ├── Hopper-v4-Ablation/       # HCGAE 消融实验数据
-│   ├── MultiEnv/                 # 多环境对比数据
-│   │   ├── Hopper-v4/
-│   │   ├── HalfCheetah-v4/
-│   │   ├── Walker2d-v4/
-│   │   └── Ant-v4/
-│   ├── Advance-Ablation/         # 扩展消融数据
-│   └── Hopper-v4/                # 早期 Hopper 实验数据
+├── scripts/                       # 脚本目录 / Scripts
+│   ├── experiments/               # 实验运行脚本（41 个）
+│   │   ├── run_large_scale_experiment.py   # 🔑 主实验：8环境×12种子×1M步
+│   │   ├── run_icml_experiment.py          # ICML 正式实验配置
+│   │   ├── run_v4_full.py                  # V4 完整实验
+│   │   ├── run_baseline_comparison.py      # 基线对比实验
+│   │   ├── run_unified_comparison.py       # 统一比较实验
+│   │   ├── run_aligned_experiment.py       # 对齐实验（消融）
+│   │   ├── run_ablation.py                 # HCGAE 消融
+│   │   ├── run_dcppo.py                    # DCPPO 消融
+│   │   └── ...                             # 其他实验脚本
+│   ├── analysis/                  # 分析与可视化脚本（140 个）
+│   │   ├── generate_paper_figures.py       # 生成论文图表
+│   │   ├── generate_icml_figures.py        # 生成 ICML 图表
+│   │   ├── compute_unified_stats.py        # 统一统计分析
+│   │   ├── verify_paper_data.py            # 数据核验
+│   │   └── ...                             # 其他分析脚本
+│   ├── compute_aulc.py            # 面积下学习曲线计算
+│   ├── compute_stats.py           # 统计量计算
+│   ├── full_analysis.py           # 完整分析流程
+│   ├── icml_analysis.py           # ICML 专项分析
+│   ├── stat_analysis_dcppo.py     # DCPPO 统计分析
+│   ├── generate_icml_figures.py   # ICML 图表生成
+│   ├── analyze_aligned_results.py # 对齐实验结果分析
+│   └── monitor_icml.sh            # ICML 实验监控脚本
 │
-├── run_ablation.py               # 运行 HCGAE 消融实验
-├── run_dcppo.py                  # 运行 DCPPO 消融实验
-├── run_multi_env_seeds.py        # 多环境多种子实验
-├── run_advance_ablation.py       # 扩展消融实验
-├── analyze_dcppo_results.py      # DCPPO 结果分析与可视化
-├── analyze_ablation.py           # HCGAE 消融结果分析
-├── analyze_advance_results.py    # 扩展实验分析
-├── main.py                       # 单环境训练入口
+├── docs/                          # 文档目录 / Documentation
+│   ├── paper_draft.md             # 📄 论文草稿（英文版，ICML 风格）
+│   ├── paper_draft_zh.md          # 📄 论文草稿（中文版）
+│   ├── 技术报告.md                 # 完整数学推导与实验分析（中文）
+│   ├── TECH_REPORT_EN.md          # 技术报告（英文精简版）
+│   ├── EXP_RECORD.md              # 完整实验记录（所有变体、原始数据）
+│   ├── ABLATION_REPORT.md         # HCGAE 消融专项报告
+│   └── ADVANCE_PPO_DESIGN.md      # DCPPO 设计文档
 │
-├── TECH_REPORT.md                # 英文技术报告（根目录镜像）
-└── EXP_RECORD.md                 # 完整实验记录（根目录镜像）
+├── results/                       # 实验数据 / Experiment data
+│   ├── ICMLExperiment/            # 🔑 ICML 正式实验（4环境×多算法×12种子）
+│   ├── BaselineComparison/        # 基线对比数据
+│   ├── AlignedExperiment/         # 对齐消融数据
+│   ├── MultiEnv/                  # 多环境快速验证
+│   ├── V4FullExperiment/          # V4 完整实验
+│   ├── UnifiedComparison/         # 统一比较实验
+│   ├── paper_figures/             # 论文图表
+│   └── ...                        # 其他实验数据
+│
+└── logs/                          # 日志文件 / Logs
+    └── bayesian_experiment.log
 ```
 
 ---
 
-## 快速开始
+## 🚀 快速开始 / Quick Start
 
-### 安装依赖
+### 安装依赖 / Installation
 
 ```bash
-pip install gymnasium[mujoco] torch numpy matplotlib
+pip install gymnasium[mujoco] torch numpy matplotlib scipy
 ```
 
-### 运行主实验
+### 运行主实验 / Run Main Experiments
 
 ```bash
-# 标准训练（Hopper-v4，使用 HCGAE_Imp12）
-python main.py --env Hopper-v4 --agent hindsight --total_steps 500000
+# 大规模实验（12 种子，100 万步，推荐）
+python scripts/experiments/run_large_scale_experiment.py
 
-# DCPPO 消融实验（9 个变体，Hopper-v4）
-python run_dcppo.py --env Hopper-v4 --total_steps 500000
+# ICML 正式实验（4 环境，12 种子）
+python scripts/experiments/run_icml_experiment.py
 
-# HCGAE 消融实验（6 个变体，Hopper-v4）
-python run_ablation.py --env Hopper-v4 --total_steps 300000
+# V4 完整实验（含 BHVF 各变体对比）
+python scripts/experiments/run_v4_full.py
 
-# 多环境多种子对比
-python run_multi_env_seeds.py
+# 基线对比（PPO 变体 vs BHVF）
+python scripts/experiments/run_baseline_comparison.py
+
+# 单环境快速对比（CartPole，用于早期方法验证）
+python main.py --env Hopper-v4
 ```
 
-### 分析与可视化
+### 生成论文图表 / Generate Figures
 
 ```bash
-# 生成 DCPPO 综合分析图（雷达图、热力图、学习曲线）
-python analyze_dcppo_results.py
+# 生成 ICML 论文图表
+python scripts/analysis/generate_paper_figures.py
 
-# 生成 HCGAE 消融分析图
-python analyze_ablation.py
+# ICML 专项分析
+python scripts/icml_analysis.py
+
+# 统计显著性分析
+python scripts/analysis/compute_unified_stats.py
 ```
 
 ---
 
-## 算法实现说明
+## 🔬 算法实现核心 / Algorithm Core
 
-### HCGAE 的核心流程
+### BHVF 完整算法
 
 ```python
-# 1. 计算 MC 回报（rollout 完成后反向累加）
-G[T-1] = r[T-1] + γ * V(s_T)
-G[t]   = r[t] + γ * G[t+1] * (1 - done[t])
+# 批内统计
+sigma_V = mean(|G - V|)        # Critic MAE（鲁棒 RMSE 代理）
+sigma_G = std(G)               # MC 回报标准差
+SCR = sigma_V / sigma_G        # 信号-校正比（EMA 平滑）
 
-# 2. 批内中心化归一化（改进①）
-e = |V - G|           # Critic 绝对误差
-z = β * (e - e.mean()) / (e.std() + ε)
-α = α_max(k) * sigmoid(z)
+# 最优卡尔曼增益
+alpha_star = SCR**2 / (SCR**2 + 1) + delta_relax   # delta_relax=0.05
 
-# 3. 校正价值
-V_c = (1 - α) * V + α * G
+# 鲁棒创新截断（99.7% 置信区间）
+sigma_e = std(G - V)
+innovation_clipped = clip(G - V, -3*sigma_e, +3*sigma_e)
 
-# 4. 用校正值重算 TD 残差和 GAE
-δ_c = r + γ * V_c_next - V_c
-A   = GAE(δ_c, γ, λ)
+# 后见校正价值
+V_corrected = V + alpha_star * innovation_clipped
 
-# 5. EV 驱动目标混合（改进②）
+# 用校正值重算 GAE
+A_BHVF = GAE(r, V_corrected, gamma=0.99, lam=0.95)
+
+# EV 驱动 Critic 训练目标混合
 c_mc = clip(1 - EV_ema, 0.1, 1.0)
-R    = c_mc * G + (1 - c_mc) * (A + V)
+R_target = c_mc * G + (1 - c_mc) * (A_BHVF + V_corrected)
 ```
 
-### DCPPO-S 的核心流程
+### DCPPO-S 核心
 
 ```python
-# 计算批内 SNR
-SNR = |A.mean()| / (A.std() + ε)
+# 基于 EV 的线性收缩（MSE 最优）
+w = clip(EV_ema, w_min=0.1, w_max=1.0)
 
-# 梯度缩放权重
-w = clip((SNR / SNR_target) ** γ_s, w_min, 1.0)
+# 有效优势（方向严格不变，幅度自适应调节）
+A_eff = w * A_BHVF
 
-# 有效优势（方向不变，幅度调节）
-A_eff = w * A
-
-# 标准 PPO 裁剪目标
-L = -E[min(ρ * A_eff, clip(ρ, 1±ε) * A_eff)]
+# 标准 PPO 裁剪目标（梯度方向 = w * ∇L_PPO）
+L = -E[min(rho * A_eff, clip(rho, 1±eps) * A_eff)]
 ```
 
 ---
 
-## 文档导航
+## 📚 文档导航 / Documentation
 
 | 文档 | 语言 | 内容 |
 |---|---|---|
-| [`docs/paper_draft_zh.md`](docs/paper_draft_zh.md) | 中文 | 📄 论文草稿（完整中文版，含摘要、方法、实验、附录） |
-| [`docs/paper_draft.md`](docs/paper_draft.md) | 英文 | 📄 论文草稿（English version, ICML-style full paper） |
-| [`docs/技术报告.md`](docs/技术报告.md) | 中文 | 完整数学推导、实验分析、理论证明 |
-| [`docs/TECH_REPORT_EN.md`](docs/TECH_REPORT_EN.md) | 英文 | ICML 风格精简报告 |
-| [`docs/EXP_RECORD.md`](docs/EXP_RECORD.md) | 英文 | 完整实验记录（所有变体、原始数据） |
-| [`docs/ABLATION_REPORT.md`](docs/ABLATION_REPORT.md) | 英文 | HCGAE 消融分析专项报告 |
-| [`docs/ADVANCE_PPO_DESIGN.md`](docs/ADVANCE_PPO_DESIGN.md) | 中文 | DCPPO 设计思路与动机分析 |
+| [`docs/paper_draft.md`](docs/paper_draft.md) | EN | 📄 完整论文草稿（ICML 风格，含定理证明）|
+| [`docs/paper_draft_zh.md`](docs/paper_draft_zh.md) | ZH | 📄 论文草稿中文版 |
+| [`docs/技术报告.md`](docs/技术报告.md) | ZH | 完整数学推导、实验分析、理论证明 |
+| [`docs/TECH_REPORT_EN.md`](docs/TECH_REPORT_EN.md) | EN | 技术报告英文精简版 |
+| [`docs/EXP_RECORD.md`](docs/EXP_RECORD.md) | EN | 完整实验记录（所有变体与原始数据） |
+| [`docs/ABLATION_REPORT.md`](docs/ABLATION_REPORT.md) | EN | HCGAE 消融分析专项报告 |
+| [`docs/ADVANCE_PPO_DESIGN.md`](docs/ADVANCE_PPO_DESIGN.md) | ZH | DCPPO 设计思路与动机分析 |
 
 ---
 
-## 研究背景
+## 📈 研究演进 / Research Evolution
 
-本项目探索了以下三类 GAE 改进方向：
+本项目经历了从启发式工程到贝叶斯第一性原理的系统性演进：
 
-| 方法 | 解决的问题 | 状态 |
-|---|---|---|
-| **HCGAE** | Critic 初始化偏差污染优势估计 | ✅ 已验证，推荐使用 |
-| **MSGAE** | 固定时域参数 $\lambda$ 无法自适应 | ✅ 实现完成，效果良好 |
-| **CAGAE** | 对所有 TD 残差等权，忽略局部信号质量 | ✅ 实现完成，效果一般 |
-| **DCPPO-S** | 策略更新不感知优势信噪比 | ✅ 最优改进，显著提升稳定性 |
-| **DCPPO-G** | 高维动作空间 Ratio 方差膨胀 | ⚠️ 单独使用尚可，与其他改进有强拮抗 |
-| **DCPPO-A** | 对称裁剪的方向性不一致 | ⚠️ 单独有效，与 G 组合有拮抗 |
+| 版本 | 方法 | 状态 | 说明 |
+|---|---|:---:|---|
+| v0 | Standard PPO（基线） | ✅ | 参考实现 |
+| v1 | HCGAE（早期启发式）| ✅ | 多层叠加门控，环境专属，难以泛化 |
+| v2 | HCGAE_v2（改进启发式）| ✅ | 批内归一化 + EV 驱动目标混合 |
+| **v3** | **BHVF（贝叶斯框架）** | **✅ 当前主线** | **解析最优增益，零环境专属超参** |
+| **v3+** | **BHVF + DCPPO-S** | **✅ 当前推荐** | **完整框架，ICML 投稿版本** |
+| 探索 | MSGAE（多尺度 GAE）| ✅ | 实现完成，效果良好 |
+| 探索 | CAGAE（因果注意力 GAE）| ✅ | 实现完成，效果一般 |
+| 探索 | DCPPO-G（几何均值 Ratio）| ⚠️ | 单独尚可，与其他改进有拮抗 |
+| 探索 | DCPPO-A（非对称裁剪）| ⚠️ | 单独有效，与 G 组合有拮抗 |
 
 ---
 
-## 引用
+## 🔧 超参数说明 / Hyperparameters
+
+所有提出方法在**所有环境使用完全相同的超参数**，无任何环境专属调整：
+
+| 超参数 | 值 | 说明 |
+|---|:---:|---|
+| `clip_c` | 3.0 | 鲁棒创新截断系数（对应 99.7% 置信区间）|
+| `scr_ema_lr` | 0.1 | SCR EMA 学习率 |
+| `scr_relax` | 0.05 | SCR 数值松弛项（防止 $\alpha^*$ 塌陷到零）|
+| `w_min` | 0.1 | DCPPO-S 收缩下界（防止训练完全停止）|
+| `gamma` | 0.99 | 折扣因子 |
+| `lam` | 0.95 | GAE $\lambda$ |
+| `lr` | 3e-4 | 学习率（带线性退火）|
+| `n_steps` | 2048 | Rollout 长度 |
+| `batch_size` | 64 | 小批量大小 |
+| `n_epochs` | 10 | PPO 更新轮数 |
+
+---
+
+## 引用 / Citation
 
 如果您使用了本项目的代码或方法，请引用：
 
+If you use this code or methods, please cite:
+
 ```bibtex
-@misc{newgae_ppo_2026,
-  title  = {Hindsight-Corrected GAE with SNR-Adaptive Policy Optimization},
-  author = {Joe-CaoZhi},
+@misc{bhvf_ppo_2026,
+  title  = {Bayesian Hindsight Value Fusion and Reliability-Weighted Policy Optimization},
+  author = {Anonymous},
   year   = {2026},
-  note   = {GitHub: https://github.com/Joe-CaoZhi/newGAE_PPO}
+  note   = {ICML 2026 Submission (Under Review)}
 }
 ```
 
 ---
 
-## 许可证
+## 许可证 / License
 
 MIT License

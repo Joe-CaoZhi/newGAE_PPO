@@ -1,0 +1,405 @@
+{
+  "env_summary": {
+    "Ant-v4": {
+      "Optimal_HCGAE": {
+        "mean_ep": -296.9016915958143,
+        "std_ep": 650.4679221088711,
+        "cv": 2.1908528664514106,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 561.8208199545887
+      },
+      "Optimal_HCGAE_SCR": {
+        "mean_ep": -296.9016915958143,
+        "std_ep": 650.4679221088711,
+        "cv": 2.1908528664514106,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 637.5663131341221
+      },
+      "Optimal_HCGAE_v2": {
+        "mean_ep": -342.47937781161943,
+        "std_ep": 719.1843396729201,
+        "cv": 2.099934729639423,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 677.0421386671458
+      },
+      "Optimal_HCGAE_v2_NoBdry": {
+        "mean_ep": -296.9016915958143,
+        "std_ep": 650.4679221088711,
+        "cv": 2.1908528664514106,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 711.4653944583204
+      },
+      "Optimal_HCGAE_v2_NoGate": {
+        "mean_ep": -345.3012869120557,
+        "std_ep": 724.6731340513102,
+        "cv": 2.098669079721355,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 521.9674247966593
+      },
+      "Optimal_HCGAE_v3": {
+        "mean_ep": -299.6074174202212,
+        "std_ep": 635.9797692694003,
+        "cv": 2.1227103611929783,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 710.5154612990635
+      },
+      "Optimal_PPO": {
+        "mean_ep": -273.1940394087569,
+        "std_ep": 575.3322886586172,
+        "cv": 2.105947442640713,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 793.0729221790573
+      },
+      "Standard_PPO": {
+        "mean_ep": -260.9092137887134,
+        "std_ep": 552.2915028308252,
+        "cv": 2.116795703722858,
+        "neg_rate": 1.0,
+        "n_seeds": 5,
+        "final_mean": 746.7844790284562
+      }
+    },
+    "HalfCheetah-v4": {
+      "HCGAE_Imp12": {
+        "mean_ep": -228.79710651925572,
+        "std_ep": 255.15801909897286,
+        "cv": 1.1152152357588772,
+        "neg_rate": 0.785,
+        "n_seeds": 10,
+        "final_mean": 757.3438442051215
+      },
+      "HCGAE_Imp12_SCR": {
+        "mean_ep": -244.49880114401944,
+        "std_ep": 230.62082048860216,
+        "cv": 0.9432390645683576,
+        "neg_rate": 0.85,
+        "n_seeds": 10,
+        "final_mean": 709.2831413758003
+      },
+      "Optimal_HCGAE": {
+        "mean_ep": -46.13973575482023,
+        "std_ep": 439.58140323360647,
+        "cv": 9.527176433653752,
+        "neg_rate": 0.57,
+        "n_seeds": 5,
+        "final_mean": 1249.5467616291312
+      },
+      "Optimal_HCGAE_SCR": {
+        "mean_ep": -40.046706508787416,
+        "std_ep": 445.1241041675695,
+        "cv": 11.115123885624527,
+        "neg_rate": 0.564,
+        "n_seeds": 5,
+        "final_mean": 1253.8602336837434
+      },
+      "Optimal_HCGAE_v2": {
+        "mean_ep": 71.62600912083285,
+        "std_ep": 495.3174865171596,
+        "cv": 6.915329955245829,
+        "neg_rate": 0.4835,
+        "n_seeds": 10,
+        "final_mean": 1511.3875904180757
+      },
+      "Optimal_HCGAE_v2_NoBdry": {
+        "mean_ep": 58.04374431487336,
+        "std_ep": 489.34634662188984,
+        "cv": 8.430647476547982,
+        "neg_rate": 0.501,
+        "n_seeds": 10,
+        "final_mean": 1699.9755125296713
+      },
+      "Optimal_HCGAE_v2_NoGate": {
+        "mean_ep": -1.6631187342530356,
+        "std_ep": 462.00616362784746,
+        "cv": 277.79505535869026,
+        "neg_rate": 0.5405,
+        "n_seeds": 10,
+        "final_mean": 1573.246377301108
+      },
+      "Optimal_PPO": {
+        "mean_ep": 187.02503822671292,
+        "std_ep": 524.1769195911256,
+        "cv": 2.8027098645887616,
+        "neg_rate": 0.4285,
+        "n_seeds": 10,
+        "final_mean": 1802.8558581571328
+      },
+      "Standard_PPO": {
+        "mean_ep": -23.331617068926043,
+        "std_ep": 412.4583109736933,
+        "cv": 17.678085045645656,
+        "neg_rate": 0.56825,
+        "n_seeds": 20,
+        "final_mean": 1278.8025490851428
+      }
+    },
+    "Hopper-v4": {
+      "HCGAE_Imp12": {
+        "mean_ep": 21.521719912302625,
+        "std_ep": 25.600779307987274,
+        "cv": 1.1895322214214665,
+        "neg_rate": 0.0,
+        "n_seeds": 10,
+        "final_mean": 2663.2814231956654
+      },
+      "HCGAE_Imp12_SCR": {
+        "mean_ep": 22.279425427966878,
+        "std_ep": 27.023843667290514,
+        "cv": 1.2129506545190598,
+        "neg_rate": 0.0,
+        "n_seeds": 10,
+        "final_mean": 2834.220759382669
+      },
+      "Optimal_HCGAE": {
+        "mean_ep": 18.900398390524238,
+        "std_ep": 20.83256417375069,
+        "cv": 1.1022288383705636,
+        "neg_rate": 0.0,
+        "n_seeds": 5,
+        "final_mean": 1752.0744888181664
+      },
+      "Optimal_HCGAE_SCR": {
+        "mean_ep": 19.179621055416046,
+        "std_ep": 22.80564602865154,
+        "cv": 1.1890561315506802,
+        "neg_rate": 0.0,
+        "n_seeds": 5,
+        "final_mean": 1366.1403179374497
+      },
+      "Optimal_HCGAE_v2": {
+        "mean_ep": 20.501881502432298,
+        "std_ep": 23.995494296752717,
+        "cv": 1.170404495909407,
+        "neg_rate": 0.0,
+        "n_seeds": 10,
+        "final_mean": 2463.156685590516
+      },
+      "Optimal_HCGAE_v2_NoBdry": {
+        "mean_ep": 20.63386269329719,
+        "std_ep": 24.005128154548448,
+        "cv": 1.1633850869189193,
+        "neg_rate": 0.0,
+        "n_seeds": 10,
+        "final_mean": 2149.1394312436705
+      },
+      "Optimal_HCGAE_v2_NoGate": {
+        "mean_ep": 20.501881502432298,
+        "std_ep": 23.995494296752717,
+        "cv": 1.170404495909407,
+        "neg_rate": 0.0,
+        "n_seeds": 10,
+        "final_mean": 2409.844937626718
+      },
+      "Optimal_PPO": {
+        "mean_ep": 22.932196926893813,
+        "std_ep": 26.486481942086353,
+        "cv": 1.154991037926869,
+        "neg_rate": 0.0,
+        "n_seeds": 10,
+        "final_mean": 2237.647960128524
+      },
+      "Standard_PPO": {
+        "mean_ep": 24.756313766197465,
+        "std_ep": 30.347412781372174,
+        "cv": 1.2258453764853474,
+        "neg_rate": 0.0,
+        "n_seeds": 20,
+        "final_mean": 2420.8303482775564
+      }
+    },
+    "Walker2d-v4": {
+      "HCGAE_Imp12": {
+        "mean_ep": 1.2624268765511837,
+        "std_ep": 6.300308215470509,
+        "cv": 4.990632156672679,
+        "neg_rate": 0.4715,
+        "n_seeds": 10,
+        "final_mean": 1062.608929013627
+      },
+      "HCGAE_Imp12_SCR": {
+        "mean_ep": 1.2499736861071198,
+        "std_ep": 6.396302769833031,
+        "cv": 5.117149896636612,
+        "neg_rate": 0.4715,
+        "n_seeds": 10,
+        "final_mean": 1515.7929497373239
+      },
+      "Optimal_HCGAE": {
+        "mean_ep": 1.3000901399078104,
+        "std_ep": 6.47878598690764,
+        "cv": 4.983335953562183,
+        "neg_rate": 0.474,
+        "n_seeds": 5,
+        "final_mean": 1872.2667893694768
+      },
+      "Optimal_HCGAE_SCR": {
+        "mean_ep": 1.2973540120565525,
+        "std_ep": 6.548930315225902,
+        "cv": 5.0479130629622615,
+        "neg_rate": 0.473,
+        "n_seeds": 5,
+        "final_mean": 1895.5179451949066
+      },
+      "Optimal_HCGAE_v2": {
+        "mean_ep": 1.4079531976994508,
+        "std_ep": 6.658956885687582,
+        "cv": 4.7295299653943035,
+        "neg_rate": 0.467,
+        "n_seeds": 10,
+        "final_mean": 2633.8159423428183
+      },
+      "Optimal_HCGAE_v2_NoBdry": {
+        "mean_ep": 1.3410555216347047,
+        "std_ep": 6.460102584071202,
+        "cv": 4.817177537902953,
+        "neg_rate": 0.4715,
+        "n_seeds": 10,
+        "final_mean": 2104.5147056493024
+      },
+      "Optimal_HCGAE_v2_NoGate": {
+        "mean_ep": 1.4079531976994508,
+        "std_ep": 6.658956885687582,
+        "cv": 4.7295299653943035,
+        "neg_rate": 0.467,
+        "n_seeds": 10,
+        "final_mean": 1737.868283187813
+      },
+      "Optimal_PPO": {
+        "mean_ep": 1.5135202331268667,
+        "std_ep": 6.654252840771452,
+        "cv": 4.396540364087934,
+        "neg_rate": 0.456,
+        "n_seeds": 10,
+        "final_mean": 2317.4771651696233
+      },
+      "Standard_PPO": {
+        "mean_ep": 1.417850394502167,
+        "std_ep": 6.450318378628142,
+        "cv": 4.549364557887167,
+        "neg_rate": 0.4595,
+        "n_seeds": 20,
+        "final_mean": 1561.5440956798639
+      }
+    }
+  },
+  "env_theory": {
+    "Hopper-v4": {
+      "reward_type": "episodic_sparse",
+      "obs_dim": 11,
+      "act_dim": 3,
+      "episode_length": "variable (50-1000)",
+      "reward_scale": "~1.0/step when alive",
+      "cv_expected": "~0.57 (moderate)",
+      "ev_speed": "slow (~46K steps to EV>0.9)",
+      "scr_regime": "HIGH (bias >> MC variance early)",
+      "hcgae_prediction": "BENEFIT (+10% to +25%)",
+      "reason": "Sparse episodic reward \u2192 high Critic init bias; moderate MC variance \u2192 SCR>1"
+    },
+    "Walker2d-v4": {
+      "reward_type": "episodic_hv",
+      "obs_dim": 17,
+      "act_dim": 6,
+      "episode_length": "variable (high variance)",
+      "reward_scale": "~1.0/step when balanced",
+      "cv_expected": "~0.72 (high)",
+      "ev_speed": "moderate",
+      "scr_regime": "MEDIUM (marginal SCR)",
+      "hcgae_prediction": "BENEFIT (+20-30% with v2/v5)",
+      "reason": "High episode variance \u2192 MC carries real signal about Critic error"
+    },
+    "HalfCheetah-v4": {
+      "reward_type": "dense_smooth",
+      "obs_dim": 17,
+      "act_dim": 6,
+      "episode_length": "fixed 1000",
+      "reward_scale": "~0.3*velocity, dense",
+      "cv_expected": "~0.19 (low \u2014 dense smooth)",
+      "ev_speed": "FAST (~20K steps to EV>0.9 with obs_norm)",
+      "scr_regime": "LOW (Critic converges fast, MC variance high)",
+      "hcgae_prediction": "NEUTRAL to slight BENEFIT (v5 EV-rate gate critical)",
+      "reason": "Dense reward \u2192 low Critic bias after warmup; EV-rate gate prevents harm"
+    },
+    "Ant-v4": {
+      "reward_type": "dense_extreme_hv",
+      "obs_dim": 27,
+      "act_dim": 8,
+      "episode_length": "variable (falling episodes common)",
+      "reward_scale": "~0.5-3.0 when healthy, negative when fallen",
+      "cv_expected": "~16.47 (EXTREME)",
+      "ev_speed": "slow (high obs dim, unstable episodes)",
+      "scr_regime": "VERY LOW (SNR\u22480.06)",
+      "hcgae_prediction": "HARM without v5; NEUTRAL with v5",
+      "reason": "CV=16.47 means MC returns wildly variable; SCR\u22480.064 << optimal \u03b1 threshold"
+    },
+    "Swimmer-v4": {
+      "reward_type": "dense_lowdim",
+      "obs_dim": 8,
+      "act_dim": 2,
+      "episode_length": "fixed 1000",
+      "reward_scale": "~0.1*forward_velocity (small but dense)",
+      "cv_expected": "~0.1-0.2 (very low \u2014 stable locomotion)",
+      "ev_speed": "VERY FAST (low obs dim, dense reward)",
+      "scr_regime": "LOW (Critic converges very fast)",
+      "hcgae_prediction": "NEUTRAL (EV-rate gate fires immediately)",
+      "reason": "Swimmer has very stable dense reward; EV reaches >0.9 within 10-20K steps"
+    },
+    "Humanoid-v4": {
+      "reward_type": "dense_highdim_hv",
+      "obs_dim": 376,
+      "act_dim": 17,
+      "episode_length": "variable (falling common, esp early)",
+      "reward_scale": "~5-8 when healthy, 0 when fallen (alive_bonus)",
+      "cv_expected": "~5-10 (very high)",
+      "ev_speed": "VERY SLOW (high obs dim, unstable)",
+      "scr_regime": "VERY LOW early (similar to Ant)",
+      "hcgae_prediction": "HARM without v5; BENEFIT with v5 (slow Critic + high bias)",
+      "reason": "High obs dim slows Critic; high episode variance \u2192 needs VW+SCR gates"
+    },
+    "InvertedDoublePendulum-v4": {
+      "reward_type": "sparse_control",
+      "obs_dim": 11,
+      "act_dim": 1,
+      "episode_length": "variable (falls quickly early)",
+      "reward_scale": "~10/step when balanced (high magnitude)",
+      "cv_expected": "~0.3-0.8 (moderate, episodic falls)",
+      "ev_speed": "moderate (simpler dynamics than Ant)",
+      "scr_regime": "HIGH to MEDIUM",
+      "hcgae_prediction": "STRONG BENEFIT",
+      "reason": "Like Hopper: episodic sparse reward with falls \u2192 high Critic bias early"
+    },
+    "HumanoidStandup-v4": {
+      "reward_type": "standup_extreme_hv",
+      "obs_dim": 376,
+      "act_dim": 17,
+      "episode_length": "fixed 1000 (no termination)",
+      "reward_scale": "~0-50 (standup reward, highly variable)",
+      "cv_expected": "~3-8 (very high, progressive standup)",
+      "ev_speed": "VERY SLOW (high dim + progressive reward)",
+      "scr_regime": "MEDIUM to LOW (progressive, hard to estimate)",
+      "hcgae_prediction": "UNCERTAIN \u2014 needs v5",
+      "reason": "No termination but progressive reward is highly variable; MC noise significant"
+    }
+  },
+  "recommendations": {
+    "tier1_sota": [
+      "Hopper-v4",
+      "Walker2d-v4",
+      "InvertedDoublePendulum-v4"
+    ],
+    "tier2_neutral": [
+      "HalfCheetah-v4",
+      "Swimmer-v4"
+    ],
+    "tier3_challenging": [
+      "Ant-v4",
+      "Humanoid-v4"
+    ]
+  }
+}

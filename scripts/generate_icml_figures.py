@@ -13,9 +13,10 @@ ICMLExperiment data (stochastic eval) for ablation.
 """
 
 import json
-import numpy as np
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import numpy as np
 
 try:
     import matplotlib

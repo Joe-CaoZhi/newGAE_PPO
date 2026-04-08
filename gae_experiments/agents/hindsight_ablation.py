@@ -44,10 +44,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+from .optimal_ppo import RunningMeanStd
 from ..utils.logger import MetricLogger
 from ..utils.networks import ActorNetwork, CriticNetwork
 from ..utils.rollout_buffer import RolloutBuffer
-from .optimal_ppo import RunningMeanStd
 
 
 class HindsightAblation:

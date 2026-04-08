@@ -2749,3 +2749,345 @@
 [TD3] Step  798720/1000000 | Eval:  10234.6 | Buffer:  798720 | Elapsed: 5969s
 [TD3] Step  808960/1000000 | Eval:  10440.7 | Buffer:  808960 | Elapsed: 6019s
 [TD3] Step  819200/1000000 | Eval:  10275.6 | Buffer:  819200 | Elapsed: 6068s
+[TD3] Step  829440/1000000 | Eval:  10547.0 | Buffer:  829440 | Elapsed: 6118s
+[TD3] Step  839680/1000000 | Eval:  10066.3 | Buffer:  839680 | Elapsed: 6168s
+[TD3] Step  849920/1000000 | Eval:  10640.1 | Buffer:  849920 | Elapsed: 6217s
+[TD3] Step  860160/1000000 | Eval:  10412.3 | Buffer:  860160 | Elapsed: 6267s
+[TD3] Step  870400/1000000 | Eval:  10847.1 | Buffer:  870400 | Elapsed: 6316s
+[TD3] Step  880640/1000000 | Eval:  10737.9 | Buffer:  880640 | Elapsed: 6365s
+[TD3] Step  890880/1000000 | Eval:  10614.8 | Buffer:  890880 | Elapsed: 6414s
+[TD3] Step  901120/1000000 | Eval:  10889.8 | Buffer:  901120 | Elapsed: 6462s
+[TD3] Step  911360/1000000 | Eval:  10620.3 | Buffer:  911360 | Elapsed: 6512s
+[TD3] Step  921600/1000000 | Eval:  10850.7 | Buffer:  921600 | Elapsed: 6561s
+[TD3] Step  931840/1000000 | Eval:  11033.0 | Buffer:  931840 | Elapsed: 6611s
+[TD3] Step  942080/1000000 | Eval:  10924.3 | Buffer:  942080 | Elapsed: 6661s
+[TD3] Step  952320/1000000 | Eval:  10834.5 | Buffer:  952320 | Elapsed: 6709s
+[TD3] Step  962560/1000000 | Eval:  10802.9 | Buffer:  962560 | Elapsed: 6757s
+[TD3] Step  972800/1000000 | Eval:  10693.5 | Buffer:  972800 | Elapsed: 6805s
+[TD3] Step  983040/1000000 | Eval:  10777.6 | Buffer:  983040 | Elapsed: 6854s
+[TD3] Step  993280/1000000 | Eval:  11101.8 | Buffer:  993280 | Elapsed: 6903s
+  -> Saved: results/OffPolicyComparison/HalfCheetah-v4/TD3/TD3_s123_metrics.json
+  -> TD3 HalfCheetah-v4 s123: 10842.1 (6935s)
+  Saved summary -> results/OffPolicyComparison/offpolicy_comparison_summary.json
+
+  [28/30] HalfCheetah-v4 | TD3 | seed=456
+[TD3] Step   10240/1000000 | Eval:   -427.4 | Buffer:   10240 | Elapsed: 2s
+[TD3] Step   20480/1000000 | Eval:    -82.3 | Buffer:   20480 | Elapsed: 50s
+[TD3] Step   30720/1000000 | Eval:   1216.3 | Buffer:   30720 | Elapsed: 99s
+[TD3] Step   40960/1000000 | Eval:   1705.3 | Buffer:   40960 | Elapsed: 151s
+[TD3] Step   51200/1000000 | Eval:   1632.2 | Buffer:   51200 | Elapsed: 203s
+[TD3] Step   61440/1000000 | Eval:   1918.5 | Buffer:   61440 | Elapsed: 252s
+[TD3] Step   71680/1000000 | Eval:   2377.9 | Buffer:   71680 | Elapsed: 301s
+[TD3] Step   81920/1000000 | Eval:   2708.5 | Buffer:   81920 | Elapsed: 350s
+[TD3] Step   92160/1000000 | Eval:   2867.7 | Buffer:   92160 | Elapsed: 399s
+[TD3] Step  102400/1000000 | Eval:   3104.5 | Buffer:  102400 | Elapsed: 447s
+[TD3] Step  112640/1000000 | Eval:   3246.7 | Buffer:  112640 | Elapsed: 496s
+[TD3] Step  122880/1000000 | Eval:   3441.9 | Buffer:  122880 | Elapsed: 548s
+[TD3] Step  133120/1000000 | Eval:   3585.5 | Buffer:  133120 | Elapsed: 602s
+[TD3] Step  143360/1000000 | Eval:   3654.4 | Buffer:  143360 | Elapsed: 652s
+[TD3] Step  153600/1000000 | Eval:   3845.5 | Buffer:  153600 | Elapsed: 701s
+[TD3] Step  163840/1000000 | Eval:   3956.4 | Buffer:  163840 | Elapsed: 750s
+[TD3] Step  174080/1000000 | Eval:   4132.5 | Buffer:  174080 | Elapsed: 799s
+[TD3] Step  184320/1000000 | Eval:   4295.6 | Buffer:  184320 | Elapsed: 848s
+[TD3] Step  194560/1000000 | Eval:   4305.6 | Buffer:  194560 | Elapsed: 897s
+[TD3] Step  204800/1000000 | Eval:   4676.6 | Buffer:  204800 | Elapsed: 945s
+[TD3] Step  215040/1000000 | Eval:   4768.7 | Buffer:  215040 | Elapsed: 994s
+[TD3] Step  225280/1000000 | Eval:   4755.7 | Buffer:  225280 | Elapsed: 1043s
+[TD3] Step  235520/1000000 | Eval:   5082.3 | Buffer:  235520 | Elapsed: 1091s
+[TD3] Step  245760/1000000 | Eval:   5097.9 | Buffer:  245760 | Elapsed: 1140s
+[TD3] Step  256000/1000000 | Eval:   5161.9 | Buffer:  256000 | Elapsed: 1189s
+[TD3] Step  266240/1000000 | Eval:   4919.4 | Buffer:  266240 | Elapsed: 1238s
+[TD3] Step  276480/1000000 | Eval:   4925.6 | Buffer:  276480 | Elapsed: 1287s
+[TD3] Step  286720/1000000 | Eval:   5425.0 | Buffer:  286720 | Elapsed: 1337s
+[TD3] Step  296960/1000000 | Eval:   5438.2 | Buffer:  296960 | Elapsed: 1388s
+[TD3] Step  307200/1000000 | Eval:   5493.4 | Buffer:  307200 | Elapsed: 1436s
+[TD3] Step  317440/1000000 | Eval:   5616.1 | Buffer:  317440 | Elapsed: 1484s
+[TD3] Step  327680/1000000 | Eval:   5675.1 | Buffer:  327680 | Elapsed: 1532s
+[TD3] Step  337920/1000000 | Eval:   5768.4 | Buffer:  337920 | Elapsed: 1580s
+[TD3] Step  348160/1000000 | Eval:   5530.6 | Buffer:  348160 | Elapsed: 1628s
+[TD3] Step  358400/1000000 | Eval:   5772.4 | Buffer:  358400 | Elapsed: 1676s
+[TD3] Step  368640/1000000 | Eval:   5704.4 | Buffer:  368640 | Elapsed: 2676s
+[TD3] Step  378880/1000000 | Eval:   5840.4 | Buffer:  378880 | Elapsed: 2855s
+[TD3] Step  389120/1000000 | Eval:   5725.3 | Buffer:  389120 | Elapsed: 3975s
+[TD3] Step  399360/1000000 | Eval:   5881.3 | Buffer:  399360 | Elapsed: 5165s
+[TD3] Step  409600/1000000 | Eval:   5872.6 | Buffer:  409600 | Elapsed: 6215s
+[TD3] Step  419840/1000000 | Eval:   6012.7 | Buffer:  419840 | Elapsed: 7461s
+[TD3] Step  430080/1000000 | Eval:   5917.2 | Buffer:  430080 | Elapsed: 8536s
+[TD3] Step  440320/1000000 | Eval:   5972.9 | Buffer:  440320 | Elapsed: 9896s
+[TD3] Step  450560/1000000 | Eval:   6019.8 | Buffer:  450560 | Elapsed: 10387s
+[TD3] Step  460800/1000000 | Eval:   5919.3 | Buffer:  460800 | Elapsed: 11513s
+[TD3] Step  471040/1000000 | Eval:   6017.4 | Buffer:  471040 | Elapsed: 13651s
+[TD3] Step  481280/1000000 | Eval:   6016.0 | Buffer:  481280 | Elapsed: 14837s
+[TD3] Step  491520/1000000 | Eval:   5956.2 | Buffer:  491520 | Elapsed: 15886s
+[TD3] Step  501760/1000000 | Eval:   6031.1 | Buffer:  501760 | Elapsed: 16035s
+[TD3] Step  512000/1000000 | Eval:   6049.3 | Buffer:  512000 | Elapsed: 17450s
+[TD3] Step  522240/1000000 | Eval:   6138.7 | Buffer:  522240 | Elapsed: 19493s
+[TD3] Step  532480/1000000 | Eval:   6207.1 | Buffer:  532480 | Elapsed: 21808s
+[TD3] Step  542720/1000000 | Eval:   6161.9 | Buffer:  542720 | Elapsed: 22881s
+[TD3] Step  552960/1000000 | Eval:   6040.7 | Buffer:  552960 | Elapsed: 23636s
+[TD3] Step  563200/1000000 | Eval:   6236.3 | Buffer:  563200 | Elapsed: 24901s
+[TD3] Step  573440/1000000 | Eval:   6302.7 | Buffer:  573440 | Elapsed: 26031s
+[TD3] Step  583680/1000000 | Eval:   6206.7 | Buffer:  583680 | Elapsed: 27203s
+[TD3] Step  593920/1000000 | Eval:   5966.0 | Buffer:  593920 | Elapsed: 28251s
+[TD3] Step  604160/1000000 | Eval:   6277.6 | Buffer:  604160 | Elapsed: 29302s
+[TD3] Step  614400/1000000 | Eval:   6286.9 | Buffer:  614400 | Elapsed: 30403s
+[TD3] Step  624640/1000000 | Eval:   6274.9 | Buffer:  624640 | Elapsed: 31975s
+[TD3] Step  634880/1000000 | Eval:   6432.6 | Buffer:  634880 | Elapsed: 33983s
+[TD3] Step  645120/1000000 | Eval:   6502.4 | Buffer:  645120 | Elapsed: 35657s
+[TD3] Step  655360/1000000 | Eval:   6319.2 | Buffer:  655360 | Elapsed: 36763s
+[TD3] Step  665600/1000000 | Eval:   6381.4 | Buffer:  665600 | Elapsed: 38001s
+[TD3] Step  675840/1000000 | Eval:   6459.2 | Buffer:  675840 | Elapsed: 39305s
+[TD3] Step  686080/1000000 | Eval:   6378.8 | Buffer:  686080 | Elapsed: 40890s
+[TD3] Step  696320/1000000 | Eval:   6434.4 | Buffer:  696320 | Elapsed: 42868s
+[TD3] Step  706560/1000000 | Eval:   6619.5 | Buffer:  706560 | Elapsed: 44936s
+[TD3] Step  716800/1000000 | Eval:   6612.6 | Buffer:  716800 | Elapsed: 45488s
+[TD3] Step  727040/1000000 | Eval:   6565.7 | Buffer:  727040 | Elapsed: 47627s
+[TD3] Step  737280/1000000 | Eval:   6548.9 | Buffer:  737280 | Elapsed: 49146s
+[TD3] Step  747520/1000000 | Eval:   6702.7 | Buffer:  747520 | Elapsed: 51218s
+[TD3] Step  757760/1000000 | Eval:   6636.6 | Buffer:  757760 | Elapsed: 52346s
+[TD3] Step  768000/1000000 | Eval:   6546.4 | Buffer:  768000 | Elapsed: 54725s
+[TD3] Step  778240/1000000 | Eval:   6519.1 | Buffer:  778240 | Elapsed: 56501s
+[TD3] Step  788480/1000000 | Eval:   6474.0 | Buffer:  788480 | Elapsed: 57628s
+[TD3] Step  798720/1000000 | Eval:   6755.1 | Buffer:  798720 | Elapsed: 58653s
+[TD3] Step  808960/1000000 | Eval:   6663.5 | Buffer:  808960 | Elapsed: 60064s
+[TD3] Step  819200/1000000 | Eval:   6594.2 | Buffer:  819200 | Elapsed: 61224s
+[TD3] Step  829440/1000000 | Eval:   6805.7 | Buffer:  829440 | Elapsed: 62346s
+[TD3] Step  839680/1000000 | Eval:   6592.5 | Buffer:  839680 | Elapsed: 63423s
+[TD3] Step  849920/1000000 | Eval:   6448.6 | Buffer:  849920 | Elapsed: 64695s
+[TD3] Step  860160/1000000 | Eval:   6731.3 | Buffer:  860160 | Elapsed: 65811s
+[TD3] Step  870400/1000000 | Eval:   6797.8 | Buffer:  870400 | Elapsed: 67381s
+[TD3] Step  880640/1000000 | Eval:   6715.7 | Buffer:  880640 | Elapsed: 69383s
+[TD3] Step  890880/1000000 | Eval:   6796.6 | Buffer:  890880 | Elapsed: 70442s
+[TD3] Step  901120/1000000 | Eval:   6799.4 | Buffer:  901120 | Elapsed: 71992s
+[TD3] Step  911360/1000000 | Eval:   6745.3 | Buffer:  911360 | Elapsed: 73069s
+[TD3] Step  921600/1000000 | Eval:   6846.5 | Buffer:  921600 | Elapsed: 74216s
+[TD3] Step  931840/1000000 | Eval:   6824.9 | Buffer:  931840 | Elapsed: 76726s
+[TD3] Step  942080/1000000 | Eval:   6901.5 | Buffer:  942080 | Elapsed: 77758s
+[TD3] Step  952320/1000000 | Eval:   6834.0 | Buffer:  952320 | Elapsed: 78446s
+[TD3] Step  962560/1000000 | Eval:   6839.6 | Buffer:  962560 | Elapsed: 80529s
+[TD3] Step  972800/1000000 | Eval:   6826.6 | Buffer:  972800 | Elapsed: 82090s
+[TD3] Step  983040/1000000 | Eval:   6892.2 | Buffer:  983040 | Elapsed: 83147s
+[TD3] Step  993280/1000000 | Eval:   6893.9 | Buffer:  993280 | Elapsed: 83647s
+  -> Saved: results/OffPolicyComparison/HalfCheetah-v4/TD3/TD3_s456_metrics.json
+  -> TD3 HalfCheetah-v4 s456: 6857.3 (85848s)
+  Saved summary -> results/OffPolicyComparison/offpolicy_comparison_summary.json
+
+  [29/30] HalfCheetah-v4 | TD3 | seed=789
+[TD3] Step   10240/1000000 | Eval:   -718.3 | Buffer:   10240 | Elapsed: 2s
+[TD3] Step   20480/1000000 | Eval:   -253.5 | Buffer:   20480 | Elapsed: 56s
+[TD3] Step   30720/1000000 | Eval:    666.7 | Buffer:   30720 | Elapsed: 108s
+[TD3] Step   40960/1000000 | Eval:    763.3 | Buffer:   40960 | Elapsed: 164s
+[TD3] Step   51200/1000000 | Eval:   1158.5 | Buffer:   51200 | Elapsed: 219s
+[TD3] Step   61440/1000000 | Eval:   1697.4 | Buffer:   61440 | Elapsed: 272s
+[TD3] Step   71680/1000000 | Eval:   2294.3 | Buffer:   71680 | Elapsed: 323s
+[TD3] Step   81920/1000000 | Eval:   2981.1 | Buffer:   81920 | Elapsed: 373s
+[TD3] Step   92160/1000000 | Eval:   2967.2 | Buffer:   92160 | Elapsed: 423s
+[TD3] Step  102400/1000000 | Eval:   3324.7 | Buffer:  102400 | Elapsed: 472s
+[TD3] Step  112640/1000000 | Eval:   3896.1 | Buffer:  112640 | Elapsed: 523s
+[TD3] Step  122880/1000000 | Eval:   4156.0 | Buffer:  122880 | Elapsed: 571s
+[TD3] Step  133120/1000000 | Eval:   3160.1 | Buffer:  133120 | Elapsed: 622s
+[TD3] Step  143360/1000000 | Eval:   4044.1 | Buffer:  143360 | Elapsed: 671s
+[TD3] Step  153600/1000000 | Eval:   4962.4 | Buffer:  153600 | Elapsed: 723s
+[TD3] Step  163840/1000000 | Eval:   5037.0 | Buffer:  163840 | Elapsed: 771s
+[TD3] Step  174080/1000000 | Eval:   5392.3 | Buffer:  174080 | Elapsed: 821s
+[TD3] Step  184320/1000000 | Eval:   5397.9 | Buffer:  184320 | Elapsed: 873s
+[TD3] Step  194560/1000000 | Eval:   5862.6 | Buffer:  194560 | Elapsed: 921s
+[TD3] Step  204800/1000000 | Eval:   5947.8 | Buffer:  204800 | Elapsed: 971s
+[TD3] Step  215040/1000000 | Eval:   6041.7 | Buffer:  215040 | Elapsed: 1019s
+[TD3] Step  225280/1000000 | Eval:   6484.2 | Buffer:  225280 | Elapsed: 1067s
+[TD3] Step  235520/1000000 | Eval:   6605.7 | Buffer:  235520 | Elapsed: 1117s
+[TD3] Step  245760/1000000 | Eval:   6825.4 | Buffer:  245760 | Elapsed: 1166s
+[TD3] Step  256000/1000000 | Eval:   7000.4 | Buffer:  256000 | Elapsed: 1218s
+[TD3] Step  266240/1000000 | Eval:   7038.1 | Buffer:  266240 | Elapsed: 1267s
+[TD3] Step  276480/1000000 | Eval:   6900.1 | Buffer:  276480 | Elapsed: 1316s
+[TD3] Step  286720/1000000 | Eval:   7240.9 | Buffer:  286720 | Elapsed: 1367s
+[TD3] Step  296960/1000000 | Eval:   7375.9 | Buffer:  296960 | Elapsed: 1415s
+[TD3] Step  307200/1000000 | Eval:   7488.6 | Buffer:  307200 | Elapsed: 1459s
+[TD3] Step  317440/1000000 | Eval:   7677.9 | Buffer:  317440 | Elapsed: 1505s
+[TD3] Step  327680/1000000 | Eval:   7532.8 | Buffer:  327680 | Elapsed: 1548s
+[TD3] Step  337920/1000000 | Eval:   7568.6 | Buffer:  337920 | Elapsed: 1594s
+[TD3] Step  348160/1000000 | Eval:   7816.2 | Buffer:  348160 | Elapsed: 1639s
+[TD3] Step  358400/1000000 | Eval:   7871.9 | Buffer:  358400 | Elapsed: 1684s
+[TD3] Step  368640/1000000 | Eval:   8013.2 | Buffer:  368640 | Elapsed: 1732s
+[TD3] Step  378880/1000000 | Eval:   7673.2 | Buffer:  378880 | Elapsed: 1779s
+[TD3] Step  389120/1000000 | Eval:   7668.7 | Buffer:  389120 | Elapsed: 1826s
+[TD3] Step  399360/1000000 | Eval:   8033.4 | Buffer:  399360 | Elapsed: 1872s
+[TD3] Step  409600/1000000 | Eval:   8428.6 | Buffer:  409600 | Elapsed: 1918s
+[TD3] Step  419840/1000000 | Eval:   8281.7 | Buffer:  419840 | Elapsed: 1962s
+[TD3] Step  430080/1000000 | Eval:   8463.2 | Buffer:  430080 | Elapsed: 2007s
+[TD3] Step  440320/1000000 | Eval:   8401.7 | Buffer:  440320 | Elapsed: 2053s
+[TD3] Step  450560/1000000 | Eval:   8424.3 | Buffer:  450560 | Elapsed: 2101s
+[TD3] Step  460800/1000000 | Eval:   8382.3 | Buffer:  460800 | Elapsed: 2149s
+[TD3] Step  471040/1000000 | Eval:   8621.8 | Buffer:  471040 | Elapsed: 2197s
+[TD3] Step  481280/1000000 | Eval:   8218.0 | Buffer:  481280 | Elapsed: 2243s
+[TD3] Step  491520/1000000 | Eval:   8456.3 | Buffer:  491520 | Elapsed: 2287s
+[TD3] Step  501760/1000000 | Eval:   8805.3 | Buffer:  501760 | Elapsed: 2331s
+[TD3] Step  512000/1000000 | Eval:   8397.8 | Buffer:  512000 | Elapsed: 2405s
+[TD3] Step  522240/1000000 | Eval:   8699.6 | Buffer:  522240 | Elapsed: 2453s
+[TD3] Step  532480/1000000 | Eval:   8994.1 | Buffer:  532480 | Elapsed: 2499s
+[TD3] Step  542720/1000000 | Eval:   8847.9 | Buffer:  542720 | Elapsed: 2545s
+[TD3] Step  552960/1000000 | Eval:   8916.1 | Buffer:  552960 | Elapsed: 2592s
+[TD3] Step  563200/1000000 | Eval:   8999.8 | Buffer:  563200 | Elapsed: 2638s
+[TD3] Step  573440/1000000 | Eval:   9117.9 | Buffer:  573440 | Elapsed: 2687s
+[TD3] Step  583680/1000000 | Eval:   8988.1 | Buffer:  583680 | Elapsed: 2736s
+[TD3] Step  593920/1000000 | Eval:   8715.1 | Buffer:  593920 | Elapsed: 2783s
+[TD3] Step  604160/1000000 | Eval:   8896.7 | Buffer:  604160 | Elapsed: 2830s
+[TD3] Step  614400/1000000 | Eval:   9111.0 | Buffer:  614400 | Elapsed: 2878s
+[TD3] Step  624640/1000000 | Eval:   8896.2 | Buffer:  624640 | Elapsed: 2925s
+[TD3] Step  634880/1000000 | Eval:   9022.5 | Buffer:  634880 | Elapsed: 2973s
+[TD3] Step  645120/1000000 | Eval:   9350.1 | Buffer:  645120 | Elapsed: 3021s
+[TD3] Step  655360/1000000 | Eval:   9225.4 | Buffer:  655360 | Elapsed: 3096s
+[TD3] Step  665600/1000000 | Eval:   9294.7 | Buffer:  665600 | Elapsed: 3155s
+[TD3] Step  675840/1000000 | Eval:   9175.6 | Buffer:  675840 | Elapsed: 3202s
+[TD3] Step  686080/1000000 | Eval:   9273.5 | Buffer:  686080 | Elapsed: 3249s
+[TD3] Step  696320/1000000 | Eval:   9422.4 | Buffer:  696320 | Elapsed: 3296s
+[TD3] Step  706560/1000000 | Eval:   9427.5 | Buffer:  706560 | Elapsed: 3343s
+[TD3] Step  716800/1000000 | Eval:   9261.2 | Buffer:  716800 | Elapsed: 3389s
+[TD3] Step  727040/1000000 | Eval:   9459.6 | Buffer:  727040 | Elapsed: 3436s
+[TD3] Step  737280/1000000 | Eval:   9357.2 | Buffer:  737280 | Elapsed: 3486s
+[TD3] Step  747520/1000000 | Eval:   9469.0 | Buffer:  747520 | Elapsed: 3537s
+[TD3] Step  757760/1000000 | Eval:   9448.4 | Buffer:  757760 | Elapsed: 3593s
+[TD3] Step  768000/1000000 | Eval:   9436.7 | Buffer:  768000 | Elapsed: 3646s
+[TD3] Step  778240/1000000 | Eval:   9420.0 | Buffer:  778240 | Elapsed: 3704s
+[TD3] Step  788480/1000000 | Eval:   9510.8 | Buffer:  788480 | Elapsed: 3755s
+[TD3] Step  798720/1000000 | Eval:   9390.0 | Buffer:  798720 | Elapsed: 3808s
+[TD3] Step  808960/1000000 | Eval:   9600.4 | Buffer:  808960 | Elapsed: 3860s
+[TD3] Step  819200/1000000 | Eval:   9518.4 | Buffer:  819200 | Elapsed: 3920s
+[TD3] Step  829440/1000000 | Eval:   9467.2 | Buffer:  829440 | Elapsed: 3987s
+[TD3] Step  839680/1000000 | Eval:   9546.8 | Buffer:  839680 | Elapsed: 4043s
+[TD3] Step  849920/1000000 | Eval:   9553.7 | Buffer:  849920 | Elapsed: 4101s
+[TD3] Step  860160/1000000 | Eval:   9537.5 | Buffer:  860160 | Elapsed: 4157s
+[TD3] Step  870400/1000000 | Eval:   9549.8 | Buffer:  870400 | Elapsed: 4215s
+[TD3] Step  880640/1000000 | Eval:   9676.9 | Buffer:  880640 | Elapsed: 4276s
+[TD3] Step  890880/1000000 | Eval:   9583.4 | Buffer:  890880 | Elapsed: 4333s
+[TD3] Step  901120/1000000 | Eval:   9580.5 | Buffer:  901120 | Elapsed: 4384s
+[TD3] Step  911360/1000000 | Eval:   9696.4 | Buffer:  911360 | Elapsed: 4437s
+[TD3] Step  921600/1000000 | Eval:   9818.6 | Buffer:  921600 | Elapsed: 4491s
+[TD3] Step  931840/1000000 | Eval:   9710.7 | Buffer:  931840 | Elapsed: 4552s
+[TD3] Step  942080/1000000 | Eval:   9828.7 | Buffer:  942080 | Elapsed: 4610s
+[TD3] Step  952320/1000000 | Eval:   9708.0 | Buffer:  952320 | Elapsed: 4669s
+[TD3] Step  962560/1000000 | Eval:   9554.7 | Buffer:  962560 | Elapsed: 4732s
+[TD3] Step  972800/1000000 | Eval:   9835.8 | Buffer:  972800 | Elapsed: 4785s
+[TD3] Step  983040/1000000 | Eval:   9911.7 | Buffer:  983040 | Elapsed: 4838s
+[TD3] Step  993280/1000000 | Eval:   9728.4 | Buffer:  993280 | Elapsed: 4886s
+  -> Saved: results/OffPolicyComparison/HalfCheetah-v4/TD3/TD3_s789_metrics.json
+  -> TD3 HalfCheetah-v4 s789: 9747.7 (4918s)
+  Saved summary -> results/OffPolicyComparison/offpolicy_comparison_summary.json
+
+  [30/30] HalfCheetah-v4 | TD3 | seed=1234
+[TD3] Step   10240/1000000 | Eval:   -492.8 | Buffer:   10240 | Elapsed: 3s
+[TD3] Step   20480/1000000 | Eval:   -157.0 | Buffer:   20480 | Elapsed: 52s
+[TD3] Step   30720/1000000 | Eval:    541.0 | Buffer:   30720 | Elapsed: 101s
+[TD3] Step   40960/1000000 | Eval:   1374.9 | Buffer:   40960 | Elapsed: 154s
+[TD3] Step   51200/1000000 | Eval:   1861.3 | Buffer:   51200 | Elapsed: 214s
+[TD3] Step   61440/1000000 | Eval:   1920.3 | Buffer:   61440 | Elapsed: 275s
+[TD3] Step   71680/1000000 | Eval:   2077.6 | Buffer:   71680 | Elapsed: 359s
+[TD3] Step   81920/1000000 | Eval:   3876.9 | Buffer:   81920 | Elapsed: 448s
+[TD3] Step   92160/1000000 | Eval:   4339.5 | Buffer:   92160 | Elapsed: 532s
+[TD3] Step  102400/1000000 | Eval:   3493.3 | Buffer:  102400 | Elapsed: 608s
+[TD3] Step  112640/1000000 | Eval:   4570.1 | Buffer:  112640 | Elapsed: 683s
+[TD3] Step  122880/1000000 | Eval:   5597.5 | Buffer:  122880 | Elapsed: 761s
+[TD3] Step  133120/1000000 | Eval:   4961.7 | Buffer:  133120 | Elapsed: 845s
+[TD3] Step  143360/1000000 | Eval:   5748.7 | Buffer:  143360 | Elapsed: 932s
+[TD3] Step  153600/1000000 | Eval:   5912.9 | Buffer:  153600 | Elapsed: 1012s
+[TD3] Step  163840/1000000 | Eval:   6064.8 | Buffer:  163840 | Elapsed: 1094s
+[TD3] Step  174080/1000000 | Eval:   6163.3 | Buffer:  174080 | Elapsed: 1175s
+[TD3] Step  184320/1000000 | Eval:   6271.2 | Buffer:  184320 | Elapsed: 1257s
+[TD3] Step  194560/1000000 | Eval:   6404.7 | Buffer:  194560 | Elapsed: 1340s
+[TD3] Step  204800/1000000 | Eval:   6436.2 | Buffer:  204800 | Elapsed: 1418s
+[TD3] Step  215040/1000000 | Eval:   6372.9 | Buffer:  215040 | Elapsed: 2469s
+[TD3] Step  225280/1000000 | Eval:   6184.3 | Buffer:  225280 | Elapsed: 2538s
+[TD3] Step  235520/1000000 | Eval:   6652.6 | Buffer:  235520 | Elapsed: 2590s
+[TD3] Step  245760/1000000 | Eval:   6703.4 | Buffer:  245760 | Elapsed: 3576s
+[TD3] Step  256000/1000000 | Eval:   6759.0 | Buffer:  256000 | Elapsed: 3619s
+[TD3] Step  266240/1000000 | Eval:   6392.6 | Buffer:  266240 | Elapsed: 3663s
+[TD3] Step  276480/1000000 | Eval:   6879.8 | Buffer:  276480 | Elapsed: 4652s
+[TD3] Step  286720/1000000 | Eval:   6952.6 | Buffer:  286720 | Elapsed: 5637s
+[TD3] Step  296960/1000000 | Eval:   6896.6 | Buffer:  296960 | Elapsed: 6636s
+[TD3] Step  307200/1000000 | Eval:   6921.9 | Buffer:  307200 | Elapsed: 7647s
+[TD3] Step  317440/1000000 | Eval:   6788.1 | Buffer:  317440 | Elapsed: 7691s
+[TD3] Step  327680/1000000 | Eval:   6954.4 | Buffer:  327680 | Elapsed: 7734s
+[TD3] Step  337920/1000000 | Eval:   6856.0 | Buffer:  337920 | Elapsed: 7779s
+[TD3] Step  348160/1000000 | Eval:   6941.0 | Buffer:  348160 | Elapsed: 7831s
+[TD3] Step  358400/1000000 | Eval:   6875.8 | Buffer:  358400 | Elapsed: 8157s
+[TD3] Step  368640/1000000 | Eval:   7169.7 | Buffer:  368640 | Elapsed: 8682s
+[TD3] Step  378880/1000000 | Eval:   7286.6 | Buffer:  378880 | Elapsed: 8734s
+[TD3] Step  389120/1000000 | Eval:   7252.2 | Buffer:  389120 | Elapsed: 8787s
+[TD3] Step  399360/1000000 | Eval:   7339.7 | Buffer:  399360 | Elapsed: 8850s
+[TD3] Step  409600/1000000 | Eval:   7323.0 | Buffer:  409600 | Elapsed: 8948s
+[TD3] Step  419840/1000000 | Eval:   7578.0 | Buffer:  419840 | Elapsed: 9048s
+[TD3] Step  430080/1000000 | Eval:   7639.5 | Buffer:  430080 | Elapsed: 9147s
+[TD3] Step  440320/1000000 | Eval:   7550.7 | Buffer:  440320 | Elapsed: 9245s
+[TD3] Step  450560/1000000 | Eval:   7585.8 | Buffer:  450560 | Elapsed: 9353s
+[TD3] Step  460800/1000000 | Eval:   7739.4 | Buffer:  460800 | Elapsed: 9444s
+[TD3] Step  471040/1000000 | Eval:   7838.1 | Buffer:  471040 | Elapsed: 9539s
+[TD3] Step  481280/1000000 | Eval:   7814.7 | Buffer:  481280 | Elapsed: 9669s
+[TD3] Step  491520/1000000 | Eval:   7708.5 | Buffer:  491520 | Elapsed: 9792s
+[TD3] Step  501760/1000000 | Eval:   7872.9 | Buffer:  501760 | Elapsed: 9925s
+[TD3] Step  512000/1000000 | Eval:   7844.7 | Buffer:  512000 | Elapsed: 10049s
+[TD3] Step  522240/1000000 | Eval:   8053.5 | Buffer:  522240 | Elapsed: 10172s
+[TD3] Step  532480/1000000 | Eval:   8028.3 | Buffer:  532480 | Elapsed: 10307s
+[TD3] Step  542720/1000000 | Eval:   8084.8 | Buffer:  542720 | Elapsed: 10425s
+[TD3] Step  552960/1000000 | Eval:   7993.1 | Buffer:  552960 | Elapsed: 10546s
+[TD3] Step  563200/1000000 | Eval:   8200.5 | Buffer:  563200 | Elapsed: 10663s
+[TD3] Step  573440/1000000 | Eval:   8059.3 | Buffer:  573440 | Elapsed: 10766s
+[TD3] Step  583680/1000000 | Eval:   8229.8 | Buffer:  583680 | Elapsed: 10871s
+[TD3] Step  593920/1000000 | Eval:   8154.1 | Buffer:  593920 | Elapsed: 10973s
+[TD3] Step  604160/1000000 | Eval:   8009.3 | Buffer:  604160 | Elapsed: 11077s
+[TD3] Step  614400/1000000 | Eval:   8057.0 | Buffer:  614400 | Elapsed: 11176s
+[TD3] Step  624640/1000000 | Eval:   8176.4 | Buffer:  624640 | Elapsed: 11254s
+[TD3] Step  634880/1000000 | Eval:   8246.1 | Buffer:  634880 | Elapsed: 11348s
+[TD3] Step  645120/1000000 | Eval:   8303.1 | Buffer:  645120 | Elapsed: 11430s
+[TD3] Step  655360/1000000 | Eval:   8349.3 | Buffer:  655360 | Elapsed: 11498s
+[TD3] Step  665600/1000000 | Eval:   8282.6 | Buffer:  665600 | Elapsed: 11554s
+[TD3] Step  675840/1000000 | Eval:   8375.0 | Buffer:  675840 | Elapsed: 11606s
+[TD3] Step  686080/1000000 | Eval:   8262.3 | Buffer:  686080 | Elapsed: 11662s
+[TD3] Step  696320/1000000 | Eval:   8346.6 | Buffer:  696320 | Elapsed: 11719s
+[TD3] Step  706560/1000000 | Eval:   8310.0 | Buffer:  706560 | Elapsed: 11775s
+[TD3] Step  716800/1000000 | Eval:   8405.2 | Buffer:  716800 | Elapsed: 11830s
+[TD3] Step  727040/1000000 | Eval:   8349.4 | Buffer:  727040 | Elapsed: 11919s
+[TD3] Step  737280/1000000 | Eval:   8443.3 | Buffer:  737280 | Elapsed: 12003s
+[TD3] Step  747520/1000000 | Eval:   8352.0 | Buffer:  747520 | Elapsed: 12085s
+[TD3] Step  757760/1000000 | Eval:   8464.5 | Buffer:  757760 | Elapsed: 12171s
+[TD3] Step  768000/1000000 | Eval:   8439.4 | Buffer:  768000 | Elapsed: 12257s
+[TD3] Step  778240/1000000 | Eval:   8412.9 | Buffer:  778240 | Elapsed: 12348s
+[TD3] Step  788480/1000000 | Eval:   8552.9 | Buffer:  788480 | Elapsed: 12436s
+[TD3] Step  798720/1000000 | Eval:   8495.8 | Buffer:  798720 | Elapsed: 12519s
+[TD3] Step  808960/1000000 | Eval:   8503.7 | Buffer:  808960 | Elapsed: 12615s
+[TD3] Step  819200/1000000 | Eval:   8402.3 | Buffer:  819200 | Elapsed: 12717s
+[TD3] Step  829440/1000000 | Eval:   8568.4 | Buffer:  829440 | Elapsed: 12806s
+[TD3] Step  839680/1000000 | Eval:   8583.4 | Buffer:  839680 | Elapsed: 12892s
+[TD3] Step  849920/1000000 | Eval:   8563.0 | Buffer:  849920 | Elapsed: 12972s
+[TD3] Step  860160/1000000 | Eval:   8520.7 | Buffer:  860160 | Elapsed: 13054s
+[TD3] Step  870400/1000000 | Eval:   8501.9 | Buffer:  870400 | Elapsed: 13141s
+[TD3] Step  880640/1000000 | Eval:   8742.6 | Buffer:  880640 | Elapsed: 13219s
+[TD3] Step  890880/1000000 | Eval:   8641.9 | Buffer:  890880 | Elapsed: 13300s
+[TD3] Step  901120/1000000 | Eval:   8591.7 | Buffer:  901120 | Elapsed: 13375s
+[TD3] Step  911360/1000000 | Eval:   8806.7 | Buffer:  911360 | Elapsed: 13449s
+[TD3] Step  921600/1000000 | Eval:   8531.4 | Buffer:  921600 | Elapsed: 13530s
+[TD3] Step  931840/1000000 | Eval:   8737.7 | Buffer:  931840 | Elapsed: 13605s
+[TD3] Step  942080/1000000 | Eval:   8788.7 | Buffer:  942080 | Elapsed: 13682s
+[TD3] Step  952320/1000000 | Eval:   8660.6 | Buffer:  952320 | Elapsed: 13755s
+[TD3] Step  962560/1000000 | Eval:   8536.7 | Buffer:  962560 | Elapsed: 13833s
+[TD3] Step  972800/1000000 | Eval:   8690.3 | Buffer:  972800 | Elapsed: 13906s
+[TD3] Step  983040/1000000 | Eval:   8667.6 | Buffer:  983040 | Elapsed: 13986s
+[TD3] Step  993280/1000000 | Eval:   8900.3 | Buffer:  993280 | Elapsed: 14071s
+  -> Saved: results/OffPolicyComparison/HalfCheetah-v4/TD3/TD3_s1234_metrics.json
+  -> TD3 HalfCheetah-v4 s1234: 8691.1 (14133s)
+  Saved summary -> results/OffPolicyComparison/offpolicy_comparison_summary.json
+
+========================================================================
+  Off-Policy Comparison Final Results (last-5 eval mean ± std)
+  Total wall time: 83.20h
+========================================================================
+Algorithm    |          Hopper-v4 |        Walker2d-v4 |     HalfCheetah-v4
+------------ | ------------------ | ------------------ | ------------------
+SAC          |       3204 ±   295 |       4044 ±   312 |      10679 ±   988
+TD3          |       3070 ±   579 |       3077 ±  1207 |       9040 ±  1314
+
+  Reference: On-Policy baselines (from BaselineComparison, 300K steps, 5 seeds)
+Standard_PPO              |       2735 ±   511 |       1184 ±   589 |        902 ±   200
+HCGAE_Imp12               |       2873 ±   491 |       1290 ±   682 |        828 ±   253
+
+========================================================================
+  Full summary: results/OffPolicyComparison/offpolicy_comparison_summary.json
