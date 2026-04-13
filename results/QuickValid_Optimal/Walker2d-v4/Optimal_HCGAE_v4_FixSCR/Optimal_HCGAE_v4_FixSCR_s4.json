@@ -1,0 +1,90 @@
+{
+  "env": "Walker2d-v4",
+  "agent": "Optimal_HCGAE_v4_FixSCR",
+  "seed": 4,
+  "total_steps": 301056,
+  "elapsed_s": 318.01560401916504,
+  "final_reward": 880.0298194865521,
+  "final_std": 58.42726134303041,
+  "eval_curve": [
+    {
+      "steps": 2048,
+      "mean_reward": 274.93030941817494,
+      "std_reward": 9.31661454580733
+    },
+    {
+      "steps": 22528,
+      "mean_reward": 293.536606146284,
+      "std_reward": 6.414068899958478
+    },
+    {
+      "steps": 43008,
+      "mean_reward": 420.0647963415786,
+      "std_reward": 5.627060500031231
+    },
+    {
+      "steps": 63488,
+      "mean_reward": 459.91013403197,
+      "std_reward": 23.471916586932608
+    },
+    {
+      "steps": 83968,
+      "mean_reward": 425.1589761162307,
+      "std_reward": 3.3531777244937953
+    },
+    {
+      "steps": 104448,
+      "mean_reward": 495.7970189378474,
+      "std_reward": 1.7874621208503265
+    },
+    {
+      "steps": 124928,
+      "mean_reward": 550.3957351396182,
+      "std_reward": 16.34887535644863
+    },
+    {
+      "steps": 145408,
+      "mean_reward": 512.9408398607484,
+      "std_reward": 18.83153600528154
+    },
+    {
+      "steps": 165888,
+      "mean_reward": 596.8366992892174,
+      "std_reward": 40.14479712350064
+    },
+    {
+      "steps": 186368,
+      "mean_reward": 569.5253939566962,
+      "std_reward": 22.624274122047403
+    },
+    {
+      "steps": 206848,
+      "mean_reward": 684.1215885655627,
+      "std_reward": 26.126882139970164
+    },
+    {
+      "steps": 227328,
+      "mean_reward": 672.9467567373196,
+      "std_reward": 174.21982171466647
+    },
+    {
+      "steps": 247808,
+      "mean_reward": 746.7830963621839,
+      "std_reward": 37.283853574585265
+    },
+    {
+      "steps": 268288,
+      "mean_reward": 878.8209584881755,
+      "std_reward": 17.246525950093908
+    },
+    {
+      "steps": 288768,
+      "mean_reward": 840.1084898371179,
+      "std_reward": 33.24165135375183
+    }
+  ],
+  "diagnostics": {
+    "scr_ema_final": 0.23130266691856374,
+    "ev_ema_final": 0.8945155334202485
+  }
+}

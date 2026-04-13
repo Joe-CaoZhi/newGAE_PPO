@@ -1,0 +1,91 @@
+{
+  "env": "Hopper-v4",
+  "agent": "Optimal_HCGAE_Optimal",
+  "seed": 0,
+  "total_steps": 301056,
+  "elapsed_s": 313.1508810520172,
+  "final_reward": 3601.4783199662734,
+  "final_std": 7.57895016591786,
+  "eval_curve": [
+    {
+      "steps": 2048,
+      "mean_reward": 110.45781141364753,
+      "std_reward": 1.6350730663015491
+    },
+    {
+      "steps": 22528,
+      "mean_reward": 310.4189433654847,
+      "std_reward": 1.113043055576532
+    },
+    {
+      "steps": 43008,
+      "mean_reward": 609.5441875547706,
+      "std_reward": 5.34153439623857
+    },
+    {
+      "steps": 63488,
+      "mean_reward": 873.6625512155804,
+      "std_reward": 14.098927134446566
+    },
+    {
+      "steps": 83968,
+      "mean_reward": 923.3937150285486,
+      "std_reward": 63.81981540612665
+    },
+    {
+      "steps": 104448,
+      "mean_reward": 1136.9392141577587,
+      "std_reward": 94.54401743072226
+    },
+    {
+      "steps": 124928,
+      "mean_reward": 1203.517903288058,
+      "std_reward": 94.64494433363038
+    },
+    {
+      "steps": 145408,
+      "mean_reward": 1549.100623665986,
+      "std_reward": 30.697743284884957
+    },
+    {
+      "steps": 165888,
+      "mean_reward": 2741.040000219027,
+      "std_reward": 680.2764838497886
+    },
+    {
+      "steps": 186368,
+      "mean_reward": 3351.6778813171904,
+      "std_reward": 14.878062933896278
+    },
+    {
+      "steps": 206848,
+      "mean_reward": 3402.5711064336197,
+      "std_reward": 9.371727518297043
+    },
+    {
+      "steps": 227328,
+      "mean_reward": 3525.537732946295,
+      "std_reward": 4.27681717838009
+    },
+    {
+      "steps": 247808,
+      "mean_reward": 3595.4289752110526,
+      "std_reward": 4.466245011834822
+    },
+    {
+      "steps": 268288,
+      "mean_reward": 3591.73836921088,
+      "std_reward": 6.962175034153565
+    },
+    {
+      "steps": 288768,
+      "mean_reward": 3586.8272299364035,
+      "std_reward": 12.759037582586844
+    }
+  ],
+  "diagnostics": {
+    "scr_ema_final": 0.18615410824483186,
+    "ev_ema_final": 0.9368034208516142,
+    "g_std_ema_final": 71.55291259570033
+  }
+}

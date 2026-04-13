@@ -1,0 +1,90 @@
+{
+  "env": "HalfCheetah-v4",
+  "agent": "Optimal_HCGAE_v4_FixSCR",
+  "seed": 0,
+  "total_steps": 301056,
+  "elapsed_s": 300.3797628879547,
+  "final_reward": 1329.346509756958,
+  "final_std": 102.96560865909316,
+  "eval_curve": [
+    {
+      "steps": 2048,
+      "mean_reward": -1.2049177339198307,
+      "std_reward": 0.36287552527693534
+    },
+    {
+      "steps": 22528,
+      "mean_reward": -29.503851819613466,
+      "std_reward": 1.1969379792888624
+    },
+    {
+      "steps": 43008,
+      "mean_reward": -22.260723096634372,
+      "std_reward": 0.6774111284665838
+    },
+    {
+      "steps": 63488,
+      "mean_reward": -116.337937804429,
+      "std_reward": 79.73333699419726
+    },
+    {
+      "steps": 83968,
+      "mean_reward": 561.3379679951297,
+      "std_reward": 77.00133126215619
+    },
+    {
+      "steps": 104448,
+      "mean_reward": 809.4215658731671,
+      "std_reward": 27.26090112652848
+    },
+    {
+      "steps": 124928,
+      "mean_reward": 967.1499421561739,
+      "std_reward": 33.015125065212196
+    },
+    {
+      "steps": 145408,
+      "mean_reward": 1038.3232998156443,
+      "std_reward": 34.56595091302361
+    },
+    {
+      "steps": 165888,
+      "mean_reward": 1140.2227550141229,
+      "std_reward": 26.791906179997365
+    },
+    {
+      "steps": 186368,
+      "mean_reward": 1240.6152184454652,
+      "std_reward": 18.211169472556954
+    },
+    {
+      "steps": 206848,
+      "mean_reward": 1241.976627598298,
+      "std_reward": 37.26762475354466
+    },
+    {
+      "steps": 227328,
+      "mean_reward": 1259.0317133928215,
+      "std_reward": 100.0205163548524
+    },
+    {
+      "steps": 247808,
+      "mean_reward": 1167.196039439807,
+      "std_reward": 474.2198844508483
+    },
+    {
+      "steps": 268288,
+      "mean_reward": 885.3056339078257,
+      "std_reward": 727.5412709416178
+    },
+    {
+      "steps": 288768,
+      "mean_reward": 1352.9967809580112,
+      "std_reward": 33.10042424161804
+    }
+  ],
+  "diagnostics": {
+    "scr_ema_final": 0.38082117943919025,
+    "ev_ema_final": 0.13742082336228514
+  }
+}

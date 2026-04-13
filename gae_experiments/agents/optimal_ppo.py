@@ -1314,6 +1314,102 @@ class OptimalHCGAE_v4(OptimalHCGAE_v2):
         self.compute_hindsight_gae(last_value)
 
 
+class OptimalHCGAE_v4_FixSCR(OptimalHCGAE_v4):
+    """
+    HCGAE v4_FixSCR: 修正 SCR 分母的精确版本。
+
+    ═══════════════════════════════════════════════════════════════════════════
+    v4 的 SCR 分母问题
+    ═══════════════════════════════════════════════════════════════════════════
+
+    v4 原始公式（line 1202）：
+        SCR = |mean(G - V)| / std(G)
+        α_cap = SCR² / (1 + SCR²) + scr_relax
+
+    这里 std(G) 包含两部分方差：
+        Var(G) = Var(V*(s))      ← V*(s) 在不同时刻 t 的结构方差（时序差异）
+               + E[Var(G|s)]    ← 固定 s_t 时 G_t 的条件方差（真正的 MC 噪声）
+
+    MSE 最优的 α* 需要的是 **E[Var(G|s)]**（纯 MC 采样噪声），
+    而不是 Var(G)（包含了与 alpha 无关的时序结构方差）。
+
+    ── 全方差定律推导 ──
+        Var(G) = Var(V*) + E[Var(G|s)]
+        当 Critic 好时（V ≈ V*）：Var(V) ≈ Var(V*)
+        ∴ E[Var(G|s)] ≈ max(Var(G) - Var(V), ε)
+
+    ── 修正后的 SCR ──
+        SCR_corrected = |mean(G-V)| / sqrt(max(Var(G) - Var(V), floor))
+        α_cap = SCR_corrected² / (1 + SCR_corrected²) + scr_relax
+
+    ── 影响量化（示例）──
+        若 std(G)=60, std(V)=48, MAE(G-V)=12:
+          v4:       SCR = 12/60 = 0.2  → α_cap = 0.04 + 0.05 = 0.09
+          v4_Fix:   denom = sqrt(60²-48²) = sqrt(1296) = 36
+                    SCR = 12/36 = 0.33 → α_cap = 0.10 + 0.05 = 0.15
+          提升：α_cap 从 0.09 → 0.15（约 1.67x）
+
+    ── Critic 质量对修正效果的影响 ──
+        Critic 差（V ≈ const, Var(V)≈0）：分母 ≈ Var(G)，等同 v4（无变化）
+        Critic 好（V ≈ V*, Var(V)≈Var(V*)）：分母 << Var(G)，α_cap 更大
+
+    ── 在 v4 架构中的角色 ──
+        SCR cap 是 v4 三层门控的最终约束层，
+        修正分母使 cap 在"Critic 质量中等-良好"时不再过度保守，
+        允许 per-step sigmoid 在准确 Critic 误差大的步骤上施加更多修正。
+
+    Parameters
+    ───────────────────────────────────────────────────────────────────────────
+    var_floor_frac : float
+        Var(G)-Var(V) 的最小值 = var_floor_frac × Var(G)。
+        防止数值噪声导致分母为负。默认 0.05（即 5% 的 Var(G)）。
+    所有其他参数继承自 OptimalHCGAE_v4。
+    """
+
+    NAME = "Optimal_HCGAE_v4_FixSCR"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Optimal_HCGAE_v4_FixSCR",
+        var_floor_frac: float = 0.05,
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.var_floor_frac = var_floor_frac
+
+    def _scr_alpha_cap(self, values: np.ndarray, returns_mc: np.ndarray) -> float:
+        """
+        修正版 SCR cap：使用 sqrt(Var(G) - Var(V)) 作为分母。
+
+        原始 v4：  SCR = |mean(G-V)| / std(G)
+        修正版：   SCR = |mean(G-V)| / sqrt(max(Var(G) - Var(V), floor))
+
+        数学依据：全方差定律
+            Var(G) = Var(V*(s)) + E[Var(G|s)]
+            E[Var(G|s)] ≈ Var(G) - Var(V)  （当 V ≈ V* 时）
+            E[Var(G|s)] 才是真正影响 α* 的 MC 噪声方差
+        """
+        delta = returns_mc - values
+        bias = float(np.abs(np.mean(delta)))
+
+        # 修正分母：Var(G) - Var(V)，下界为 floor × Var(G)
+        var_G = float(np.var(returns_mc)) + 1e-8
+        var_V = float(np.var(values))
+        floor = self.var_floor_frac * var_G
+        denom_sq = max(var_G - var_V, floor)
+        denom = float(np.sqrt(denom_sq)) + 1e-8
+
+        scr_hat = bias / denom
+
+        # EMA 更新（与 v4 完全相同）
+        self._scr_ema = (1 - self.scr_ema_alpha) * self._scr_ema + self.scr_ema_alpha * scr_hat
+        self._scr_history.append(self._scr_ema)
+
+        alpha_cap = (self._scr_ema ** 2) / (1.0 + self._scr_ema ** 2) + self.scr_relax
+        return float(np.clip(alpha_cap, 0.0, 1.0))
+
+
 class OptimalHCGAE_v5(OptimalHCGAE_v3):
     """
     HCGAE v5: Universal Adaptive Correction (v3 + v4 combined).
@@ -1810,78 +1906,109 @@ class OptimalHCGAE_v6(OptimalHCGAE_v4):
         self.compute_hindsight_gae(last_value)
 
 
-class OptimalHCGAE_Bayesian(OptimalPPO):
+class OptimalHCGAE_HeuristicV2(OptimalHCGAE_v4):
     """
-    Unified Bayesian HCGAE (ICML Candidate) — BHVF + DCPPO-S.
+    HCGAE HeuristicV2: 基于 Heuristic_HCGAE 的系统性改进。
 
-    Replaces all heuristic gates (EV-rate, VW, Cosine, Boundary Prior) with a
-    principled Bayesian Value Fusion (BHVF) framework derived from first principles.
+    ═══════════════════════════════════════════════════════════════════════════
+    背景：Heuristic_HCGAE (v2) 的问题分析
+    ═══════════════════════════════════════════════════════════════════════════
 
-    Mathematical Formulation (paper §2):
-    1. Estimate Critic error (sigma_V) and MC noise (sigma_G):
-           sigma_V = mean(|G - V|)   # MAE: Critic error proxy (NOT |mean(G-V)|)
-           sigma_G = std(G)          # MC return volatility
+    Heuristic_HCGAE 在 FinalExperiment 同批次对比中的表现:
+      HC: +9.8% vs Optimal_PPO  (高模式逃脱概率提升：4/12 vs 3/12 seeds > 3000)
+      Hopper: -0.2%  (统计不显著)
+      Walker2d: -9.3%
+      Ant: -14.4%
 
-    2. Optimal Bayesian Gain (Kalman Gain), paper Theorem 1 / Corollary 1:
-           SCR = sigma_V / sigma_G
-           alpha* = SCR^2 / (SCR^2 + 1) + scr_relax
+    根因分析：
+    1. per-step sigmoid 使用批内 z-score 归一化（问题）
+       z_t = β·(|V_t - G_t| - μ_e) / σ_e
+       → 每批次固定 50% 步骤得到正 z 值（由于 sigmoid 对称性）
+       → E[α_t] ≈ α_max/2，与 MC 噪声水平无关
+       → HC 方差大时 σ_e 也大，σ_e 归一化后 α 实际上被"均匀化"了
 
-    3. Robust Innovation Clipping (paper §2.3):
-           sigma_e = std(G - V)
-           innovation = clip(G - V, -c * sigma_e, +c * sigma_e)
+    2. 无 SCR 上界约束（v4 已修复，但 Heuristic 没有）
+       → 当 SCR 低（Var(G)大、Bias小）时 α_max 仍高
+       → Ant/Walker 上过度修正 → Advantage 方差增加
 
-    4. Corrected Value:
-           V^c = V + alpha* * innovation
+    3. HC 优势的保留机制（需要继承）：
+       α_max=0.7 的积极初始值在 HC 上有助于早期探索逃脱低模式
 
-    No per-sample sigmoid gates — alpha* is a global scalar per rollout.
-    This achieves the exact same goals as v5/v6 but with ~4 lines of math
-    instead of 100 lines of conditional logic, with zero heuristic parameters.
+    ═══════════════════════════════════════════════════════════════════════════
+    HeuristicV2 改进
+    ═══════════════════════════════════════════════════════════════════════════
 
-    Hyperparameters (environment-agnostic):
-        scr_ema_alpha : EMA learning rate for SCR (default 0.1 = fast tracking)
-        scr_relax     : numerical floor to prevent alpha* collapsing to 0 (default 0.05)
-        clip_c        : innovation clipping multiplier (default 3.0 = 99.7% Normal)
+    改进1: 修正 per-step sigmoid 归一化（核心改进）
+    ─────────────────────────────────────────────────
+    原始: z_t = β·(|V_t-G_t| - μ_e) / σ_e   (批均值中心化)
+    改进: z_t = β·(|V_t-G_t| / (σ_G_ema + ε) - noise_threshold)
+
+    其中 σ_G_ema = EMA(std(G))，noise_threshold 为分位数（默认 0.5 对应中位数）
+
+    物理含义:
+    - 以"MC 噪声水平 σ_G"为参考，判断每步 Critic 误差是否显著
+    - 当 Critic 普遍准确时（所有 |V-G| << σ_G），全批次 α → 0
+    - 当 Critic 系统性偏差（所有 |V-G| >> σ_G）时，全批次 α → α_max
+    - 相比 z-score，这个方式不再人为保证 50% 步骤得到修正
+
+    改进2: 继承 v4 的 SCR_cap（理论最优上界）
+    ─────────────────────────────────────────────
+    同 v4：α_max_k = min(α_max_v2, SCR²/(1+SCR²) + relax)
+    防止低 SCR 环境（Ant、Walker2d）上的过度修正
+
+    改进3: 保留 Heuristic 的高初始 α_max（HC 优势保留）
+    ─────────────────────────────────────────────────────
+    继续使用 α_max=0.7, α_min=0.1（与 Heuristic 相同）
+    SCR_cap 在 SCR 高时（HC 早期）允许足够的修正
+
+    ═══════════════════════════════════════════════════════════════════════════
+    参数
+    ═══════════════════════════════════════════════════════════════════════════
+    noise_threshold : float
+        per-step sigmoid 的阈值（以 σ_G 为单位）。
+        默认 0.5：误差 > 0.5·σ_G 才开始较强修正。
+        较大值（如 1.0）→ 更保守（仅误差很大时才修正）。
+        较小值（如 0.2）→ 更激进（接近原始批归一化行为）。
+    g_std_ema_alpha : float
+        MC 回报标准差的 EMA 系数。默认 0.1。
+    use_noise_normalized_sigmoid : bool
+        是否启用改进的 noise-normalized sigmoid。
+        False → 退化为原始批归一化（兼容模式）。默认 True。
+    所有其他参数继承自 OptimalHCGAE_v4（v2 + SCR_cap）。
     """
-    NAME = "Optimal_HCGAE_Bayesian"
+
+    NAME = "Optimal_HCGAE_HeuristicV2"
 
     def __init__(
         self,
-        env: gym.Env,
-        name: str = "Optimal_HCGAE_Bayesian",
-        scr_ema_alpha: float = 0.1,
-        scr_relax: float = 0.05,
-        clip_c: float = 3.0,
+        env,
+        name: str = "Optimal_HCGAE_HeuristicV2",
+        # 新增参数
+        noise_threshold: float = 0.5,
+        g_std_ema_alpha: float = 0.1,
+        use_noise_normalized_sigmoid: bool = True,
+        # 继承自 v4（v2 + SCR_cap）
         **kwargs,
     ):
         super().__init__(env=env, name=name, **kwargs)
-        self.scr_ema_alpha = scr_ema_alpha
-        self.scr_relax = scr_relax
-        self.clip_c = clip_c
+        self.noise_threshold = noise_threshold
+        self.g_std_ema_alpha = g_std_ema_alpha
+        self.use_noise_normalized_sigmoid = use_noise_normalized_sigmoid
 
-        self._scr_ema = 1.0
-        self._sigma_e_ema = 1.0
-        self._ev_ema = 0.0
-        self._ev_ema_alpha = 0.05
-
-        # ── Diagnostics cache (written per rollout; read by train() for logging) ──
-        # These allow the outer train loop to call logger.log_update(..., snr=..., alpha_mean=...)
-        # without needing to change the train() interface.
-        self._diag_scr: float = 1.0          # current SCR_ema (= sigma_V / sigma_G)
-        self._diag_sigma_V: float = 0.0      # batch-level sigma_V (MAE)
-        self._diag_sigma_G: float = 1.0      # batch-level sigma_G (std of G)
-        self._diag_sigma_e: float = 1.0      # batch-level sigma_e (std of delta)
-        self._diag_alpha_star: float = 0.0   # current alpha* (Kalman gain)
-        self._diag_c_mc: float = 1.0         # current c_mc for critic target
-        self._diag_ev_now: float = 0.0       # raw EV of current rollout
-        self._diag_clip_ratio: float = 0.0   # fraction of innovations that were clipped
+        # 在线跟踪 MC 回报标准差（用于 noise-normalized sigmoid）
+        self._g_std_ema = 1.0          # 初始化为 1（中性）
+        self._g_std_history = []       # 用于诊断
 
     def compute_hindsight_gae(self, last_value: float):
+        """
+        HCGAE HeuristicV2 = v4 (v2 + SCR_cap) + Noise-Normalized Per-Step Sigmoid
+        """
         T = self.buffer.pos
         rewards = self.buffer.rewards[:T]
         terminated = self.buffer.terminated[:T]
         values = self.buffer.values[:T]
 
-        # 1. MC Returns
+        # Step 1: MC returns（与 v4 完全相同）
         returns_mc = np.zeros(T, dtype=np.float32)
         running_return = last_value
         for t in reversed(range(T)):
@@ -1890,50 +2017,85 @@ class OptimalHCGAE_Bayesian(OptimalPPO):
             running_return = rewards[t] + self.gamma * running_return
             returns_mc[t] = running_return
 
-        # 2. Global Bayesian Gain (alpha*)
-        # sigma_V = MAE(G, V) = mean(|G - V|), approximates Critic RMSE.
-        # sigma_G = std(G), captures MC return noise.
-        # SCR = sigma_V / sigma_G; alpha* = SCR^2 / (SCR^2 + 1).
-        # IMPORTANT: use mean(|G-V|) NOT |mean(G-V)|; the latter is the signed
-        # mean bias and can be near zero even when Critic error is large (errors cancel).
-        delta = returns_mc - values
-        sigma_V = float(np.mean(np.abs(delta))) + 1e-8   # MAE: Critic error proxy
-        sigma_G = float(np.std(returns_mc)) + 1e-8       # MC return noise
-        scr_now = sigma_V / sigma_G
+        # Step 2: 更新 MC 回报标准差的 EMA
+        g_std_now = float(np.std(returns_mc)) + 1e-8
+        self._g_std_ema = (
+            (1 - self.g_std_ema_alpha) * self._g_std_ema
+            + self.g_std_ema_alpha * g_std_now
+        )
+        self._g_std_history.append(self._g_std_ema)
 
-        self._scr_ema = (1 - self.scr_ema_alpha) * self._scr_ema + self.scr_ema_alpha * scr_now
-        alpha_star = (self._scr_ema ** 2) / (self._scr_ema ** 2 + 1.0) + self.scr_relax
-        alpha_star = float(np.clip(alpha_star, 0.0, 1.0))
+        # Step 3: per-step error
+        errors = np.abs(values - returns_mc)
+        mu_e = errors.mean()
+        sigma_e = errors.std() + 1e-8
 
-        # 3. Robust Innovation Clipping
-        # sigma_e = std(G - V): spread of innovations in the current batch.
-        # Clip innovation to [-c*sigma_e, c*sigma_e] (c=3 covers 99.7% of Normal).
-        # This replaces all complex boundary-prior rules with a single statistical clip.
-        sigma_e_now = float(np.std(delta)) + 1e-8
-        self._sigma_e_ema = (1 - self.scr_ema_alpha) * self._sigma_e_ema + self.scr_ema_alpha * sigma_e_now
-
-        innovation = np.clip(
-            delta,
-            -self.clip_c * self._sigma_e_ema,
-            self.clip_c * self._sigma_e_ema
+        # Step 4a: EV-gated cosine α_max（与 v4 完全相同）
+        self._total_rollouts += 1
+        K = max(1, self._total_timesteps // self.n_steps)
+        k = self._total_rollouts
+        cosine_factor = 0.5 * (1 + np.cos(np.pi * k / K))
+        ev_gate = max(1.0 - self._ev_ema, 0.2)
+        alpha_max_k = (
+            self.hindsight_alpha_min
+            + (self.hindsight_alpha_max - self.hindsight_alpha_min)
+            * cosine_factor * ev_gate
         )
 
-        # 4. Corrected Values: V^c = V + alpha* * clip(G - V, ±c*sigma_e)
-        # alpha_star is a global scalar — no per-sample sigmoid gate.
-        # Per-sample sigmoid gates are heuristic and contradict the principled Bayesian design.
-        v_corrected = values + alpha_star * innovation
+        # Step 4b: EV 增长速率门控（与 v4 完全相同）
+        if self.use_ev_rate_gate:
+            var_y_tmp = np.var(returns_mc) + 1e-8
+            ev_now_tmp = float(1.0 - np.var(returns_mc - values) / var_y_tmp)
+            ev_rate_raw = ev_now_tmp - self._ev_prev
+            self._ev_rate_ema = ((1 - self._ev_rate_ema_alpha) * self._ev_rate_ema
+                                 + self._ev_rate_ema_alpha * max(ev_rate_raw, 0.0))
+            if self._ev_rate_ema > self.ev_rate_threshold:
+                excess = min(self._ev_rate_ema - self.ev_rate_threshold,
+                             self.ev_rate_max - self.ev_rate_threshold)
+                suppression_frac = excess / max(self.ev_rate_max - self.ev_rate_threshold, 1e-8)
+                ev_rate_scale = max(1.0 - suppression_frac * (1.0 - self.ev_gate_min_scale),
+                                    self.ev_gate_min_scale)
+            else:
+                ev_rate_scale = 1.0
+            alpha_max_k *= ev_rate_scale
 
-        # 5. Boundary Correction (Unified via Innovation Clipping)
-        # Apply the same clip to the last_value bootstrap, replacing ad-hoc boundary rules.
-        last_innovation = returns_mc[-1] - last_value
-        last_innovation_clipped = float(np.clip(
-            last_innovation,
-            -self.clip_c * self._sigma_e_ema,
-            self.clip_c * self._sigma_e_ema
-        ))
-        last_value_corrected = last_value + alpha_star * last_innovation_clipped
+        # Step 4c: SCR-based α_max cap（继承自 v4）
+        alpha_max_k = min(alpha_max_k, self._scr_alpha_cap(values, returns_mc))
 
-        # 7. GAE Computation
+        # ── HeuristicV2 核心改进: Noise-Normalized Per-Step Sigmoid ──────────
+        if self.use_noise_normalized_sigmoid:
+            # 用 σ_G_ema 归一化误差（不再用批内 z-score）
+            # z_t = β·(|V_t-G_t|/σ_G_ema - noise_threshold)
+            # 物理含义: 阈值为 noise_threshold × σ_G_ema（约为 MC 噪声的一半）
+            z = self.hindsight_beta * (errors / self._g_std_ema - self.noise_threshold)
+        else:
+            # 退化为原始批归一化（兼容模式）
+            z = self.hindsight_beta * (errors - mu_e) / sigma_e
+
+        sigmoid_z = 1.0 / (1.0 + np.exp(-np.clip(z, -20, 20)))
+        alpha = alpha_max_k * sigmoid_z
+        # ─────────────────────────────────────────────────────────────────────
+
+        # Step 5: 修正后的 V^c
+        v_corrected = (1 - alpha) * values + alpha * returns_mc
+
+        # Step 6: 边界修正（与 v4 完全相同）
+        if self.use_boundary_correction:
+            tail_n = min(10, T)
+            approx_err_last = float(errors[-tail_n:].mean())
+            if self.use_noise_normalized_sigmoid:
+                z_last = self.hindsight_beta * (
+                    approx_err_last / self._g_std_ema - self.noise_threshold
+                )
+            else:
+                z_last = self.hindsight_beta * (approx_err_last - mu_e) / sigma_e
+            alpha_last = alpha_max_k * (1.0 / (1.0 + np.exp(-np.clip(z_last, -20, 20))))
+            approx_G_last = returns_mc[-1]
+            last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+        else:
+            last_value_corrected = last_value
+
+        # Step 7: 修正 GAE（与 v4 完全相同）
         advantages = np.zeros(T, dtype=np.float32)
         last_gae = 0.0
         for t in reversed(range(T)):
@@ -1947,40 +2109,217 @@ class OptimalHCGAE_Bayesian(OptimalPPO):
             last_gae = delta_td + self.gamma * self.lam * next_non_terminal * last_gae
             advantages[t] = last_gae
 
-        # 8. Critic Targets (EV-driven mixing)
-        # NOTE: Use OLD _ev_ema (from previous rollout) to compute c_mc,
-        # then update _ev_ema AFTER. This avoids using fresh information
-        # from the current rollout to scale its own targets.
+        # Step 8: Critic 训练目标（与 v4 完全相同）
         c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
-        # Update EV EMA with current rollout's EV
-        var_y = np.var(returns_mc) + 1e-8
-        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
-        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
-
-        # For MC component: use innovation-clipped target V(s) + clip(G-V, ±c*σ_e)
-        # which equals the BHVF-corrected value; this is also the paper's "clamped MC".
-        # For GAE component: use standard GAE returns from ORIGINAL (uncorrected) V,
-        # keeping advantage estimation and critic training paths fully decoupled.
-        returns_mc_clamped = values + innovation   # = V + clip(G-V, ±c*σ_e)
         std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
-        critic_returns = c_mc * returns_mc_clamped + (1 - c_mc) * std_gae_returns
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
 
         self.buffer.advantages[:T] = advantages
         self.buffer.returns[:T] = critic_returns
 
-        # ── Write diagnostics cache for train() logging ──
-        # clip_ratio: fraction of timesteps where |delta| > c*sigma_e (i.e., innovation was clipped)
-        clip_bound = self.clip_c * self._sigma_e_ema
-        clip_ratio = float(np.mean(np.abs(delta) > clip_bound))
+        # 更新 EV EMA
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_prev = self._ev_ema
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
 
-        self._diag_scr = self._scr_ema
-        self._diag_sigma_V = sigma_V
-        self._diag_sigma_G = sigma_G
-        self._diag_sigma_e = self._sigma_e_ema
-        self._diag_alpha_star = alpha_star
-        self._diag_c_mc = c_mc
-        self._diag_ev_now = ev_now
-        self._diag_clip_ratio = clip_ratio
+    def compute_gae(self, last_value: float):
+        self.compute_hindsight_gae(last_value)
+
+
+class OptimalHCGAE_Optimal(OptimalHCGAE_v4_FixSCR):
+    """
+    HCGAE_Optimal: 基于三学科统一推导的最完整理论实现。
+
+    ═══════════════════════════════════════════════════════════════════════════
+    理论基础（James-Stein / 卡尔曼滤波 / 贝叶斯后验的等价推导）
+    ═══════════════════════════════════════════════════════════════════════════
+
+    核心问题: V_t = V*(s) + B + ε_V, G_t = V*(s) + ε_G
+    最优混合: V^c_t = (1-α)V_t + αG_t
+    MSE 最优: α* = (B² + σ²_V) / (B² + σ²_V + σ²_G)
+
+    其中 σ²_G 应为 **条件 MC 噪声** E[Var(G|s)]，而非 Var(G)。
+    由全方差定律: E[Var(G|s)] ≈ Var(G) - Var(V)  （当 V ≈ V* 时成立）
+
+    ═══════════════════════════════════════════════════════════════════════════
+    本版本 = v4_FixSCR (分母修正) + HeuristicV2 (MC 归一化 per-step sigmoid)
+    ═══════════════════════════════════════════════════════════════════════════
+
+    改进1 (继承 v4_FixSCR): 全局 α_cap 分母修正
+    ─────────────────────────────────────────────
+    原始 v4:   SCR = |mean(G-V)| / std(G)          [分母高估 σ_G]
+    Optimal:   SCR = |mean(G-V)| / sqrt(Var(G)-Var(V))  [FixSCR 修正]
+
+    理论依据: Var(G) = Var(V*) + E[Var(G|s)]
+              当 Critic 好时 Var(V) ≈ Var(V*) → E[Var(G|s)] ≈ Var(G) - Var(V)
+    实际影响: α_cap 约提升 1.5-2×（Critic 越好提升越大）
+
+    改进2 (继承 HeuristicV2): MC 归一化 per-step sigmoid
+    ─────────────────────────────────────────────────────
+    原始:    z_t = β·(|δ_t| - μ_e) / σ_e           [批内 z-score，强制 50% 修正]
+    Optimal: z_t = β·(|δ_t| / σ_G_ema - θ)         [MC 噪声归一化]
+
+    理论依据: per-step α_t* ∝ SNR_t = |δ_t| / σ_G
+              当所有 |δ_t| << σ_G (Critic 很好) → 全批 α → 0
+              当所有 |δ_t| >> σ_G (Critic 系统偏差) → 全批 α → α_max
+
+    两项改进的协同效果:
+    ─────────────────────────────────────────────────────────────────────────
+    环境         v4 问题                    Optimal 修复
+    HalfCheetah  α_cap 过低（B 小）         FixSCR 放宽 α_cap；per-step 不再
+                                           强制低误差步骤做无效修正
+    Hopper       α_cap 较准，per-step 冗余  per-step 更智能分配
+    Walker2d     α_cap 过低               FixSCR 放宽 2×；改善 Walker 表现
+    Ant          α_cap 需精准控制           FixSCR 依然保守（高 σ_G）
+
+    参数
+    ─────────────────────────────────────────────────────────────────────────
+    noise_threshold : float
+        per-step sigmoid 阈值（以 σ_G 为单位）。默认 0.5。
+        值越大 → 仅大误差步骤才获得修正（更保守）。
+        值越小 → 更多步骤获得修正（更激进）。
+    g_std_ema_alpha : float
+        MC 回报标准差 EMA 平滑系数。默认 0.1。
+    var_floor_frac : float (继承自 v4_FixSCR)
+        Var(G)-Var(V) 下界 = var_floor_frac × Var(G)。默认 0.05。
+    所有其他参数继承自 OptimalHCGAE_v4 / v2。
+    """
+
+    NAME = "Optimal_HCGAE_Optimal"
+
+    def __init__(
+        self,
+        env,
+        name: str = "Optimal_HCGAE_Optimal",
+        # MC 归一化 per-step sigmoid 参数
+        noise_threshold: float = 0.5,
+        g_std_ema_alpha: float = 0.1,
+        # 所有其他参数继承自 v4_FixSCR (包含 var_floor_frac, scr_ema_alpha, scr_relax)
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.noise_threshold = noise_threshold
+        self.g_std_ema_alpha = g_std_ema_alpha
+
+        # 在线跟踪 MC 回报标准差
+        self._g_std_ema = 1.0
+
+    def compute_hindsight_gae(self, last_value: float):
+        """
+        HCGAE_Optimal = v4_FixSCR (FixSCR 分母) + MC 归一化 per-step sigmoid
+
+        三学科统一的理论最优实现:
+          全局 α_cap = FixSCR 修正的 James-Stein/Kalman 最优上界
+          per-step = MC 噪声感知的局部最优分配
+        """
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # Step 1: MC 回报（标准）
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # Step 2: 更新 MC 回报标准差 EMA（用于 per-step 归一化）
+        g_std_now = float(np.std(returns_mc)) + 1e-8
+        self._g_std_ema = (
+            (1 - self.g_std_ema_alpha) * self._g_std_ema
+            + self.g_std_ema_alpha * g_std_now
+        )
+
+        # Step 3: Per-step 误差
+        errors = np.abs(values - returns_mc)
+
+        # Step 4a: EV-gated cosine α_max（继承 v4/v2）
+        self._total_rollouts += 1
+        K = max(1, self._total_timesteps // self.n_steps)
+        k = self._total_rollouts
+        cosine_factor = 0.5 * (1 + np.cos(np.pi * k / K))
+        ev_gate = max(1.0 - self._ev_ema, 0.2)
+        alpha_max_k = (
+            self.hindsight_alpha_min
+            + (self.hindsight_alpha_max - self.hindsight_alpha_min)
+            * cosine_factor * ev_gate
+        )
+
+        # Step 4b: EV 增长速率门控（继承 v4/v2）
+        if self.use_ev_rate_gate:
+            var_y_tmp = np.var(returns_mc) + 1e-8
+            ev_now_tmp = float(1.0 - np.var(returns_mc - values) / var_y_tmp)
+            ev_rate_raw = ev_now_tmp - self._ev_prev
+            self._ev_rate_ema = ((1 - self._ev_rate_ema_alpha) * self._ev_rate_ema
+                                 + self._ev_rate_ema_alpha * max(ev_rate_raw, 0.0))
+            if self._ev_rate_ema > self.ev_rate_threshold:
+                excess = min(self._ev_rate_ema - self.ev_rate_threshold,
+                             self.ev_rate_max - self.ev_rate_threshold)
+                suppression_frac = excess / max(self.ev_rate_max - self.ev_rate_threshold, 1e-8)
+                ev_rate_scale = max(1.0 - suppression_frac * (1.0 - self.ev_gate_min_scale),
+                                    self.ev_gate_min_scale)
+            else:
+                ev_rate_scale = 1.0
+            alpha_max_k *= ev_rate_scale
+
+        # Step 4c: FixSCR-based α_max cap（理论最优上界，FixSCR 修正分母）
+        # 使用 v4_FixSCR 的 _scr_alpha_cap: SCR = |B| / sqrt(Var(G)-Var(V))
+        alpha_max_k = min(alpha_max_k, self._scr_alpha_cap(values, returns_mc))
+
+        # Step 5: MC 噪声归一化 per-step sigmoid（HeuristicV2 核心改进）
+        # z_t = β·(|δ_t| / σ_G_ema - noise_threshold)
+        # 理论依据: per-step α_t* ∝ SNR_t = |δ_t| / σ_G (卡尔曼局部最优)
+        z = self.hindsight_beta * (errors / self._g_std_ema - self.noise_threshold)
+        sigmoid_z = 1.0 / (1.0 + np.exp(-np.clip(z, -20, 20)))
+        alpha = alpha_max_k * sigmoid_z
+
+        # Step 6: 修正后的 V^c = (1-α)V + αG
+        v_corrected = (1 - alpha) * values + alpha * returns_mc
+
+        # Step 7: 边界修正（继承 v4/v2，用 noise-normalized sigmoid）
+        if self.use_boundary_correction:
+            tail_n = min(10, T)
+            approx_err_last = float(errors[-tail_n:].mean())
+            z_last = self.hindsight_beta * (
+                approx_err_last / self._g_std_ema - self.noise_threshold
+            )
+            alpha_last = alpha_max_k * (1.0 / (1.0 + np.exp(-np.clip(z_last, -20, 20))))
+            approx_G_last = returns_mc[-1]
+            last_value_corrected = (1.0 - alpha_last) * last_value + alpha_last * approx_G_last
+        else:
+            last_value_corrected = last_value
+
+        # Step 8: 修正 GAE（标准 δ_TD 递推）
+        advantages = np.zeros(T, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(T)):
+            if t == T - 1:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = last_value_corrected if next_non_terminal > 0 else 0.0
+            else:
+                next_non_terminal = 1.0 - terminated[t]
+                next_v_c = v_corrected[t + 1] if next_non_terminal > 0 else 0.0
+            delta_td = rewards[t] + self.gamma * next_v_c - v_corrected[t]
+            last_gae = delta_td + self.gamma * self.lam * next_non_terminal * last_gae
+            advantages[t] = last_gae
+
+        # Step 9: Critic 训练目标（EV 驱动的 MC/GAE 混合）
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        std_gae_returns = self.buffer._compute_standard_returns(last_value, self.gamma, self.lam)
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns
+
+        # 更新 EV EMA
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_prev = self._ev_ema
+        self._ev_ema = (1 - self._ev_ema_alpha) * self._ev_ema + self._ev_ema_alpha * ev_now
 
     def compute_gae(self, last_value: float):
         self.compute_hindsight_gae(last_value)
@@ -2309,6 +2648,31 @@ def build_optimal_agent(
             **hcgae_kwargs
         )
 
+    elif algo_name == "Optimal_HCGAE_v4_FixSCR":
+        # v4_FixSCR: 修正 v4 的 SCR 分母问题
+        # v4 原始: SCR = |mean(G-V)| / std(G)   ← 分母 std(G) 包含 V*(s) 结构方差
+        # 修正后:  SCR = |mean(G-V)| / sqrt(max(Var(G)-Var(V), floor))
+        #              ← 分母改为纯 MC 条件方差 E[Var(G|s)]
+        # 全方差定律: Var(G) = Var(V*) + E[Var(G|s)]
+        # 当 Critic 质量中等-好时，修正后 SCR 更大，alpha_cap 更宽松
+        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
+        return OptimalHCGAE_v4_FixSCR(
+            env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            scr_ema_alpha=0.1,
+            scr_relax=0.05,
+            var_floor_frac=0.05,
+            **hcgae_kwargs
+        )
+
     elif algo_name == "Optimal_HCGAE_v5":
         # v5: Universal agent = v3 (G-Clamping + VW-Gate + Boundary Prior)
         #                      + v4 (SCR-adaptive α_max cap)
@@ -2374,48 +2738,415 @@ def build_optimal_agent(
             **hcgae_kwargs
         )
 
-    elif algo_name == "Optimal_HCGAE_Bayesian":
+    elif algo_name == "Optimal_HCGAE_HeuristicV2":
+        # HeuristicV2: Heuristic_HCGAE 的系统性改进
+        # = v4 (v2 + SCR_cap) + Noise-Normalized Per-Step Sigmoid
+        #
+        # 核心改进：修正 per-step sigmoid 的批内 z-score 归一化缺陷
+        # 原始 (Heuristic/v2): z_t = β·(|V-G| - μ_e) / σ_e  (强制 50% 步骤修正)
+        # 改进 (HeuristicV2):  z_t = β·(|V-G|/σ_G_ema - threshold)  (信噪比感知)
+        #
+        # 保留: α_max=0.7 的高初始值（HC 高模式逃脱优势）
+        # 新增: SCR_cap（v4 继承，防止 Ant/Walker 过度修正）
+        # 新增: noise_threshold 归一化（使修正量与 MC 噪声水平挂钩）
         hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
-        return OptimalHCGAE_Bayesian(
+        return OptimalHCGAE_HeuristicV2(
             env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            # v4: SCR α* cap
             scr_ema_alpha=0.1,
             scr_relax=0.05,
-            clip_c=3.0,
+            # HeuristicV2: noise-normalized sigmoid
+            noise_threshold=0.5,
+            g_std_ema_alpha=0.1,
+            use_noise_normalized_sigmoid=True,
             **hcgae_kwargs
         )
 
-    elif algo_name == "BHVF":
-        # ── BHVF: Paper proposed method (§2) ──
-        # Replaces all heuristic gates with principled Bayesian Value Fusion.
-        # Uses same 3 env-agnostic hyperparameters across ALL environments:
-        #   scr_ema_alpha=0.1, scr_relax=0.05, clip_c=3.0
-        # NO DCPPO-S (pure BHVF ablation).
+    elif algo_name == "Optimal_HCGAE_Optimal":
+        # HCGAE_Optimal: 三学科统一推导的理论最完整实现
+        # = v4_FixSCR (FixSCR 分母修正) + HeuristicV2 (MC 归一化 per-step sigmoid)
+        #
+        # 理论依据（三者等价）:
+        #   James-Stein 估计器:  α* = (B²+σ²_V) / (B²+σ²_V+σ²_G)
+        #   卡尔曼滤波最优增益:  K = (B²+σ²_V) / (B²+σ²_V+σ²_G)
+        #   贝叶斯后验期望:      α = 1 - K (命名约定不同)
+        #
+        # 改进1 (vs v4): SCR 分母从 std(G) → sqrt(Var(G)-Var(V))
+        #   依据: E[Var(G|s)] ≈ Var(G) - Var(V)  (全方差定律 + Critic 质量假设)
+        #   效果: α_cap 提升 1.5-2× (Critic 越好提升越大)
+        #
+        # 改进2 (vs v4): per-step sigmoid 从批内 z-score → MC 噪声归一化
+        #   依据: per-step α_t* ∝ SNR_t = |δ_t| / σ_G (局部卡尔曼最优)
+        #   效果: Critic 好时整批 α→0，避免无效修正
         hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
-        # Disable EV-driven advantage scaling (pure BHVF, no DCPPO-S)
-        hcgae_kwargs['ev_scale_advantages'] = False
-        return OptimalHCGAE_Bayesian(
+        return OptimalHCGAE_Optimal(
             env=env, name=name,
+            hindsight_beta=3.0,
+            hindsight_alpha_max=0.7,
+            hindsight_alpha_min=0.1,
+            use_scr_adapt=False,
+            use_boundary_correction=True,
+            use_ev_rate_gate=True,
+            ev_rate_threshold=0.05,
+            ev_rate_max=0.15,
+            ev_gate_min_scale=0.1,
+            # FixSCR: 修正分母
             scr_ema_alpha=0.1,
             scr_relax=0.05,
-            clip_c=3.0,
-            **{k: v for k, v in hcgae_kwargs.items()
-               if k not in ('ev_scale_advantages',)}
+            var_floor_frac=0.05,
+            # Noise-Normalized Per-Step Sigmoid
+            noise_threshold=0.5,
+            g_std_ema_alpha=0.1,
+            **hcgae_kwargs
         )
 
-    elif algo_name == "BHVF_DCPPO":
-        # ── BHVF + DCPPO-S: Full proposed method (§2 + §3) ──
-        # BHVF value fusion + EV-based linear shrinkage on policy gradient.
-        # The EV weight w = clip(EV, 0.1, 1.0) is applied to advantages
-        # before the PPO clip objective (gradient direction preserved).
-        hcgae_kwargs = {k: v for k, v in opt_defaults.items()}
-        return OptimalHCGAE_Bayesian(
+    elif algo_name in ("Standard_GRPO", "Optimal_GRPO"):
+        # Standard/Optimal GRPO: Group Relative Policy Optimization (基线)
+        # Shao et al. (2024): DeepSeekMath. 适配连续控制环境。
+        # 组优势 = (r_i - mean) / std  [批内标准化]，附带 Critic baseline + obs_norm 等
+        # Optimal_GRPO 是 Standard_GRPO 的改名别名（保持向后兼容）
+        return StandardGRPO(env=env, name=name, **opt_defaults)
+
+    elif algo_name in ("HCGAE_GRPO", "HCGAE_Optimal_GRPO"):
+        # HCGAE_GRPO / HCGAE_Optimal_GRPO: GRPO + HCGAE 方差分解 + SNR 感知加权
+        # 理论依据 (James-Stein/Kalman):
+        #   GRPO 标准差 std(r) = sqrt(Var(V*) + E[Var(G|s)])
+        #   纯MC噪声  σ_G = sqrt(E[Var(G|s)]) = sqrt(max(Var(r)-Var(V),floor))
+        #   加权系数  w_i ∝ SNR_i = |r_i - mean(r)| / σ_G   [局部卡尔曼]
+        # HCGAE_Optimal_GRPO 是 HCGAE_GRPO 的改名别名（保持向后兼容）
+        return HCGAE_GRPO(env=env, name=name, **opt_defaults)
+
+    elif algo_name == "HCGAE_GRPO_NoCritic":
+        # 消融：去掉 Critic，纯组内 SNR 加权 (无价值函数基线)
+        return HCGAE_GRPO(env=env, name=name, use_critic=False, **opt_defaults)
+
+    elif algo_name == "Standard_GRPO_NoTrick":
+        # Standard GRPO (No Trick): 最纯粹的 GRPO 基线，去掉所有 PPO-style tricks
+        # 对比 Standard_GRPO (Optimal_GRPO)，本算法去掉:
+        #   - obs normalization (use_obs_norm=False)
+        #   - advantage normalization (use_adv_norm=False)
+        #   - lr annealing (use_lr_anneal=False)
+        #   - Critic baseline (use_critic_baseline=False): 纯组内 MC 标准化
+        # 完全对应原始 GRPO 论文设定，无任何额外稳定化 trick
+        no_trick_cfg = dict(opt_defaults)
+        no_trick_cfg['use_obs_norm']  = False
+        no_trick_cfg['use_adv_norm']  = False
+        no_trick_cfg['use_lr_anneal'] = False
+        return StandardGRPO(
             env=env, name=name,
-            scr_ema_alpha=0.1,
-            scr_relax=0.05,
-            clip_c=3.0,
-            **hcgae_kwargs
+            grpo_group_norm=True,
+            use_critic_baseline=False,   # 纯组内标准化，无 Critic
+            **no_trick_cfg
+        )
+
+    elif algo_name == "HCGAE_Standard_GRPO":
+        # HCGAE_Standard_GRPO: 在 Standard_GRPO_NoTrick 基础上叠加 HCGAE 方差修正
+        # 对比关系:
+        #   Standard_GRPO_NoTrick: 纯 GRPO，无任何 trick
+        #   HCGAE_Standard_GRPO:   纯 GRPO + HCGAE FixSCR + SNR 加权 (无其他 trick)
+        # 验证 HCGAE 修正在"公平"基线上的增益（排除 obs_norm 等 PPO tricks 影响）
+        no_trick_cfg = dict(opt_defaults)
+        no_trick_cfg['use_obs_norm']  = False
+        no_trick_cfg['use_adv_norm']  = False
+        no_trick_cfg['use_lr_anneal'] = False
+        return HCGAE_GRPO(
+            env=env, name=name,
+            use_critic=True,             # 保留 Critic 供 FixSCR 分母修正使用
+            use_snr_weight=True,         # SNR 感知加权
+            use_gae_blend=True,          # EV-driven GAE/GRPO 混合
+            **no_trick_cfg
         )
 
     else:
-        raise ValueError(f"Unknown optimal agent: {algo_name}")
+        raise ValueError(f"Unknown algorithm: {algo_name}")
 
+
+# =============================================================================
+#  GRPO for Continuous Control (MuJoCo)
+#  理论框架: 跨学科统一 (James-Stein / Kalman / Bayes)
+# =============================================================================
+
+class StandardGRPO(OptimalPPO):
+    """
+    Standard GRPO (Group Relative Policy Optimization) 适配连续控制环境。
+
+    ═══════════════════════════════════════════════════════════════════════════
+    原始 GRPO (Shao et al. 2024, DeepSeekMath) 的核心：
+      对问题 q 采样 G 个响应 {o_i}，用组内相对优势替代 GAE：
+        A_i = (r_i - mean_j(r_j)) / std_j(r_j)
+      不需要 Critic，完全依赖 MC 回报的组内标准化。
+
+    ═══════════════════════════════════════════════════════════════════════════
+    连续控制适配：
+      "组" = 一个 rollout 窗口内的 n_steps 步
+      "响应" = 每步的折扣累积回报 G_t (MC returns)
+      优势 = (G_t - mean(G)) / std(G)  [与 GRPO 原始公式完全对应]
+
+      对比 PPO-clip 的差异:
+        PPO: A_t = GAE_t (TD-λ 混合估计, 需要 Critic)
+        GRPO: A_t = (G_t - μ_G) / σ_G  (纯组内 MC, 不需要 Critic)
+
+    ═══════════════════════════════════════════════════════════════════════════
+    参数
+    ─────────────────────────────────────────────────────────────────────────
+    grpo_group_norm : bool
+        是否使用 GRPO 式组内标准化。True 为 GRPO，False 退化为 MC-returns PPO。
+    use_critic_baseline : bool
+        True = 用 Critic V(s) 做基线，优势 = G_t - V(s_t) [减方差]
+        False = 纯 GRPO 组内标准化 [原始 GRPO，无 Critic 基线]
+    """
+
+    NAME = "Standard_GRPO"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "Standard_GRPO",
+        grpo_group_norm: bool = True,
+        use_critic_baseline: bool = True,   # True: GRPO+Critic baseline
+        **kwargs,
+    ):
+        super().__init__(env=env, name=name, **kwargs)
+        self.grpo_group_norm = grpo_group_norm
+        self.use_critic_baseline = use_critic_baseline
+
+    def compute_gae(self, last_value: float):
+        """
+        GRPO 优势计算：组内 MC 回报标准化。
+
+        A_t = (G_t - μ_G) / σ_G    [纯 GRPO]
+        or
+        A_t = (G_t - V(s_t))        [GRPO with Critic baseline, 后续 minibatch 归一化]
+
+        Critic 训练目标: MC 回报 G_t (不使用 λ-return)
+        """
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # Step 1: MC returns (折扣累积回报)
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        if self.use_critic_baseline:
+            # GRPO + Critic baseline: A_t = G_t - V(s_t)
+            # 后续 minibatch 归一化会进一步标准化
+            advantages = returns_mc - values
+        else:
+            # 纯 GRPO: A_t = (G_t - μ) / σ
+            mu_g = np.mean(returns_mc)
+            sigma_g = np.std(returns_mc) + 1e-8
+            advantages = (returns_mc - mu_g) / sigma_g
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = returns_mc   # Critic 学 MC 回报
+
+
+class HCGAE_GRPO(StandardGRPO):
+    """
+    HCGAE_GRPO: GRPO + Hindsight-Corrected 方差分解 + SNR-Aware 加权
+
+    ═══════════════════════════════════════════════════════════════════════════
+    理论框架（跨学科统一视角验证）
+    ═══════════════════════════════════════════════════════════════════════════
+
+    **问题诊断：标准 GRPO 的方差高估**
+
+    GRPO 组内标准化: A_i = (r_i - μ) / σ_r
+    其中 σ_r = std(G_t) = sqrt(Var(G_t))
+
+    全方差定律分解:
+        Var(G_t) = Var(V*(s_t)) + E[Var(G_t | s_t)]
+                   ────────────   ──────────────────
+                   状态价值结构    纯 MC 随机噪声
+
+    问题: σ_r 高估了"真正的噪声"，导致优势被过度缩放：
+        若 Var(V*(s)) 大（如 HalfCheetah），则 σ_r >> σ_G
+        → 真实信号被稀释，梯度过小，学习缓慢
+
+    **HCGAE_GRPO 修正**
+
+    ① 分母修正 (FixSCR): σ_G = sqrt(max(Var(G) - Var(V), floor))
+        依据: E[Var(G|s)] ≈ Var(G) - Var(V)  (全方差定律 + Critic 质量假设)
+        效果: 优势量级提升 1.5-2× (Critic 越好提升越大)
+
+    ② SNR 感知加权 (per-step Kalman):
+        w_t = σ(β · (|G_t - V(s_t)| / σ_G - θ))
+        依据: per-step α_t* ∝ SNR_t = |δ_t| / σ_G (卡尔曼局部最优)
+        效果: 误差大步骤权重高，Critic 好时整批权重低
+
+    ③ 修正优势 (混合):
+        A_t^HCGAE = w_t · (G_t - V(s_t)) / σ_G_corrected
+                  + (1-w_t) · GAE_t / std(GAE)   [如果启用 GAE blend]
+
+    ═══════════════════════════════════════════════════════════════════════════
+    与 HCGAE_Optimal (PPO 版) 的对比
+    ─────────────────────────────────────────────────────────────────────────
+    PPO 版:  修正 V^c = (1-α)V + αG, 再用 V^c 计算 TD-δ → 影响 Actor
+    GRPO 版: 直接修正 MC 优势的标准化分母 + 加权 → 更纯粹，无需 TD 传播
+
+    ═══════════════════════════════════════════════════════════════════════════
+    参数
+    ─────────────────────────────────────────────────────────────────────────
+    use_critic : bool
+        是否使用 Critic 网络 (True: 提供 V(s) 基线 + FixSCR)
+    noise_threshold : float
+        SNR 阈值: |δ_t| / σ_G > threshold → 开始加权修正 (默认 0.5)
+    snr_beta : float
+        SNR sigmoid 的 β 系数 (默认 3.0, 与 HCGAE v4 一致)
+    g_std_ema_alpha : float
+        MC 回报标准差 σ_G 的 EMA 平滑系数 (默认 0.1)
+    var_floor_frac : float
+        分母下界 = var_floor_frac × Var(G) (防止分母趋零, 默认 0.05)
+    use_snr_weight : bool
+        是否启用 SNR 感知加权 (True: HCGAE_GRPO, False: 仅 FixSCR)
+    use_gae_blend : bool
+        是否与标准 GAE 优势混合 (EV-driven blend, 默认 True)
+    ev_ema_alpha : float
+        EV EMA 平滑系数 (默认 0.1)
+    """
+
+    NAME = "HCGAE_GRPO"
+
+    def __init__(
+        self,
+        env: gym.Env,
+        name: str = "HCGAE_GRPO",
+        # ── HCGAE 核心参数 ──
+        use_critic: bool = True,
+        noise_threshold: float = 0.5,      # SNR 阈值 θ
+        snr_beta: float = 3.0,             # sigmoid 斜率
+        g_std_ema_alpha: float = 0.1,      # σ_G EMA 系数
+        var_floor_frac: float = 0.05,      # 分母下界
+        use_snr_weight: bool = True,       # SNR 感知加权
+        use_gae_blend: bool = True,        # EV-driven GAE/GRPO 混合
+        ev_ema_alpha: float = 0.1,         # EV EMA 系数
+        # ── 继承所有 StandardGRPO 参数 ──
+        **kwargs,
+    ):
+        # GRPO: use_critic_baseline=True 保留 Critic (V(s) 做基线)
+        super().__init__(env=env, name=name, use_critic_baseline=True, **kwargs)
+        self.use_critic = use_critic
+        self.noise_threshold = noise_threshold
+        self.snr_beta = snr_beta
+        self.g_std_ema_alpha = g_std_ema_alpha
+        self.var_floor_frac = var_floor_frac
+        self.use_snr_weight = use_snr_weight
+        self.use_gae_blend = use_gae_blend
+        self.ev_ema_alpha = ev_ema_alpha
+
+        # 在线状态
+        self._g_std_ema = 1.0        # σ_G (MC 回报标准差) EMA
+        self._ev_ema = 0.0           # EV EMA
+
+    def compute_gae(self, last_value: float):
+        """
+        HCGAE_GRPO 优势计算：FixSCR + SNR-Aware 加权。
+
+        数学:
+          σ_G_corrected = sqrt(max(Var(G) - Var(V), floor))  [FixSCR]
+          w_t = σ(β·(|G_t - V_t| / σ_G - θ))               [SNR 加权]
+          A_t = w_t·(G_t - V_t)/σ_G + (1-w_t)·GAE_t/std(GAE)  [混合]
+        """
+        T = self.buffer.pos
+        rewards = self.buffer.rewards[:T]
+        terminated = self.buffer.terminated[:T]
+        values = self.buffer.values[:T]
+
+        # ── Step 1: MC returns ──────────────────────────────────────────────
+        returns_mc = np.zeros(T, dtype=np.float32)
+        running_return = last_value
+        for t in reversed(range(T)):
+            if terminated[t]:
+                running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns_mc[t] = running_return
+
+        # ── Step 2: 标准 GAE (用于混合基准) ────────────────────────────────
+        nv = np.zeros(T, dtype=np.float32)
+        for t in range(T):
+            if terminated[t] > 0.5:
+                nv[t] = 0.0
+            elif t == T - 1:
+                nv[t] = last_value
+            else:
+                nv[t] = values[t + 1]
+        std_gae = np.zeros(T, dtype=np.float32)
+        gae_acc = 0.0
+        for t in reversed(range(T)):
+            delta = rewards[t] + self.gamma * nv[t] - values[t]
+            not_done = 1.0 - terminated[t]
+            gae_acc = delta + self.gamma * self.lam * not_done * gae_acc
+            std_gae[t] = gae_acc
+
+        # ── Step 3: FixSCR 分母修正 ─────────────────────────────────────────
+        var_g = np.var(returns_mc) + 1e-8
+        var_v = np.var(values) + 1e-8
+
+        # EV: 当 Critic 好时，Var(V) ≈ Var(V*)，E[Var(G|s)] ≈ Var(G)-Var(V)
+        var_g_corrected = max(var_g - var_v, self.var_floor_frac * var_g)
+        sigma_g_corrected = float(np.sqrt(var_g_corrected)) + 1e-8
+
+        # 更新 σ_G EMA (用于在线诊断和 per-step SNR)
+        self._g_std_ema = (
+            (1 - self.g_std_ema_alpha) * self._g_std_ema
+            + self.g_std_ema_alpha * sigma_g_corrected
+        )
+
+        # ── Step 4: per-step 误差 (|G_t - V_t|) ────────────────────────────
+        errors = np.abs(returns_mc - values)  # = |δ_hindsight_t|
+
+        # ── Step 5: SNR 感知权重 w_t ────────────────────────────────────────
+        if self.use_snr_weight:
+            # w_t = σ(β·(SNR_t - θ))   SNR_t = |δ_t| / σ_G
+            snr_t = errors / self._g_std_ema
+            z = self.snr_beta * (snr_t - self.noise_threshold)
+            w = 1.0 / (1.0 + np.exp(-np.clip(z, -20.0, 20.0)))
+        else:
+            w = np.ones(T, dtype=np.float32)
+
+        # ── Step 6: EV 驱动混合系数 ─────────────────────────────────────────
+        var_y = np.var(returns_mc) + 1e-8
+        ev_now = float(1.0 - np.var(returns_mc - values) / var_y)
+        self._ev_ema = (1 - self.ev_ema_alpha) * self._ev_ema + self.ev_ema_alpha * ev_now
+
+        # ev_blend: EV 高 (Critic 好) → 更依赖 GRPO-FixSCR 修正；
+        #            EV 低 (Critic 差) → 退回标准 GAE (稳健)
+        ev_blend = float(np.clip(self._ev_ema, 0.0, 1.0))
+
+        # ── Step 7: 最终优势 ─────────────────────────────────────────────────
+        # GRPO 部分: w_t·(G_t - V_t) / σ_G_corrected
+        grpo_adv = w * (returns_mc - values) / sigma_g_corrected
+
+        if self.use_gae_blend:
+            # GAE 部分 (归一化, 量纲对齐)
+            std_gae_std = np.std(std_gae) + 1e-8
+            gae_adv_normed = std_gae / std_gae_std
+
+            # EV-driven 混合: ev_blend=1→全 GRPO, ev_blend=0→全 GAE
+            advantages = ev_blend * grpo_adv + (1.0 - ev_blend) * gae_adv_normed
+        else:
+            advantages = grpo_adv
+
+        # ── Step 8: Critic 目标 (EV-adaptive MC/GAE 混合) ───────────────────
+        c_mc = float(np.clip(1.0 - self._ev_ema, 0.1, 1.0))
+        std_gae_returns = std_gae + values  # GAE-returns
+        critic_returns = c_mc * returns_mc + (1 - c_mc) * std_gae_returns
+
+        self.buffer.advantages[:T] = advantages
+        self.buffer.returns[:T] = critic_returns

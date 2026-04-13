@@ -1984,3 +1984,7 @@ newGAE_PPO/
 └── TECH_REPORT.md                   # 本报告
 ```
 
+---
+
+
+> **Note**: Part B (BHVF/BayesianV route V1-V26) has been archived to `docs/archive/` (see `paper_draft_zh.md`, `paper_draft.md`). Main research direction: HCGAE_v4 (`gae_experiments/agents/optimal_ppo.py`)

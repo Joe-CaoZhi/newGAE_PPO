@@ -1,0 +1,90 @@
+{
+  "env": "Walker2d-v4",
+  "agent": "Optimal_HCGAE_v4_FixSCR",
+  "seed": 1,
+  "total_steps": 301056,
+  "elapsed_s": 319.2588291168213,
+  "final_reward": 991.2746614415959,
+  "final_std": 260.30302822387944,
+  "eval_curve": [
+    {
+      "steps": 2048,
+      "mean_reward": 256.3878030275865,
+      "std_reward": 3.1869345750774634
+    },
+    {
+      "steps": 22528,
+      "mean_reward": 278.408801800333,
+      "std_reward": 4.105378788749013
+    },
+    {
+      "steps": 43008,
+      "mean_reward": 334.7825582408068,
+      "std_reward": 12.701619141542315
+    },
+    {
+      "steps": 63488,
+      "mean_reward": 424.338263359217,
+      "std_reward": 9.75591567115786
+    },
+    {
+      "steps": 83968,
+      "mean_reward": 345.5581548614467,
+      "std_reward": 2.3540702593312806
+    },
+    {
+      "steps": 104448,
+      "mean_reward": 387.78441583439195,
+      "std_reward": 4.155734636367435
+    },
+    {
+      "steps": 124928,
+      "mean_reward": 419.2825099013086,
+      "std_reward": 4.952800935766171
+    },
+    {
+      "steps": 145408,
+      "mean_reward": 419.0984001299547,
+      "std_reward": 9.96821243173577
+    },
+    {
+      "steps": 165888,
+      "mean_reward": 420.882502284949,
+      "std_reward": 13.663290827008172
+    },
+    {
+      "steps": 186368,
+      "mean_reward": 432.5431725148105,
+      "std_reward": 8.28663516412046
+    },
+    {
+      "steps": 206848,
+      "mean_reward": 630.514986935273,
+      "std_reward": 7.928031714836673
+    },
+    {
+      "steps": 227328,
+      "mean_reward": 682.9320752022026,
+      "std_reward": 22.278555425195584
+    },
+    {
+      "steps": 247808,
+      "mean_reward": 483.69906187502175,
+      "std_reward": 73.99857367737071
+    },
+    {
+      "steps": 268288,
+      "mean_reward": 721.0268453394657,
+      "std_reward": 163.46903530720567
+    },
+    {
+      "steps": 288768,
+      "mean_reward": 817.6147783471949,
+      "std_reward": 102.578226742073
+    }
+  ],
+  "diagnostics": {
+    "scr_ema_final": 0.2179609907343365,
+    "ev_ema_final": 0.9184257311121606
+  }
+}
