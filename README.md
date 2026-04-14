@@ -13,6 +13,8 @@
 
 We identify a shared statistical deficiency across two dominant paradigms: in PPO, Critic initialization bias propagates geometrically through GAE's $(\gamma\lambda)^l$ weighting, corrupting early policy gradients; in GRPO, the group normalization denominator conflates state-value structural variance with true MC noise, systematically deflating the advantage signal.
 
+**Key finding:** Experiments reveal a striking asymmetry — HCGAE delivers **+9.2% to +220.2%** gains for GRPO vs. only **+5.6% to +14.3%** for PPO. This is theoretically predicted: GRPO's variance inflation is a *multiplicative, persistent structural distortion* (2.2× overestimation in HalfCheetah-v4) while PPO's Critic bias is an additive transient that naturally diminishes.
+
 **方案 / Solution**: 我们提出 **HCGAE（事后修正广义优势估计）**，以有偏先验（Critic 估计）与无偏但噪声的观测（MC 回报）的最优线性融合为理论基础。最优融合系数为：
 
 $$\alpha^* = \frac{\sigma_V^2 + B^2}{\sigma_V^2 + B^2 + \sigma_{G|s}^2}$$
