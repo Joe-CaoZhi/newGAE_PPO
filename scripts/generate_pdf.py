@@ -204,28 +204,113 @@ img {
 }
 """
 
-# ── KaTeX script (offline-friendly via CDN with fallback) ───────────────────
-KATEX_HEADER = """
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.body, {
-    delimiters: [
-      {left: '$$', right: '$$', display: true},
-      {left: '$', right: '$', display: false},
-      {left: '\\\\(', right: '\\\\)', display: false},
-      {left: '\\\\[', right: '\\\\]', display: true}
-    ],
-    throwOnError: false,
-    strict: false
-  });
-  document.querySelectorAll('.math.display').forEach(el => {
-    el.style.textAlign = 'center';
-  });
-  // Signal render complete
-  window._katexDone = true;
-"></script>
+KATEX_CACHE_DIR = Path("/tmp/katex_local")
+KATEX_CDN_BASE  = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/"
+KATEX_FONTS = [
+    "KaTeX_AMS-Regular.woff2", "KaTeX_Caligraphic-Bold.woff2",
+    "KaTeX_Caligraphic-Regular.woff2", "KaTeX_Fraktur-Bold.woff2",
+    "KaTeX_Fraktur-Regular.woff2", "KaTeX_Main-Bold.woff2",
+    "KaTeX_Main-BoldItalic.woff2", "KaTeX_Main-Italic.woff2",
+    "KaTeX_Main-Regular.woff2", "KaTeX_Math-BoldItalic.woff2",
+    "KaTeX_Math-Italic.woff2", "KaTeX_SansSerif-Bold.woff2",
+    "KaTeX_SansSerif-Italic.woff2", "KaTeX_SansSerif-Regular.woff2",
+    "KaTeX_Script-Regular.woff2", "KaTeX_Size1-Regular.woff2",
+    "KaTeX_Size2-Regular.woff2", "KaTeX_Size3-Regular.woff2",
+    "KaTeX_Size4-Regular.woff2", "KaTeX_Typewriter-Regular.woff2",
+]
+
+
+def _fetch(url: str, dest: Path):
+    """Download url → dest if not already cached."""
+    if dest.exists():
+        return
+    import urllib.request
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    urllib.request.urlretrieve(url, dest)
+
+
+def _b64(path: Path) -> str:
+    return base64.b64encode(path.read_bytes()).decode("ascii")
+
+
+def _build_katex_header() -> str:
+    """
+    Build a fully self-contained <style>+<script> block with KaTeX inlined.
+    Downloads KaTeX assets to /tmp/katex_local/ on first run (cached thereafter).
+    """
+    print("  Loading KaTeX assets (offline) ...")
+    cache = KATEX_CACHE_DIR
+
+    # ── 1. KaTeX JS ────────────────────────────────────────────────────────
+    katex_js_path      = cache / "katex.min.js"
+    autorender_js_path = cache / "auto-render.min.js"
+    _fetch(KATEX_CDN_BASE + "katex.min.js",                       katex_js_path)
+    _fetch(KATEX_CDN_BASE + "contrib/auto-render.min.js",         autorender_js_path)
+
+    # ── 2. KaTeX fonts ─────────────────────────────────────────────────────
+    fonts_dir = cache / "fonts"
+    for fname in KATEX_FONTS:
+        _fetch(KATEX_CDN_BASE + "fonts/" + fname, fonts_dir / fname)
+
+    # ── 3. KaTeX CSS – patch font URLs → base64 ────────────────────────────
+    katex_css_path = cache / "katex.min.css"
+    _fetch(KATEX_CDN_BASE + "katex.min.css", katex_css_path)
+
+    css_text = katex_css_path.read_text(encoding="utf-8")
+
+    def embed_font(m):
+        fname = m.group(1)
+        fpath = fonts_dir / fname
+        if fpath.exists():
+            return f"url(data:font/woff2;base64,{_b64(fpath)})"
+        return m.group(0)
+
+    css_inline = re.sub(r"url\(fonts/([^)]+\.woff2)\)", embed_font, css_text)
+    # Remove remaining non-woff2 @font-face src entries so browser picks woff2
+    css_inline = re.sub(r"url\(fonts/[^)]+\.(?:woff|ttf)\)[^,;]*[,]?", "", css_inline)
+
+    katex_js   = katex_js_path.read_text(encoding="utf-8")
+    autorender = autorender_js_path.read_text(encoding="utf-8")
+
+    # The auto-render script is appended to <body> via a defer inline block
+    # so it runs after the DOM is fully parsed.
+    header = f"""<style>
+{css_inline}
+</style>
+<script>
+{katex_js}
+</script>
+<script>
+{autorender}
+</script>
+<script>
+// Run immediately – KaTeX and auto-render are already loaded synchronously above
+(function() {{
+  function doRender() {{
+    renderMathInElement(document.body, {{
+      delimiters: [
+        {{left: "$$",  right: "$$",  display: true}},
+        {{left: "$",   right: "$",   display: false}},
+        {{left: "\\\\(", right: "\\\\)", display: false}},
+        {{left: "\\\\[", right: "\\\\]", display: true}}
+      ],
+      throwOnError: false,
+      strict: false
+    }});
+    document.querySelectorAll(".math.display").forEach(function(el) {{
+      el.style.textAlign = "center";
+      el.style.margin = "0.8em 0";
+    }});
+  }}
+  if (document.readyState === "loading") {{
+    document.addEventListener("DOMContentLoaded", doRender);
+  }} else {{
+    doRender();
+  }}
+}})();
+</script>
 """
+    return header
 
 
 def img_to_base64(img_path: Path) -> str:
@@ -302,8 +387,10 @@ def build_html(md_path: Path, title: str) -> str:
     )
 
     # Inject our CSS and KaTeX into <head>
-    custom_style = f"<style>\n{ACADEMIC_CSS}\n</style>\n{KATEX_HEADER}"
-    html = re.sub(r"(</head>)", custom_style + r"\1", html)
+    # Use a lambda to avoid re.sub interpreting backslashes in KaTeX JS
+    katex_header = _build_katex_header()
+    injection = f"<style>\n{ACADEMIC_CSS}\n</style>\n{katex_header}"
+    html = re.sub(r"</head>", lambda m: injection + "</head>", html)
 
     # Embed images as base64
     html = embed_images(html, md_path.parent)
@@ -327,9 +414,6 @@ def html_to_pdf(html: str, out_pdf: Path):
         "--headless=new",
         "--disable-gpu",
         "--no-sandbox",
-        "--disable-software-rasterizer",
-        "--run-all-compositor-stages-before-draw",   # wait for JS renders
-        "--virtual-time-budget=8000",                # give KaTeX 8s to render
         "--print-to-pdf-no-header",
         f"--print-to-pdf={out_pdf}",
         f"file://{tmp_html}",
